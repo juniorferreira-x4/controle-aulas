@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Controle de Aulas — Gutierrez Ferreira</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16324F">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="eyebrow">Gutierrez Ferreira · Diário de classe</div>
+  <h1>Controle de Aulas</h1>
+</header>
+
+<main id="app-main"></main>
+
+<nav class="tabbar">
+  <button data-tab="alunos" class="active"><span class="icon">👤</span>Alunos</button>
+  <button data-tab="aulas"><span class="icon">📖</span>Aulas</button>
+  <button data-tab="reposicoes"><span class="icon">↺</span>Reposições</button>
+  <button data-tab="dashboard"><span class="icon">▤</span>Painel</button>
+  <button data-tab="resumoia"><span class="icon">✎</span>Resumo IA</button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

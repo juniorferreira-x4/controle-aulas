@@ -1,0 +1,15 @@
+{
+  "name": "Controle de Aulas — Gutierrez Ferreira",
+  "short_name": "Controle Aulas",
+  "description": "Controle de aulas, presença, dificuldades e reposições",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#16324F",
+  "theme_color": "#16324F",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
