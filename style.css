@@ -12,6 +12,8 @@
   --warn-soft: #FEF3C7;
   --danger: #B91C1C;
   --danger-soft: #FEE2E2;
+  --neutral-alt: #7C3AED;
+  --neutral-alt-soft: #EDE5FB;
   --text: #1E293B;
   --text-muted: #64748B;
   --heading: #1E293B;
@@ -34,6 +36,8 @@ body.dark-theme {
   --warn-soft: #78350F;
   --danger: #F87171;
   --danger-soft: #7F1D1D;
+  --neutral-alt: #C4B5FD;
+  --neutral-alt-soft: #3B2E63;
   --text: #E2E8F0;
   --text-muted: #94A3B8;
   --heading: #F1F5F9;
@@ -62,31 +66,10 @@ header.app-header {
   z-index: 20;
   border-bottom: 1px solid var(--accent);
 }
-
 .header-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-
-header.app-header .eyebrow {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #93A4BD;
-  margin-bottom: 2px;
-}
-
+header.app-header .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A4BD; margin-bottom: 2px; }
 header.app-header h1 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--on-ink); }
-
-.btn-theme-toggle {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: var(--on-ink);
-  border-radius: 6px;
-  padding: 6px 13px;
-  font-size: 12px;
-  font-family: var(--sans);
-  cursor: pointer;
-  flex-shrink: 0;
-}
+.btn-theme-toggle { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: var(--on-ink); border-radius: 6px; padding: 6px 13px; font-size: 12px; font-family: var(--sans); cursor: pointer; flex-shrink: 0; }
 
 main { max-width: 720px; margin: 0 auto; padding: 18px 16px 40px; }
 
@@ -98,38 +81,10 @@ main { max-width: 720px; margin: 0 auto; padding: 18px 16px 40px; }
   margin-bottom: 16px;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
+.card h2 { font-size: 14.5px; margin: 0 0 14px; color: var(--heading); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card h2 .count { font-family: var(--mono); font-size: 11px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 20px; padding: 2px 9px; color: var(--text-muted); font-weight: 400; }
 
-.card h2 {
-  font-size: 14.5px;
-  margin: 0 0 14px;
-  color: var(--heading);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card h2 .count {
-  font-family: var(--mono);
-  font-size: 11px;
-  background: var(--paper);
-  border: 1px solid var(--paper-line);
-  border-radius: 20px;
-  padding: 2px 9px;
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-  margin-top: 10px;
-}
+label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); margin-bottom: 4px; margin-top: 12px; }
 label:first-child { margin-top: 0; }
 
 input, select, textarea {
@@ -143,97 +98,46 @@ input, select, textarea {
   color: var(--text);
 }
 textarea { resize: vertical; min-height: 56px; }
-select[multiple] { min-height: 110px; }
-input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-  background: var(--card-bg);
-}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; background: var(--card-bg); }
+input:disabled, select:disabled { background: var(--paper-line); color: var(--text-muted); cursor: not-allowed; opacity: 0.8; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 16px;
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 14px;
-}
+.btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 5px; padding: 10px 16px; font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 14px; }
 .btn-primary { background: var(--ink); color: var(--on-ink); }
 .btn-primary:hover { background: var(--ink-light); }
 .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; font-size: 12px; margin-top: 0; }
 .btn-ghost { background: transparent; color: var(--heading); border: 1px solid var(--paper-line); padding: 6px 10px; font-size: 12px; margin-top: 0; }
 .btn-small { padding: 5px 9px; font-size: 11px; margin-top: 0; }
-.btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-.row-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--paper-line);
-  font-size: 13px;
-}
+/* Padrão único para pares de botão de ação (Buscar+Limpar, Salvar+Limpar) */
+.btn-row { display: flex; gap: 8px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.btn-row .btn { margin-top: 0; }
+
+.row-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--paper-line); font-size: 13px; }
 .row-item:last-child { border-bottom: none; }
 .row-main { flex: 1; }
 .row-title { font-weight: 600; color: var(--heading); }
-.row-title.aluno-inativo { color: var(--text-muted); font-weight: 500; font-style: italic; }
+.row-title.aluno-inativo { color: var(--warn); font-weight: 500; font-style: italic; }
+.row-title.aluno-trancado { color: var(--neutral-alt); font-weight: 500; font-style: italic; }
 .row-sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
-.row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 
-.tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  padding: 2px 7px;
-  border-radius: 3px;
-  font-weight: 600;
-  margin-right: 4px;
-}
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; padding: 2px 7px; border-radius: 3px; font-weight: 600; margin-right: 4px; }
 .tag-presente { background: var(--success-soft); color: var(--success); }
 .tag-falta { background: var(--danger-soft); color: var(--danger); }
 .tag-reposicao { background: var(--warn-soft); color: var(--warn); }
 .tag-pendente { background: var(--warn-soft); color: var(--warn); }
 .tag-concluida { background: var(--success-soft); color: var(--success); }
 .tag-agendada { background: var(--accent-soft); color: var(--accent); }
+.tag-trancado { background: var(--neutral-alt-soft); color: var(--neutral-alt); }
 .tag-nivel { background: var(--paper); color: var(--text-muted); border: 1px solid var(--paper-line); }
 
 .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
 .empty-state .big { font-size: 28px; margin-bottom: 6px; }
 
-nav.tabbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--ink);
-  display: flex;
-  z-index: 30;
-  border-top: 1px solid var(--accent);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-nav.tabbar button {
-  flex: 1;
-  background: none;
-  border: none;
-  color: #8A9BB5;
-  padding: 10px 2px 8px;
-  font-size: 10.5px;
-  font-family: var(--sans);
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  cursor: pointer;
-}
+nav.tabbar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink); display: flex; z-index: 30; border-top: 1px solid var(--accent); padding-bottom: env(safe-area-inset-bottom); }
+nav.tabbar button { flex: 1; background: none; border: none; color: #8A9BB5; padding: 10px 2px 8px; font-size: 10.5px; font-family: var(--sans); font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
 nav.tabbar button.active { color: var(--on-ink); }
 nav.tabbar button .icon { font-size: 17px; }
 
@@ -251,37 +155,56 @@ nav.tabbar button .icon { font-size: 17px; }
 .pct-bar-bg { background: var(--paper-line); border-radius: 3px; height: 6px; width: 100%; overflow: hidden; margin-top: 3px; }
 .pct-bar-fill { background: var(--success); height: 100%; }
 
-.ia-output {
-  background: var(--ink);
-  color: #DCE8F2;
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 14px;
-  border-radius: 6px;
-  white-space: pre-wrap;
-  line-height: 1.6;
-  max-height: 320px;
-  overflow-y: auto;
-}
+.ia-output { background: var(--ink); color: #DCE8F2; font-family: var(--mono); font-size: 12px; padding: 14px; border-radius: 6px; white-space: pre-wrap; line-height: 1.6; max-height: 320px; overflow-y: auto; }
 
-.toast {
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--ink);
-  color: var(--on-ink);
-  padding: 9px 18px;
-  border-radius: 20px;
-  font-size: 12.5px;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-}
+.toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--on-ink); padding: 9px 18px; border-radius: 20px; font-size: 12.5px; z-index: 50; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
 .toast.show { opacity: 1; }
 
 .section-hidden { display: none !important; }
+
+/* Seletor de dias da semana (aba Alunos) */
+.weekday-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.weekday-option { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 34px; border: 1px solid var(--paper-line); border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--paper); color: var(--text); user-select: none; }
+.weekday-option input { display: none; }
+.weekday-option:has(input:checked) { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+
+/* Dropdown de múltipla seleção (estética limpa, substitui checklist expandida) */
+.multi-dropdown { position: relative; margin-top: 2px; }
+.multi-dropdown-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border: 1px solid var(--paper-line); border-radius: 5px; background: var(--paper); color: var(--text); font-size: 13px; cursor: pointer; font-family: var(--sans); text-align: left; }
+.multi-dropdown-toggle .chevron { font-size: 10px; color: var(--text-muted); margin-left: 8px; }
+.multi-dropdown-panel { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--paper-line); border-radius: 6px; box-shadow: 0 6px 18px rgba(15,23,42,0.14); padding: 8px; z-index: 25; max-height: 230px; overflow-y: auto; }
+.dd-option { display: flex; align-items: center; gap: 8px; padding: 7px 6px; font-size: 13px; cursor: pointer; border-radius: 4px; }
+.dd-option:hover { background: var(--paper); }
+.dd-option input { width: auto; margin: 0; }
+
+/* Espaçamento dedicado para campos "outro" que seguem um dropdown */
+.field-followup { margin-top: 12px; }
+
+/* Calendário semanal */
+.week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
+.week-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.week-day-col { border: 1px solid var(--paper-line); border-radius: 7px; padding: 8px; background: var(--paper); min-height: 90px; }
+.week-day-header { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; text-align: center; line-height: 1.5; }
+.week-slot { background: var(--card-bg); border: 1px solid var(--paper-line); border-radius: 5px; padding: 6px 7px; margin-bottom: 6px; font-size: 11.5px; cursor: pointer; line-height: 1.4; }
+.week-slot:hover { border-color: var(--accent); }
+.week-slot.slot-vazio { color: var(--text-muted); border-style: dashed; }
+.week-slot.slot-presente { background: var(--success-soft); border-color: var(--success); }
+.week-slot.slot-falta { background: var(--danger-soft); border-color: var(--danger); }
+.week-slot.slot-reposicao, .week-slot.slot-professor { background: var(--accent-soft); border-color: var(--accent); }
+.week-slot.slot-feriado { background: var(--paper-line); border-color: var(--paper-line); color: var(--text-muted); }
+.week-empty-note { font-size: 11px; color: var(--text-muted); text-align: center; padding: 10px 0; }
+
+@media (max-width: 700px) {
+  .week-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== Layout desktop ===== */
+@media (min-width: 900px) {
+  main { max-width: 1100px; }
+  .grid-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .grid-pair > .card { margin-bottom: 0; }
+  .week-grid { grid-template-columns: repeat(5, 1fr); }
+}
 
 @media (max-width: 380px) {
   .grid-2 { grid-template-columns: 1fr; }
