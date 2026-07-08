@@ -1,4 +1,4 @@
-const CACHE = "controle-aulas-v1";
+const CACHE = "controle-aulas-v2";
 const ASSETS = [
   "./",
   "./index.html",

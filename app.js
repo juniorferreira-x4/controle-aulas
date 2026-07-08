@@ -3,15 +3,17 @@ const DB = {
   get(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } },
   set(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 };
-const K = { students: "gf_students", lessons: "gf_lessons", makeups: "gf_makeups" };
+const K = { students: "gf_students", lessons: "gf_lessons", makeups: "gf_makeups", assessments: "gf_assessments" };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 function students() { return DB.get(K.students); }
 function lessons() { return DB.get(K.lessons); }
 function makeups() { return DB.get(K.makeups); }
+function assessments() { return DB.get(K.assessments); }
 function saveStudents(v) { DB.set(K.students, v); }
 function saveLessons(v) { DB.set(K.lessons, v); }
 function saveMakeups(v) { DB.set(K.makeups, v); }
+function saveAssessments(v) { DB.set(K.assessments, v); }
 
 function studentName(id) {
   const s = students().find(s => s.id === id);
@@ -29,18 +31,34 @@ function esc(str) {
   return (str || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+function slug(s) {
+  return (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 function fmtDate(iso) {
   if (!iso) return "—";
   const [y, m, d] = iso.split("-");
   return `${d}/${m}/${y}`;
 }
 
-// ===== Regras do contrato =====
+// ===== Constantes de conteúdo =====
 const SKILLS = ["Gramática", "Vocabulário", "Listening", "Speaking", "Writing", "Reading", "Pronúncia"];
+const VERB_TENSES = ["Simple Present", "Simple Past", "Present Continuous", "Past Continuous", "Present Perfect", "Future", "Todos"];
+const SUBTHEMES = ["Short answers", "Prepositions", "Adverbs", "If clauses", "Modal verbs", "Comparatives/Superlatives",
+  "Question tags", "Phrasal verbs", "Reported speech", "Passive voice", "Countable/Uncountable", "Articles"];
+const DIFFICULTY_CHECKLIST = ["Construção de frases", "Gramática", "Pronúncia", "Vocabulário",
+  "Confiança/Fluência", "Listening", "Writing", "Compreensão de texto"];
 
+// ===== Regras do contrato =====
 function addDays(dateStr, days) {
   const d = new Date(dateStr + "T00:00:00");
   d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+function addMonths(dateStr, months) {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setMonth(d.getMonth() + months);
   return d.toISOString().slice(0, 10);
 }
 function monthKeyOf(dateStr) { return dateStr ? dateStr.slice(0, 7) : "sem-data"; }
@@ -56,7 +74,7 @@ function prazoInfo(m) {
 }
 
 // 1 remarcação grátis por mês por aluno; cancelamento <24h é sempre cobrado E revoga
-// o direito grátis daquele mês para o aluno (mesmo que outras remarcações do mês já existissem antes).
+// o direito grátis daquele mês. Falta do professor NUNCA conta na cota do aluno.
 function mapaCobranca() {
   const mk = makeups();
   const grupos = {};
@@ -66,10 +84,15 @@ function mapaCobranca() {
   });
   const resultado = {};
   Object.values(grupos).forEach(lista => {
-    lista.sort((a, b) => (a.dataPerdida || "").localeCompare(b.dataPerdida || ""));
-    const direitoRevogado = lista.some(e => e.motivo === "Cancelamento (<24h)");
+    const semCota = lista.filter(e => e.motivo === "Professor faltou");
+    semCota.forEach(e => {
+      resultado[e.id] = { label: "Grátis", detalhe: "falta do professor — não conta na cota do aluno" };
+    });
+    const comCota = lista.filter(e => e.motivo !== "Professor faltou")
+      .sort((a, b) => (a.dataPerdida || "").localeCompare(b.dataPerdida || ""));
+    const direitoRevogado = comCota.some(e => e.motivo === "Cancelamento (<24h)");
     let usouGratis = false;
-    lista.forEach(e => {
+    comCota.forEach(e => {
       if (e.motivo === "Cancelamento (<24h)") {
         resultado[e.id] = { label: "R$80", detalhe: "cancelamento com menos de 24h de aviso" };
       } else if (direitoRevogado) {
@@ -85,9 +108,64 @@ function mapaCobranca() {
   return resultado;
 }
 
+// ===== Tema claro/escuro =====
+function applyTheme(theme) {
+  document.body.classList.toggle("dark-theme", theme === "dark");
+  localStorage.setItem("gf_theme", theme);
+}
+function initTheme() {
+  const saved = localStorage.getItem("gf_theme") || "light";
+  applyTheme(saved);
+}
+function toggleTheme() {
+  const isDark = document.body.classList.contains("dark-theme");
+  applyTheme(isDark ? "light" : "dark");
+  updateThemeButton();
+}
+function updateThemeButton() {
+  const btn = document.getElementById("btn-theme");
+  if (!btn) return;
+  const isDark = document.body.classList.contains("dark-theme");
+  btn.textContent = isDark ? "☀️ Claro" : "🌙 Escuro";
+}
+
+// ===== Rascunho de formulários (persistência ao trocar de aba) =====
+function captureFormDraft(formId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const data = {};
+  form.querySelectorAll("input, select, textarea").forEach(el => {
+    if (!el.id) return;
+    data[el.id] = el.type === "checkbox" ? el.checked : el.value;
+  });
+  localStorage.setItem("gf_draft_" + formId, JSON.stringify(data));
+}
+function restoreFormDraft(formId) {
+  const raw = localStorage.getItem("gf_draft_" + formId);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    const form = document.getElementById(formId);
+    if (!form) return;
+    Object.entries(data).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === "checkbox") el.checked = val; else el.value = val;
+    });
+  } catch {}
+}
+function clearFormDraft(formId) { localStorage.removeItem("gf_draft_" + formId); }
+function wireDraft(formId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  restoreFormDraft(formId);
+  form.addEventListener("input", () => captureFormDraft(formId));
+  form.addEventListener("change", () => captureFormDraft(formId));
+}
+
 // ===== Navegação por abas =====
-const TABS = ["alunos", "aulas", "reposicoes", "dashboard", "resumoia"];
 let currentTab = "alunos";
+let filtroAnteriores = { aluno: "", mes: "", ano: "" };
 
 document.querySelectorAll("nav.tabbar button").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -104,10 +182,12 @@ function render() {
     alunos: renderAlunos,
     aulas: renderAulas,
     reposicoes: renderReposicoes,
+    nivelamento: renderNivelamento,
     dashboard: renderDashboard,
     resumoia: renderResumoIA
   }[currentTab]();
   attachHandlers();
+  updateThemeButton();
 }
 
 // ===== ALUNOS =====
@@ -116,7 +196,7 @@ function renderAlunos() {
   const rows = list.length ? list.map(s => `
     <div class="row-item">
       <div class="row-main">
-        <div class="row-title">${esc(s.nome)} <span class="tag" style="background:#EEF2F6;color:#16324F">${esc(s.nivel || "—")}</span></div>
+        <div class="row-title">${esc(s.nome)} <span class="tag tag-nivel">${esc(s.nivel || "—")}</span></div>
         <div class="row-sub">${esc(s.horario || "sem horário fixo")} · ${esc(s.freq || "—")} · ${esc(s.status || "Ativo")}</div>
       </div>
       <div class="row-actions">
@@ -185,61 +265,102 @@ function submitStudent(e) {
   const idx = list.findIndex(s => s.id === id);
   if (idx >= 0) list[idx] = data; else list.push(data);
   saveStudents(list);
+  clearFormDraft("student-form");
   toast("Aluno salvo.");
   render();
 }
 
+// ===== Helpers de checklist =====
+function checklistHtml(prefix, items, checkedValues, extraClass) {
+  checkedValues = checkedValues || [];
+  return items.map(item => {
+    const id = `${prefix}-${slug(item)}`;
+    const checked = checkedValues.includes(item) ? "checked" : "";
+    return `
+      <label class="chip-check">
+        <input type="checkbox" id="${id}" class="${extraClass}" data-value="${esc(item)}" ${checked}>
+        <span>${esc(item)}</span>
+      </label>`;
+  }).join("");
+}
+function readChecklist(className) {
+  return Array.from(document.querySelectorAll(`.${className}:checked`)).map(el => el.dataset.value);
+}
+
 // ===== AULAS =====
 function renderAulas() {
-  const list = lessons().slice().sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  const hoje = hojeISO();
+  const hojeList = lessons().filter(l => l.data === hoje).sort((a, b) => (a.data || "").localeCompare(b.data || ""));
   const opts = students().map(s => `<option value="${s.id}">${esc(s.nome)}</option>`).join("");
-  const rows = list.length ? list.map(l => {
-    const tagClass = l.presenca === "Falta" ? "tag-falta" : l.presenca === "Reposição" ? "tag-reposicao" : "tag-presente";
+
+  const rowHtml = (l) => {
+    const tagClass = l.presenca === "Falta" ? "tag-falta" : l.presenca === "Professor faltou" ? "tag-agendada" : l.presenca === "Reposição" ? "tag-reposicao" : "tag-presente";
+    const habilidades = l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : []);
+    const temaResumo = [...(l.temposVerbais || []), ...(l.subtemas || [])].join(", ") || l.tema || "sem tema registrado";
     return `
     <div class="row-item">
       <div class="row-main">
         <div class="row-title">${esc(studentName(l.alunoId))} <span class="tag ${tagClass}">${esc(l.presenca || "—")}</span>
         ${l.presenca === "Falta" ? `<span class="tag ${l.aviso24h === "Não" ? "tag-falta" : "tag-agendada"}">${l.aviso24h === "Não" ? "sem aviso 24h" : "avisou ≥24h"}</span>` : ""}
-        ${l.atraso15 ? `<span class="tag tag-reposicao">atraso >15min</span>` : ""}
+        ${l.atraso15 ? `<span class="tag tag-reposicao">atraso &gt;15min</span>` : ""}
         </div>
-        <div class="row-sub">${fmtDate(l.data)} · ${esc(l.habilidade || "—")} — ${esc(l.tema || "sem tema registrado")}</div>
-        ${l.dificuldade ? `<div class="row-sub">⚠ ${esc(l.dificuldade)}</div>` : ""}
+        <div class="row-sub">${fmtDate(l.data)} · ${esc(habilidades.join(", ") || "—")} — ${esc(temaResumo)}</div>
+        ${(l.dificuldades && l.dificuldades.length) || l.dificuldade ? `<div class="row-sub">⚠ ${esc([...(l.dificuldades || []), l.dificuldadeOutra].filter(Boolean).join("; ") || l.dificuldade)}</div>` : ""}
       </div>
       <div class="row-actions">
         <button class="btn btn-ghost btn-small" data-edit-lesson="${l.id}">Editar</button>
         <button class="btn btn-danger btn-small" data-del-lesson="${l.id}">Excluir</button>
       </div>
     </div>`;
-  }).join("") : `<div class="empty-state"><div class="big">📖</div>Nenhuma aula registrada ainda.</div>`;
+  };
+
+  const rowsHoje = hojeList.length ? hojeList.map(rowHtml).join("") : `<div class="empty-state">Nenhuma aula registrada hoje ainda.</div>`;
+
+  // Opções de filtro (Aulas anteriores)
+  const anos = [...new Set(lessons().map(l => (l.data || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+  const meses = [
+    "01-Jan", "02-Fev", "03-Mar", "04-Abr", "05-Mai", "06-Jun",
+    "07-Jul", "08-Ago", "09-Set", "10-Out", "11-Nov", "12-Dez"
+  ];
 
   return `
     <div class="card">
-      <h2>Registro de aulas <span class="count">${list.length}</span></h2>
-      ${rows}
+      <h2>Aulas de hoje <span class="count">${hojeList.length}</span></h2>
+      ${rowsHoje}
     </div>
+
     <div class="card">
       <h2 id="lesson-form-title">Nova aula</h2>
       <form id="lesson-form">
         <input type="hidden" id="l-id">
         <div class="grid-2">
-          <div><label>Data</label><input type="date" id="l-data" required></div>
+          <div><label>Data</label><input type="date" id="l-data" value="${hoje}" required></div>
           <div><label>Aluno</label><select id="l-aluno" required><option value="">Selecione</option>${opts}</select></div>
         </div>
-        <label>Tema / assunto abordado</label>
-        <input type="text" id="l-tema" placeholder="Ex: Past simple x Present perfect">
+
+        <div id="ultima-tarefa-box" class="install-banner section-hidden" style="background:var(--paper);border-color:var(--paper-line);color:var(--text)">
+          <span id="ultima-tarefa-texto"></span>
+        </div>
+
+        <label>Habilidade(s) em foco</label>
+        <div class="chip-group">${checklistHtml("l-hab", SKILLS, [], "hab-check")}</div>
+
+        <label>Tempos verbais abordados</label>
+        <div class="chip-group">${checklistHtml("l-tempo", VERB_TENSES, [], "tempo-check")}</div>
+
+        <label>Subtemas abordados</label>
+        <div class="chip-group">${checklistHtml("l-sub", SUBTHEMES, [], "sub-check")}</div>
+        <input type="text" id="l-sub-outro" placeholder="Outro subtema não listado (opcional)">
+
         <div class="grid-2">
-          <div><label>Habilidade foco</label>
-            <select id="l-habilidade">
-              <option value="">—</option>
-              ${SKILLS.map(s => `<option>${s}</option>`).join("")}
-            </select>
-          </div>
           <div><label>Presença</label>
             <select id="l-presenca">
-              <option>Presente</option><option>Falta</option><option>Reposição</option>
+              <option>Presente</option><option>Falta</option><option>Reposição</option><option>Professor faltou</option>
             </select>
           </div>
+          <div></div>
         </div>
+
         <div id="falta-extra" class="section-hidden">
           <label>O aluno avisou com 24h ou mais de antecedência?</label>
           <select id="l-aviso24h">
@@ -247,20 +368,101 @@ function renderAulas() {
             <option value="Não">Não — cancelou/faltou em cima da hora (&lt;24h)</option>
           </select>
           <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">
-            Se marcar "Não", pelo contrato: a aula conta como dada, o aluno perde o direito à remarcação grátis do mês, e qualquer remarcação desta aula será cobrada à parte (R$80).
+            Se marcar "Não": a aula conta como dada, o aluno perde o direito à remarcação grátis do mês, e a remarcação desta aula específica será cobrada à parte (R$80).
           </p>
         </div>
+        <div id="prof-faltou-aviso" class="section-hidden">
+          <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">
+            Reposição criada automaticamente como <strong>grátis</strong> e não conta na cota mensal do aluno.
+          </p>
+        </div>
+
         <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-weight:400;font-size:13px;margin-top:12px">
-          <input type="checkbox" id="l-atraso15" style="width:auto"> Aluno chegou com mais de 15 min de atraso (aula finalizada e contabilizada, conforme tolerância do contrato)
+          <input type="checkbox" id="l-atraso15" style="width:auto"> Aluno chegou com mais de 15 min de atraso (aula finalizada e contabilizada)
         </label>
-        <label>Dificuldade observada (específica, não genérica)</label>
-        <textarea id="l-dificuldade" placeholder="Ex: confunde 'much' e 'many' com substantivos incontáveis"></textarea>
+
+        <label>Dificuldade observada</label>
+        <div class="chip-group">${checklistHtml("l-dif", DIFFICULTY_CHECKLIST, [], "dif-check")}</div>
+        <input type="text" id="l-dif-outra" placeholder="Outra dificuldade específica (opcional)">
+
+        <label>Tarefa de casa para a próxima aula</label>
+        <textarea id="l-tarefa-proxima" placeholder="O que o aluno deve estudar/praticar até a próxima aula"></textarea>
+
         <label>Nota da aula</label>
         <textarea id="l-nota" placeholder="Observações livres sobre a aula"></textarea>
         <button type="submit" class="btn btn-primary">Salvar aula</button>
       </form>
     </div>
+
+    <div class="card">
+      <h2>Aulas anteriores</h2>
+      <div class="grid-2">
+        <div><label>Aluno</label>
+          <select id="filtro-aluno"><option value="">Todos</option>${opts}</select>
+        </div>
+        <div><label>Ano</label>
+          <select id="filtro-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select>
+        </div>
+      </div>
+      <label>Mês</label>
+      <select id="filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}">${m.slice(3)}</option>`).join("")}</select>
+      <div id="aulas-anteriores-list" style="margin-top:12px">${renderAulasAnterioresList()}</div>
+    </div>
   `;
+}
+
+function renderAulasAnterioresList() {
+  const hoje = hojeISO();
+  let list = lessons().filter(l => l.data !== hoje);
+  if (filtroAnteriores.aluno) list = list.filter(l => l.alunoId === filtroAnteriores.aluno);
+  if (filtroAnteriores.ano) list = list.filter(l => (l.data || "").slice(0, 4) === filtroAnteriores.ano);
+  if (filtroAnteriores.mes) list = list.filter(l => (l.data || "").slice(5, 7) === filtroAnteriores.mes);
+  list = list.sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+
+  if (!list.length) return `<div class="empty-state">Nenhuma aula encontrada com esse filtro.</div>`;
+
+  return list.map(l => {
+    const tagClass = l.presenca === "Falta" ? "tag-falta" : l.presenca === "Professor faltou" ? "tag-agendada" : l.presenca === "Reposição" ? "tag-reposicao" : "tag-presente";
+    const habilidades = l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : []);
+    const temaResumo = [...(l.temposVerbais || []), ...(l.subtemas || [])].join(", ") || l.tema || "sem tema registrado";
+    return `
+    <div class="row-item">
+      <div class="row-main">
+        <div class="row-title">${esc(studentName(l.alunoId))} <span class="tag ${tagClass}">${esc(l.presenca || "—")}</span></div>
+        <div class="row-sub">${fmtDate(l.data)} · ${esc(habilidades.join(", ") || "—")} — ${esc(temaResumo)}</div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-ghost btn-small" data-edit-lesson="${l.id}">Editar</button>
+        <button class="btn btn-danger btn-small" data-del-lesson="${l.id}">Excluir</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function atualizarUltimaTarefa() {
+  const alunoId = document.getElementById("l-aluno")?.value;
+  const curId = document.getElementById("l-id")?.value;
+  const box = document.getElementById("ultima-tarefa-box");
+  const texto = document.getElementById("ultima-tarefa-texto");
+  if (!box || !texto) return;
+  if (!alunoId) { box.classList.add("section-hidden"); return; }
+  const mine = lessons().filter(l => l.alunoId === alunoId && l.id !== curId && l.tarefaProxima)
+    .sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  if (!mine.length) { box.classList.add("section-hidden"); return; }
+  texto.innerHTML = `<strong>O que foi pedido na última aula (${fmtDate(mine[0].data)}):</strong> ${esc(mine[0].tarefaProxima)}`;
+  box.classList.remove("section-hidden");
+}
+
+function toggleFaltaExtra() {
+  const sel = document.getElementById("l-presenca");
+  const extra = document.getElementById("falta-extra");
+  const profAviso = document.getElementById("prof-faltou-aviso");
+  if (!sel) return;
+  if (extra) extra.classList.toggle("section-hidden", sel.value !== "Falta");
+  if (profAviso) profAviso.classList.toggle("section-hidden", sel.value !== "Professor faltou");
+  if (sel.value === "Falta" && document.getElementById("l-aviso24h") && !document.getElementById("l-aviso24h").value) {
+    document.getElementById("l-aviso24h").value = "Sim";
+  }
 }
 
 function submitLesson(e) {
@@ -272,23 +474,29 @@ function submitLesson(e) {
     id,
     data: document.getElementById("l-data").value,
     alunoId: document.getElementById("l-aluno").value,
-    tema: document.getElementById("l-tema").value.trim(),
-    habilidade: document.getElementById("l-habilidade").value,
+    habilidades: readChecklist("hab-check"),
+    temposVerbais: readChecklist("tempo-check"),
+    subtemas: readChecklist("sub-check"),
+    subtemaOutro: document.getElementById("l-sub-outro").value.trim(),
     presenca,
     aviso24h,
     atraso15: document.getElementById("l-atraso15").checked,
-    dificuldade: document.getElementById("l-dificuldade").value.trim(),
+    dificuldades: readChecklist("dif-check"),
+    dificuldadeOutra: document.getElementById("l-dif-outra").value.trim(),
+    tarefaProxima: document.getElementById("l-tarefa-proxima").value.trim(),
     nota: document.getElementById("l-nota").value.trim()
   };
   if (!data.alunoId || !data.data) return;
   let list = lessons();
   const idx = list.findIndex(x => x.id === id);
-  const wasFalta = idx >= 0 && list[idx].presenca === "Falta";
+  const wasSpecial = idx >= 0 && (list[idx].presenca === "Falta" || list[idx].presenca === "Professor faltou");
   if (idx >= 0) list[idx] = data; else list.push(data);
   saveLessons(list);
 
-  if (data.presenca === "Falta" && !wasFalta) {
-    const motivo = data.aviso24h === "Não" ? "Cancelamento (<24h)" : "Falta / cancelamento (aviso ≥24h)";
+  if ((data.presenca === "Falta" || data.presenca === "Professor faltou") && !wasSpecial) {
+    let motivo;
+    if (data.presenca === "Professor faltou") motivo = "Professor faltou";
+    else motivo = data.aviso24h === "Não" ? "Cancelamento (<24h)" : "Falta / cancelamento (aviso ≥24h)";
     let mk = makeups();
     mk.push({ id: uid(), alunoId: data.alunoId, dataPerdida: data.data, motivo, dataAgendada: "", horario: "", status: "Pendente", obs: "" });
     saveMakeups(mk);
@@ -296,6 +504,7 @@ function submitLesson(e) {
   } else {
     toast("Aula salva.");
   }
+  clearFormDraft("lesson-form");
   render();
 }
 
@@ -309,7 +518,7 @@ function renderReposicoes() {
   });
   const opts = students().map(s => `<option value="${s.id}">${esc(s.nome)}</option>`).join("");
   const statusTag = { "Pendente": "tag-pendente", "Agendada": "tag-agendada", "Concluída": "tag-concluida", "Perdida (sem reposição)": "tag-falta" };
-  const motivos = ["Falta / cancelamento (aviso ≥24h)", "Cancelamento (<24h)"];
+  const motivos = ["Falta / cancelamento (aviso ≥24h)", "Cancelamento (<24h)", "Professor faltou"];
 
   const rows = list.length ? list.map(m => {
     const cob = cobrancas[m.id] || { label: "—", detalhe: "" };
@@ -338,7 +547,7 @@ function renderReposicoes() {
     <div class="card">
       <h2>Reposições <span class="count">${list.length}</span></h2>
       <p style="font-size:11.5px;color:var(--text-muted);margin:0 0 12px">
-        Cobrança e prazo calculados automaticamente pelas regras do contrato: 1 remarcação grátis por mês, R$80 nas demais, 21 dias corridos de validade, cancelamento &lt;24h sempre cobrado e revoga o direito grátis do mês.
+        Cobrança e prazo calculados automaticamente: 1 remarcação grátis por mês, R$80 nas demais, 21 dias corridos de validade, cancelamento &lt;24h sempre cobrado e revoga o direito grátis do mês. Falta do professor nunca é cobrada nem entra na cota do aluno.
       </p>
       ${rows}
     </div>
@@ -389,7 +598,150 @@ function submitMakeup(e) {
   const idx = list.findIndex(x => x.id === id);
   if (idx >= 0) list[idx] = data; else list.push(data);
   saveMakeups(list);
+  clearFormDraft("makeup-form");
   toast("Reposição salva.");
+  render();
+}
+
+// ===== NIVELAMENTO =====
+function mediaAssessment(a) {
+  const vals = [a.listening, a.reading, a.writing, a.speaking].map(Number).filter(v => !isNaN(v));
+  if (!vals.length) return null;
+  return vals.reduce((s, v) => s + v, 0) / vals.length;
+}
+function semestreOf(dateStr) {
+  if (!dateStr) return null;
+  const mes = Number(dateStr.slice(5, 7));
+  return mes <= 6 ? "1º semestre" : "2º semestre";
+}
+
+function renderNivelamento() {
+  const opts = students().map(s => `<option value="${s.id}">${esc(s.nome)}</option>`).join("");
+  const todos = assessments();
+  const anos = [...new Set(todos.map(a => (a.data || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+
+  // Resumo por aluno: última avaliação e status do timer de 6 meses
+  const resumoAlunos = students().map(s => {
+    const mine = todos.filter(a => a.alunoId === s.id).sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+    if (!mine.length) return { nome: s.nome, semAvaliacao: true };
+    const ultima = mine[0];
+    const proximo = addMonths(ultima.data, 6);
+    const vencido = hojeISO() > proximo;
+    const diasRestantes = Math.ceil((new Date(proximo) - new Date(hojeISO())) / 86400000);
+    return { nome: s.nome, semAvaliacao: false, data: ultima.data, media: mediaAssessment(ultima), proximo, vencido, diasRestantes };
+  });
+
+  const resumoHtml = resumoAlunos.map(r => `
+    <div class="row-item">
+      <div class="row-main">
+        <div class="row-title">${esc(r.nome)} ${r.semAvaliacao ? `<span class="tag tag-pendente">sem nivelamento</span>` : r.vencido ? `<span class="tag tag-falta">nivelamento vencido</span>` : `<span class="tag tag-concluida">em dia</span>`}</div>
+        ${!r.semAvaliacao ? `<div class="row-sub">Último: ${fmtDate(r.data)} · Média: ${r.media !== null ? r.media.toFixed(1) : "—"} · Próximo: ${fmtDate(r.proximo)}${!r.vencido ? ` (${r.diasRestantes} dia(s))` : ""}</div>` : ""}
+      </div>
+    </div>
+  `).join("");
+
+  // Lista filtrável
+  let listaFiltrada = todos.slice();
+  const listaHtml = listaFiltrada.length ? listaFiltrada
+    .sort((a, b) => (b.data || "").localeCompare(a.data || ""))
+    .map(a => `
+    <div class="row-item">
+      <div class="row-main">
+        <div class="row-title">${esc(studentName(a.alunoId))} <span class="tag tag-nivel">${semestreOf(a.data) || "—"}</span></div>
+        <div class="row-sub">${fmtDate(a.data)} · Listening ${a.listening ?? "—"} · Reading ${a.reading ?? "—"} · Writing ${a.writing ?? "—"} · Speaking ${a.speaking ?? "—"} · Média ${mediaAssessment(a) !== null ? mediaAssessment(a).toFixed(1) : "—"}</div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-ghost btn-small" data-edit-assessment="${a.id}">Editar</button>
+        <button class="btn btn-danger btn-small" data-del-assessment="${a.id}">Excluir</button>
+      </div>
+    </div>
+  `).join("") : `<div class="empty-state">Nenhum nivelamento registrado com esse filtro.</div>`;
+
+  return `
+    <div class="card">
+      <h2>Status por aluno <span class="count">${students().length}</span></h2>
+      ${resumoHtml || `<div class="empty-state">Cadastre alunos para acompanhar o nivelamento.</div>`}
+    </div>
+    <div class="card">
+      <h2 id="assessment-form-title">Novo nivelamento</h2>
+      <form id="assessment-form">
+        <input type="hidden" id="a-id">
+        <div class="grid-2">
+          <div><label>Aluno</label><select id="a-aluno" required><option value="">Selecione</option>${opts}</select></div>
+          <div><label>Data do teste</label><input type="date" id="a-data" value="${hojeISO()}" required></div>
+        </div>
+        <div class="grid-2">
+          <div><label>Listening (0-10)</label><input type="number" id="a-listening" min="0" max="10" step="0.5"></div>
+          <div><label>Reading (0-10)</label><input type="number" id="a-reading" min="0" max="10" step="0.5"></div>
+        </div>
+        <div class="grid-2">
+          <div><label>Writing (0-10)</label><input type="number" id="a-writing" min="0" max="10" step="0.5"></div>
+          <div><label>Speaking (0-10)</label><input type="number" id="a-speaking" min="0" max="10" step="0.5"></div>
+        </div>
+        <label>Observações</label>
+        <textarea id="a-obs"></textarea>
+        <button type="submit" class="btn btn-primary">Salvar nivelamento</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Histórico de nivelamentos</h2>
+      <div class="grid-2">
+        <div><label>Ano</label><select id="filtro-nivel-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select></div>
+        <div><label>Semestre</label>
+          <select id="filtro-nivel-semestre">
+            <option value="">Todos</option><option value="1">1º semestre</option><option value="2">2º semestre</option>
+          </select>
+        </div>
+      </div>
+      <div id="nivel-lista" style="margin-top:12px">${listaHtml}</div>
+    </div>
+  `;
+}
+
+function renderNivelListaFiltrada() {
+  const ano = document.getElementById("filtro-nivel-ano")?.value || "";
+  const sem = document.getElementById("filtro-nivel-semestre")?.value || "";
+  let list = assessments();
+  if (ano) list = list.filter(a => (a.data || "").slice(0, 4) === ano);
+  if (sem) list = list.filter(a => (Number((a.data || "").slice(5, 7)) <= 6 ? "1" : "2") === sem);
+  list = list.sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  const box = document.getElementById("nivel-lista");
+  if (!box) return;
+  box.innerHTML = list.length ? list.map(a => `
+    <div class="row-item">
+      <div class="row-main">
+        <div class="row-title">${esc(studentName(a.alunoId))} <span class="tag tag-nivel">${semestreOf(a.data) || "—"}</span></div>
+        <div class="row-sub">${fmtDate(a.data)} · Listening ${a.listening ?? "—"} · Reading ${a.reading ?? "—"} · Writing ${a.writing ?? "—"} · Speaking ${a.speaking ?? "—"} · Média ${mediaAssessment(a) !== null ? mediaAssessment(a).toFixed(1) : "—"}</div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-ghost btn-small" data-edit-assessment="${a.id}">Editar</button>
+        <button class="btn btn-danger btn-small" data-del-assessment="${a.id}">Excluir</button>
+      </div>
+    </div>
+  `).join("") : `<div class="empty-state">Nenhum nivelamento registrado com esse filtro.</div>`;
+  wireAssessmentRowButtons();
+}
+
+function submitAssessment(e) {
+  e.preventDefault();
+  const id = document.getElementById("a-id").value || uid();
+  const data = {
+    id,
+    alunoId: document.getElementById("a-aluno").value,
+    data: document.getElementById("a-data").value,
+    listening: document.getElementById("a-listening").value,
+    reading: document.getElementById("a-reading").value,
+    writing: document.getElementById("a-writing").value,
+    speaking: document.getElementById("a-speaking").value,
+    obs: document.getElementById("a-obs").value.trim()
+  };
+  if (!data.alunoId || !data.data) return;
+  let list = assessments();
+  const idx = list.findIndex(x => x.id === id);
+  if (idx >= 0) list[idx] = data; else list.push(data);
+  saveAssessments(list);
+  clearFormDraft("assessment-form");
+  toast("Nivelamento salvo.");
   render();
 }
 
@@ -401,6 +753,11 @@ function renderDashboard() {
   const totalPresente = ls.filter(l => l.presenca === "Presente").length;
   const totalFalta = ls.filter(l => l.presenca === "Falta").length;
   const pendentes = mk.filter(m => m.status === "Pendente").length;
+  const nivelVencidos = st.filter(s => {
+    const mine = assessments().filter(a => a.alunoId === s.id).sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+    if (!mine.length) return false;
+    return hojeISO() > addMonths(mine[0].data, 6);
+  }).length;
 
   const perStudent = st.map(s => {
     const mine = ls.filter(l => l.alunoId === s.id);
@@ -432,7 +789,7 @@ function renderDashboard() {
         <div class="stat-box"><div class="stat-num">${totalPresente}</div><div class="stat-label">Aulas dadas</div></div>
         <div class="stat-box"><div class="stat-num">${totalFalta}</div><div class="stat-label">Faltas</div></div>
         <div class="stat-box"><div class="stat-num">${pendentes}</div><div class="stat-label">Reposições pendentes</div></div>
-        <div class="stat-box"><div class="stat-num">${st.length}</div><div class="stat-label">Alunos ativos</div></div>
+        <div class="stat-box"><div class="stat-num">${nivelVencidos}</div><div class="stat-label">Nivelamentos vencidos</div></div>
       </div>
     </div>
     <div class="card">
@@ -480,19 +837,22 @@ function gerarResumoIA() {
   if (!alunoId) { box.innerHTML = ""; return; }
   const nome = studentName(alunoId);
   const mine = lessons().filter(l => l.alunoId === alunoId);
-  const temas = [...new Set(mine.map(l => l.tema).filter(Boolean))];
-  const dificuldades = [...new Set(mine.map(l => l.dificuldade).filter(Boolean))];
+  const temas = [...new Set(mine.flatMap(l => [...(l.temposVerbais || []), ...(l.subtemas || []), l.tema]).filter(Boolean))];
+  const dificuldades = [...new Set(mine.flatMap(l => [...(l.dificuldades || []), l.dificuldadeOutra, l.dificuldade]).filter(Boolean))];
   const faltas = mine.filter(l => l.presenca === "Falta").length;
   const pend = makeups().filter(m => m.alunoId === alunoId && m.status === "Pendente").length;
   const nivel = students().find(s => s.id === alunoId)?.nivel || "não informado";
 
-  // Sugestão automática por regras (sem IA)
   const freq = {};
-  mine.forEach(l => { if (l.dificuldade) { const k = l.dificuldade.trim().toLowerCase(); freq[k] = (freq[k] || 0) + 1; } });
-  const recorrentes = Object.entries(freq).filter(([, c]) => c > 1).sort((a, b) => b[1] - a[1]).map(([k, c]) => `${k} (apareceu ${c}x)`);
+  dificuldades.forEach(d => { const k = d.trim().toLowerCase(); freq[k] = (freq[k] || 0) + 1; });
+  mine.forEach(l => (l.dificuldades || []).forEach(d => { const k = d.trim().toLowerCase(); freq[k] = (freq[k] || 0) + 1; }));
+  const recorrentes = Object.entries(freq).filter(([, c]) => c > 1).sort((a, b) => b[1] - a[1]).map(([k, c]) => `${k} (${c}x)`);
   const ultimas5 = mine.slice().sort((a, b) => (b.data || "").localeCompare(a.data || "")).slice(0, 5);
-  const habilidadesRecentes = new Set(ultimas5.map(l => l.habilidade).filter(Boolean));
+  const habilidadesRecentes = new Set(ultimas5.flatMap(l => l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : [])));
   const habilidadesEsquecidas = SKILLS.filter(s => !habilidadesRecentes.has(s));
+
+  const ultimaTarefa = mine.filter(l => l.tarefaProxima).sort((a, b) => (b.data || "").localeCompare(a.data || ""))[0];
+  const ultimaAssessment = assessments().filter(a => a.alunoId === alunoId).sort((a, b) => (b.data || "").localeCompare(a.data || ""))[0];
 
   const sugestaoHtml = `
     <div class="card" style="margin-top:0">
@@ -510,8 +870,10 @@ Faltas: ${faltas}
 Reposições pendentes: ${pend}
 Temas já abordados: ${temas.length ? temas.join("; ") : "nenhum registrado"}
 Dificuldades observadas: ${dificuldades.length ? dificuldades.join("; ") : "nenhuma registrada"}
-Dificuldades recorrentes (repetidas em mais de 1 aula): ${recorrentes.length ? recorrentes.join("; ") : "nenhuma"}
+Dificuldades recorrentes (repetidas): ${recorrentes.length ? recorrentes.join("; ") : "nenhuma"}
 Habilidades sem prática recente: ${habilidadesEsquecidas.length ? habilidadesEsquecidas.join(", ") : "nenhuma"}
+Última tarefa de casa pedida: ${ultimaTarefa ? ultimaTarefa.tarefaProxima : "nenhuma registrada"}
+Último nivelamento: ${ultimaAssessment ? `${fmtDate(ultimaAssessment.data)}, média ${mediaAssessment(ultimaAssessment)?.toFixed(1) ?? "—"}` : "nenhum registrado"}
 
 ---
 Prompt sugerido: "Com base neste histórico, monte um plano para as próximas 3 aulas, priorizando as dificuldades recorrentes e as habilidades sem prática recente, evitando repetir os temas já abordados, adequado ao nível do aluno."`;
@@ -525,28 +887,86 @@ Prompt sugerido: "Com base neste histórico, monte um plano para as próximas 3 
   });
 }
 
-function toggleFaltaExtra() {
-  const sel = document.getElementById("l-presenca");
-  const extra = document.getElementById("falta-extra");
-  if (!sel || !extra) return;
-  extra.classList.toggle("section-hidden", sel.value !== "Falta");
-  if (sel.value === "Falta" && !document.getElementById("l-aviso24h").value) {
-    document.getElementById("l-aviso24h").value = "Sim";
-  }
+// ===== Handlers gerais (delegação após render) =====
+function wireAssessmentRowButtons() {
+  document.querySelectorAll("[data-edit-assessment]").forEach(b => b.addEventListener("click", () => {
+    const a = assessments().find(x => x.id === b.dataset.editAssessment);
+    if (!a) return;
+    document.getElementById("a-id").value = a.id;
+    document.getElementById("a-aluno").value = a.alunoId || "";
+    document.getElementById("a-data").value = a.data || "";
+    document.getElementById("a-listening").value = a.listening || "";
+    document.getElementById("a-reading").value = a.reading || "";
+    document.getElementById("a-writing").value = a.writing || "";
+    document.getElementById("a-speaking").value = a.speaking || "";
+    document.getElementById("a-obs").value = a.obs || "";
+    document.getElementById("assessment-form-title").textContent = "Editar nivelamento";
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }));
+  document.querySelectorAll("[data-del-assessment]").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("Excluir este nivelamento?")) return;
+    saveAssessments(assessments().filter(a => a.id !== b.dataset.delAssessment));
+    toast("Nivelamento excluído.");
+    render();
+  }));
 }
 
-// ===== Handlers gerais (delegação após render) =====
 function attachHandlers() {
   const sf = document.getElementById("student-form");
-  if (sf) sf.addEventListener("submit", submitStudent);
+  if (sf) { sf.addEventListener("submit", submitStudent); wireDraft("student-form"); }
+
   const lf = document.getElementById("lesson-form");
-  if (lf) lf.addEventListener("submit", submitLesson);
+  if (lf) {
+    lf.addEventListener("submit", submitLesson);
+    wireDraft("lesson-form");
+  }
+
   const mf = document.getElementById("makeup-form");
-  if (mf) mf.addEventListener("submit", submitMakeup);
+  if (mf) { mf.addEventListener("submit", submitMakeup); wireDraft("makeup-form"); }
+
+  const af = document.getElementById("assessment-form");
+  if (af) { af.addEventListener("submit", submitAssessment); wireDraft("assessment-form"); }
 
   const lPresenca = document.getElementById("l-presenca");
   if (lPresenca) lPresenca.addEventListener("change", toggleFaltaExtra);
   toggleFaltaExtra();
+
+  const lAluno = document.getElementById("l-aluno");
+  if (lAluno) { lAluno.addEventListener("change", atualizarUltimaTarefa); atualizarUltimaTarefa(); }
+
+  const filtroAlunoEl = document.getElementById("filtro-aluno");
+  const filtroAnoEl = document.getElementById("filtro-ano");
+  const filtroMesEl = document.getElementById("filtro-mes");
+  if (filtroAlunoEl) {
+    filtroAlunoEl.value = filtroAnteriores.aluno;
+    filtroAlunoEl.addEventListener("change", () => {
+      filtroAnteriores.aluno = filtroAlunoEl.value;
+      document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
+      wireLessonRowButtons();
+    });
+  }
+  if (filtroAnoEl) {
+    filtroAnoEl.value = filtroAnteriores.ano;
+    filtroAnoEl.addEventListener("change", () => {
+      filtroAnteriores.ano = filtroAnoEl.value;
+      document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
+      wireLessonRowButtons();
+    });
+  }
+  if (filtroMesEl) {
+    filtroMesEl.value = filtroAnteriores.mes;
+    filtroMesEl.addEventListener("change", () => {
+      filtroAnteriores.mes = filtroMesEl.value;
+      document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
+      wireLessonRowButtons();
+    });
+  }
+
+  const filtroNivelAno = document.getElementById("filtro-nivel-ano");
+  const filtroNivelSem = document.getElementById("filtro-nivel-semestre");
+  if (filtroNivelAno) filtroNivelAno.addEventListener("change", renderNivelListaFiltrada);
+  if (filtroNivelSem) filtroNivelSem.addEventListener("change", renderNivelListaFiltrada);
+  wireAssessmentRowButtons();
 
   document.querySelectorAll("[data-edit-student]").forEach(b => b.addEventListener("click", () => {
     const s = students().find(x => x.id === b.dataset.editStudent);
@@ -559,6 +979,7 @@ function attachHandlers() {
     document.getElementById("s-contato").value = s.contato || "";
     document.getElementById("s-freq").value = s.freq || "";
     document.getElementById("student-form-title").textContent = "Editar aluno";
+    captureFormDraft("student-form");
     document.getElementById("student-form-card").scrollIntoView({ behavior: "smooth" });
   }));
   document.querySelectorAll("[data-del-student]").forEach(b => b.addEventListener("click", () => {
@@ -568,29 +989,7 @@ function attachHandlers() {
     render();
   }));
 
-  document.querySelectorAll("[data-edit-lesson]").forEach(b => b.addEventListener("click", () => {
-    const l = lessons().find(x => x.id === b.dataset.editLesson);
-    if (!l) return;
-    document.getElementById("l-id").value = l.id;
-    document.getElementById("l-data").value = l.data || "";
-    document.getElementById("l-aluno").value = l.alunoId || "";
-    document.getElementById("l-tema").value = l.tema || "";
-    document.getElementById("l-habilidade").value = l.habilidade || "";
-    document.getElementById("l-presenca").value = l.presenca || "Presente";
-    document.getElementById("l-atraso15").checked = !!l.atraso15;
-    toggleFaltaExtra();
-    if (l.aviso24h) document.getElementById("l-aviso24h").value = l.aviso24h;
-    document.getElementById("l-dificuldade").value = l.dificuldade || "";
-    document.getElementById("l-nota").value = l.nota || "";
-    document.getElementById("lesson-form-title").textContent = "Editar aula";
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }));
-  document.querySelectorAll("[data-del-lesson]").forEach(b => b.addEventListener("click", () => {
-    if (!confirm("Excluir este registro de aula?")) return;
-    saveLessons(lessons().filter(l => l.id !== b.dataset.delLesson));
-    toast("Registro excluído.");
-    render();
-  }));
+  wireLessonRowButtons();
 
   document.querySelectorAll("[data-edit-makeup]").forEach(b => b.addEventListener("click", () => {
     const m = makeups().find(x => x.id === b.dataset.editMakeup);
@@ -604,6 +1003,7 @@ function attachHandlers() {
     if (m.motivo) document.getElementById("m-motivo").value = m.motivo;
     document.getElementById("m-obs").value = m.obs || "";
     document.getElementById("makeup-form-title").textContent = "Editar reposição";
+    captureFormDraft("makeup-form");
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   }));
   document.querySelectorAll("[data-del-makeup]").forEach(b => b.addEventListener("click", () => {
@@ -622,9 +1022,12 @@ function attachHandlers() {
     toast("Nota salva.");
   });
 
+  const btnTheme = document.getElementById("btn-theme");
+  if (btnTheme) btnTheme.addEventListener("click", toggleTheme);
+
   const btnExport = document.getElementById("btn-export");
   if (btnExport) btnExport.addEventListener("click", () => {
-    const backup = { students: students(), lessons: lessons(), makeups: makeups(), exportedAt: new Date().toISOString() };
+    const backup = { students: students(), lessons: lessons(), makeups: makeups(), assessments: assessments(), exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -649,6 +1052,7 @@ function attachHandlers() {
         saveStudents(data.students || []);
         saveLessons(data.lessons || []);
         saveMakeups(data.makeups || []);
+        saveAssessments(data.assessments || []);
         toast("Backup importado com sucesso.");
         render();
       } catch {
@@ -657,6 +1061,50 @@ function attachHandlers() {
     };
     reader.readAsText(file);
   });
+}
+
+function wireLessonRowButtons() {
+  document.querySelectorAll("[data-edit-lesson]").forEach(b => b.addEventListener("click", () => {
+    const l = lessons().find(x => x.id === b.dataset.editLesson);
+    if (!l) return;
+    document.getElementById("l-id").value = l.id;
+    document.getElementById("l-data").value = l.data || "";
+    document.getElementById("l-aluno").value = l.alunoId || "";
+    document.getElementById("l-presenca").value = l.presenca || "Presente";
+    document.getElementById("l-atraso15").checked = !!l.atraso15;
+    toggleFaltaExtra();
+    if (l.aviso24h) document.getElementById("l-aviso24h").value = l.aviso24h;
+    (l.habilidades || (l.habilidade ? [l.habilidade] : [])).forEach(v => {
+      const el = document.getElementById(`l-hab-${slug(v)}`);
+      if (el) el.checked = true;
+    });
+    (l.temposVerbais || []).forEach(v => {
+      const el = document.getElementById(`l-tempo-${slug(v)}`);
+      if (el) el.checked = true;
+    });
+    (l.subtemas || []).forEach(v => {
+      const el = document.getElementById(`l-sub-${slug(v)}`);
+      if (el) el.checked = true;
+    });
+    document.getElementById("l-sub-outro").value = l.subtemaOutro || "";
+    (l.dificuldades || []).forEach(v => {
+      const el = document.getElementById(`l-dif-${slug(v)}`);
+      if (el) el.checked = true;
+    });
+    document.getElementById("l-dif-outra").value = l.dificuldadeOutra || l.dificuldade || "";
+    document.getElementById("l-tarefa-proxima").value = l.tarefaProxima || "";
+    document.getElementById("l-nota").value = l.nota || "";
+    document.getElementById("lesson-form-title").textContent = "Editar aula";
+    atualizarUltimaTarefa();
+    captureFormDraft("lesson-form");
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }));
+  document.querySelectorAll("[data-del-lesson]").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("Excluir este registro de aula?")) return;
+    saveLessons(lessons().filter(l => l.id !== b.dataset.delLesson));
+    toast("Registro excluído.");
+    render();
+  }));
 }
 
 // ===== Service Worker + instalação =====
@@ -672,4 +1120,5 @@ window.addEventListener("beforeinstallprompt", (e) => {
   deferredPrompt = e;
 });
 
+initTheme();
 render();

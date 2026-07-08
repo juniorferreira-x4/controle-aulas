@@ -11,8 +11,25 @@
   --warn-soft: #F3E7CF;
   --text: #232323;
   --text-muted: #6B6560;
+  --card-bg: #FFFFFF;
   --mono: "IBM Plex Mono", "Courier New", monospace;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body.dark-theme {
+  --ink: #0F1F30;
+  --ink-light: #1E3A57;
+  --paper: #1A1D22;
+  --paper-line: #33383F;
+  --coral: #E07856;
+  --coral-soft: #3A2620;
+  --success: #6FBE9A;
+  --success-soft: #1E3A2E;
+  --warn: #E0B15E;
+  --warn-soft: #3A2E14;
+  --text: #E9E7E2;
+  --text-muted: #9A9A9A;
+  --card-bg: #23262C;
 }
 
 * { box-sizing: border-box; }
@@ -47,6 +64,25 @@ header.app-header {
   border-bottom: 3px solid var(--coral);
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-theme-toggle {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--paper);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--sans);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 header.app-header .eyebrow {
   font-family: var(--mono);
   font-size: 11px;
@@ -70,7 +106,7 @@ main {
 }
 
 .card {
-  background: #FFFFFF;
+  background: var(--card-bg);
   border: 1px solid var(--paper-line);
   border-left: 4px solid var(--ink);
   border-radius: 6px;
@@ -125,8 +161,34 @@ textarea { resize: vertical; min-height: 56px; }
 input:focus, select:focus, textarea:focus {
   outline: 2px solid var(--ink-light);
   outline-offset: 1px;
-  background: #fff;
+  background: var(--card-bg);
 }
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.chip-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: 16px;
+  padding: 5px 11px;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.chip-check input { width: auto; margin: 0; }
+.chip-check:has(input:checked) {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.tag-nivel { background: var(--paper); color: var(--ink); border: 1px solid var(--paper-line); }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
 

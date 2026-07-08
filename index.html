@@ -14,8 +14,13 @@
 <body>
 
 <header class="app-header">
-  <div class="eyebrow">Gutierrez Ferreira · Diário de classe</div>
-  <h1>Controle de Aulas</h1>
+  <div class="header-row">
+    <div>
+      <div class="eyebrow">Gutierrez Ferreira · Diário de classe</div>
+      <h1>Controle de Aulas</h1>
+    </div>
+    <button id="btn-theme" class="btn-theme-toggle">🌙 Escuro</button>
+  </div>
 </header>
 
 <main id="app-main"></main>
@@ -23,9 +28,10 @@
 <nav class="tabbar">
   <button data-tab="alunos" class="active"><span class="icon">👤</span>Alunos</button>
   <button data-tab="aulas"><span class="icon">📖</span>Aulas</button>
-  <button data-tab="reposicoes"><span class="icon">↺</span>Reposições</button>
+  <button data-tab="reposicoes"><span class="icon">↺</span>Repos.</button>
+  <button data-tab="nivelamento"><span class="icon">🎯</span>Nível</button>
   <button data-tab="dashboard"><span class="icon">▤</span>Painel</button>
-  <button data-tab="resumoia"><span class="icon">✎</span>Resumo IA</button>
+  <button data-tab="resumoia"><span class="icon">✎</span>IA</button>
 </nav>
 
 <div id="toast" class="toast"></div>
