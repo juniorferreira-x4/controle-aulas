@@ -31,11 +31,6 @@ function esc(str) {
   return (str || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-function slug(s) {
-  return (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
 function fmtDate(iso) {
   if (!iso) return "—";
   const [y, m, d] = iso.split("-");
@@ -47,7 +42,7 @@ const SKILLS = ["Gramática", "Vocabulário", "Listening", "Speaking", "Writing"
 const VERB_TENSES = ["Simple Present", "Simple Past", "Present Continuous", "Past Continuous", "Present Perfect", "Future", "Todos"];
 const SUBTHEMES = ["Short answers", "Prepositions", "Adverbs", "If clauses", "Modal verbs", "Comparatives/Superlatives",
   "Question tags", "Phrasal verbs", "Reported speech", "Passive voice", "Countable/Uncountable", "Articles"];
-const DIFFICULTY_CHECKLIST = ["Construção de frases", "Gramática", "Pronúncia", "Vocabulário",
+const DIFFICULTY_LIST = ["Construção de frases", "Gramática", "Pronúncia", "Vocabulário",
   "Confiança/Fluência", "Listening", "Writing", "Compreensão de texto"];
 
 // ===== Regras do contrato =====
@@ -64,7 +59,6 @@ function addMonths(dateStr, months) {
 function monthKeyOf(dateStr) { return dateStr ? dateStr.slice(0, 7) : "sem-data"; }
 function hojeISO() { return new Date().toISOString().slice(0, 10); }
 
-// Prazo de 21 dias corridos e status de expiração
 function prazoInfo(m) {
   if (!m.dataPerdida) return { prazo: null, expirada: false, diasRestantes: null };
   const prazo = addDays(m.dataPerdida, 21);
@@ -73,8 +67,6 @@ function prazoInfo(m) {
   return { prazo, expirada, diasRestantes };
 }
 
-// 1 remarcação grátis por mês por aluno; cancelamento <24h é sempre cobrado E revoga
-// o direito grátis daquele mês. Falta do professor NUNCA conta na cota do aluno.
 function mapaCobranca() {
   const mk = makeups();
   const grupos = {};
@@ -113,20 +105,15 @@ function applyTheme(theme) {
   document.body.classList.toggle("dark-theme", theme === "dark");
   localStorage.setItem("gf_theme", theme);
 }
-function initTheme() {
-  const saved = localStorage.getItem("gf_theme") || "light";
-  applyTheme(saved);
-}
+function initTheme() { applyTheme(localStorage.getItem("gf_theme") || "light"); }
 function toggleTheme() {
-  const isDark = document.body.classList.contains("dark-theme");
-  applyTheme(isDark ? "light" : "dark");
+  applyTheme(document.body.classList.contains("dark-theme") ? "light" : "dark");
   updateThemeButton();
 }
 function updateThemeButton() {
   const btn = document.getElementById("btn-theme");
   if (!btn) return;
-  const isDark = document.body.classList.contains("dark-theme");
-  btn.textContent = isDark ? "☀️ Claro" : "🌙 Escuro";
+  btn.textContent = document.body.classList.contains("dark-theme") ? "☀️ Claro" : "🌙 Escuro";
 }
 
 // ===== Rascunho de formulários (persistência ao trocar de aba) =====
@@ -136,7 +123,13 @@ function captureFormDraft(formId) {
   const data = {};
   form.querySelectorAll("input, select, textarea").forEach(el => {
     if (!el.id) return;
-    data[el.id] = el.type === "checkbox" ? el.checked : el.value;
+    if (el.tagName === "SELECT" && el.multiple) {
+      data[el.id] = Array.from(el.selectedOptions).map(o => o.value);
+    } else if (el.type === "checkbox") {
+      data[el.id] = el.checked;
+    } else {
+      data[el.id] = el.value;
+    }
   });
   localStorage.setItem("gf_draft_" + formId, JSON.stringify(data));
 }
@@ -150,7 +143,13 @@ function restoreFormDraft(formId) {
     Object.entries(data).forEach(([id, val]) => {
       const el = document.getElementById(id);
       if (!el) return;
-      if (el.type === "checkbox") el.checked = val; else el.value = val;
+      if (el.tagName === "SELECT" && el.multiple) {
+        Array.from(el.options).forEach(o => { o.selected = Array.isArray(val) && val.includes(o.value); });
+      } else if (el.type === "checkbox") {
+        el.checked = val;
+      } else {
+        el.value = val;
+      }
     });
   } catch {}
 }
@@ -163,9 +162,32 @@ function wireDraft(formId) {
   form.addEventListener("change", () => captureFormDraft(formId));
 }
 
+// ===== Multi-select helper =====
+function multiSelectHtml(id, items, selected) {
+  selected = selected || [];
+  const size = Math.min(items.length, 6);
+  return `<select id="${id}" multiple size="${size}">${items.map(i =>
+    `<option value="${esc(i)}" ${selected.includes(i) ? "selected" : ""}>${esc(i)}</option>`
+  ).join("")}</select>`;
+}
+function readMultiSelect(id) {
+  const el = document.getElementById(id);
+  if (!el) return [];
+  return Array.from(el.selectedOptions).map(o => o.value);
+}
+function setMultiSelect(id, values) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  values = values || [];
+  Array.from(el.options).forEach(o => { o.selected = values.includes(o.value); });
+}
+
 // ===== Navegação por abas =====
 let currentTab = "alunos";
 let filtroAnteriores = { aluno: "", mes: "", ano: "" };
+let aulasAnterioresBuscou = false;
+let alunosBuscou = false;
+let nivelStatusBuscou = false;
 
 document.querySelectorAll("nav.tabbar button").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -191,26 +213,26 @@ function render() {
 }
 
 // ===== ALUNOS =====
-function renderAlunos() {
-  const list = students();
-  const rows = list.length ? list.map(s => `
+function renderAlunoRow(s) {
+  const inativo = s.status === "Inativo" || s.status === "Trancado";
+  return `
     <div class="row-item">
       <div class="row-main">
-        <div class="row-title">${esc(s.nome)} <span class="tag tag-nivel">${esc(s.nivel || "—")}</span></div>
-        <div class="row-sub">${esc(s.horario || "sem horário fixo")} · ${esc(s.freq || "—")} · ${esc(s.status || "Ativo")}</div>
+        <div class="row-title ${inativo ? "aluno-inativo" : ""}">${esc(s.nome)}
+          <span class="tag tag-nivel">${esc(s.nivel || "—")}</span>
+          ${inativo ? `<span class="tag tag-pendente">${esc(s.status)}</span>` : ""}
+        </div>
+        <div class="row-sub">${esc(s.horario || "sem horário fixo")} · ${esc(s.freq || "—")}</div>
       </div>
       <div class="row-actions">
         <button class="btn btn-ghost btn-small" data-edit-student="${s.id}">Editar</button>
         <button class="btn btn-danger btn-small" data-del-student="${s.id}">Excluir</button>
       </div>
-    </div>
-  `).join("") : `<div class="empty-state"><div class="big">👤</div>Nenhum aluno cadastrado ainda.<br>Adicione o primeiro abaixo.</div>`;
+    </div>`;
+}
 
+function renderAlunos() {
   return `
-    <div class="card">
-      <h2>Alunos cadastrados <span class="count">${list.length}</span></h2>
-      ${rows}
-    </div>
     <div class="card" id="student-form-card">
       <h2 id="student-form-title">Novo aluno</h2>
       <form id="student-form">
@@ -245,7 +267,45 @@ function renderAlunos() {
         <button type="submit" class="btn btn-primary">Salvar aluno</button>
       </form>
     </div>
+
+    <div class="card">
+      <h2>Buscar alunos</h2>
+      <div class="grid-2">
+        <div><label>Nome</label><input type="text" id="busca-aluno-nome"></div>
+        <div><label>Nível</label>
+          <select id="busca-aluno-nivel">
+            <option value="">Todos</option><option>A1</option><option>A2</option><option>B1</option>
+            <option>B2</option><option>C1</option><option>C2</option>
+          </select>
+        </div>
+      </div>
+      <label>Status</label>
+      <select id="busca-aluno-status">
+        <option value="">Todos</option><option>Ativo</option><option>Inativo</option><option>Trancado</option>
+      </select>
+      <button type="button" class="btn btn-primary btn-small" id="btn-buscar-aluno">Buscar</button>
+      <div id="alunos-resultado" style="margin-top:14px">${alunosBuscou ? "" : `<div class="empty-state">Use os filtros acima e clique em Buscar para ver os alunos cadastrados.</div>`}</div>
+    </div>
   `;
+}
+
+function buscarAlunos() {
+  const nome = document.getElementById("busca-aluno-nome").value.trim().toLowerCase();
+  const nivel = document.getElementById("busca-aluno-nivel").value;
+  const status = document.getElementById("busca-aluno-status").value;
+  let list = students();
+  if (nome) list = list.filter(s => s.nome.toLowerCase().includes(nome));
+  if (nivel) list = list.filter(s => s.nivel === nivel);
+  if (status) list = list.filter(s => s.status === status);
+  list.sort((a, b) => {
+    const rank = s => (s.status === "Ativo" || !s.status) ? 0 : 1;
+    const r = rank(a) - rank(b);
+    return r !== 0 ? r : a.nome.localeCompare(b.nome);
+  });
+  alunosBuscou = true;
+  const box = document.getElementById("alunos-resultado");
+  box.innerHTML = list.length ? list.map(renderAlunoRow).join("") : `<div class="empty-state">Nenhum aluno encontrado com esse filtro.</div>`;
+  wireStudentRowButtons();
 }
 
 function submitStudent(e) {
@@ -270,23 +330,6 @@ function submitStudent(e) {
   render();
 }
 
-// ===== Helpers de checklist =====
-function checklistHtml(prefix, items, checkedValues, extraClass) {
-  checkedValues = checkedValues || [];
-  return items.map(item => {
-    const id = `${prefix}-${slug(item)}`;
-    const checked = checkedValues.includes(item) ? "checked" : "";
-    return `
-      <label class="chip-check">
-        <input type="checkbox" id="${id}" class="${extraClass}" data-value="${esc(item)}" ${checked}>
-        <span>${esc(item)}</span>
-      </label>`;
-  }).join("");
-}
-function readChecklist(className) {
-  return Array.from(document.querySelectorAll(`.${className}:checked`)).map(el => el.dataset.value);
-}
-
 // ===== AULAS =====
 function renderAulas() {
   const hoje = hojeISO();
@@ -296,7 +339,8 @@ function renderAulas() {
   const rowHtml = (l) => {
     const tagClass = l.presenca === "Falta" ? "tag-falta" : l.presenca === "Professor faltou" ? "tag-agendada" : l.presenca === "Reposição" ? "tag-reposicao" : "tag-presente";
     const habilidades = l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : []);
-    const temaResumo = [...(l.temposVerbais || []), ...(l.subtemas || [])].join(", ") || l.tema || "sem tema registrado";
+    const temaResumo = [...(l.temposVerbais || []), ...(l.subtemas || [])].filter(Boolean);
+    if (l.subtemaOutro) temaResumo.push(l.subtemaOutro);
     return `
     <div class="row-item">
       <div class="row-main">
@@ -304,8 +348,8 @@ function renderAulas() {
         ${l.presenca === "Falta" ? `<span class="tag ${l.aviso24h === "Não" ? "tag-falta" : "tag-agendada"}">${l.aviso24h === "Não" ? "sem aviso 24h" : "avisou ≥24h"}</span>` : ""}
         ${l.atraso15 ? `<span class="tag tag-reposicao">atraso &gt;15min</span>` : ""}
         </div>
-        <div class="row-sub">${fmtDate(l.data)} · ${esc(habilidades.join(", ") || "—")} — ${esc(temaResumo)}</div>
-        ${(l.dificuldades && l.dificuldades.length) || l.dificuldade ? `<div class="row-sub">⚠ ${esc([...(l.dificuldades || []), l.dificuldadeOutra].filter(Boolean).join("; ") || l.dificuldade)}</div>` : ""}
+        <div class="row-sub">${fmtDate(l.data)} · ${esc(habilidades.join(", ") || "—")} — ${esc(temaResumo.join(", ") || l.tema || "sem tema registrado")}</div>
+        ${(l.dificuldades && l.dificuldades.length) || l.dificuldadeOutra ? `<div class="row-sub">⚠ ${esc([...(l.dificuldades || []), l.dificuldadeOutra].filter(Boolean).join("; "))}</div>` : ""}
       </div>
       <div class="row-actions">
         <button class="btn btn-ghost btn-small" data-edit-lesson="${l.id}">Editar</button>
@@ -316,12 +360,8 @@ function renderAulas() {
 
   const rowsHoje = hojeList.length ? hojeList.map(rowHtml).join("") : `<div class="empty-state">Nenhuma aula registrada hoje ainda.</div>`;
 
-  // Opções de filtro (Aulas anteriores)
   const anos = [...new Set(lessons().map(l => (l.data || "").slice(0, 4)).filter(Boolean))].sort().reverse();
-  const meses = [
-    "01-Jan", "02-Fev", "03-Mar", "04-Abr", "05-Mai", "06-Jun",
-    "07-Jul", "08-Ago", "09-Set", "10-Out", "11-Nov", "12-Dez"
-  ];
+  const meses = ["01-Jan", "02-Fev", "03-Mar", "04-Abr", "05-Mai", "06-Jun", "07-Jul", "08-Ago", "09-Set", "10-Out", "11-Nov", "12-Dez"];
 
   return `
     <div class="card">
@@ -338,28 +378,20 @@ function renderAulas() {
           <div><label>Aluno</label><select id="l-aluno" required><option value="">Selecione</option>${opts}</select></div>
         </div>
 
-        <div id="ultima-tarefa-box" class="install-banner section-hidden" style="background:var(--paper);border-color:var(--paper-line);color:var(--text)">
-          <span id="ultima-tarefa-texto"></span>
-        </div>
-
         <label>Habilidade(s) em foco</label>
-        <div class="chip-group">${checklistHtml("l-hab", SKILLS, [], "hab-check")}</div>
+        ${multiSelectHtml("l-habilidades", SKILLS, [])}
 
         <label>Tempos verbais abordados</label>
-        <div class="chip-group">${checklistHtml("l-tempo", VERB_TENSES, [], "tempo-check")}</div>
+        ${multiSelectHtml("l-tempos", VERB_TENSES, [])}
 
         <label>Subtemas abordados</label>
-        <div class="chip-group">${checklistHtml("l-sub", SUBTHEMES, [], "sub-check")}</div>
+        ${multiSelectHtml("l-subtemas", SUBTHEMES, [])}
         <input type="text" id="l-sub-outro" placeholder="Outro subtema não listado (opcional)">
 
-        <div class="grid-2">
-          <div><label>Presença</label>
-            <select id="l-presenca">
-              <option>Presente</option><option>Falta</option><option>Reposição</option><option>Professor faltou</option>
-            </select>
-          </div>
-          <div></div>
-        </div>
+        <label>Presença</label>
+        <select id="l-presenca">
+          <option>Presente</option><option>Falta</option><option>Reposição</option><option>Professor faltou</option>
+        </select>
 
         <div id="falta-extra" class="section-hidden">
           <label>O aluno avisou com 24h ou mais de antecedência?</label>
@@ -382,31 +414,26 @@ function renderAulas() {
         </label>
 
         <label>Dificuldade observada</label>
-        <div class="chip-group">${checklistHtml("l-dif", DIFFICULTY_CHECKLIST, [], "dif-check")}</div>
+        ${multiSelectHtml("l-dificuldades", DIFFICULTY_LIST, [])}
         <input type="text" id="l-dif-outra" placeholder="Outra dificuldade específica (opcional)">
 
-        <label>Tarefa de casa para a próxima aula</label>
-        <textarea id="l-tarefa-proxima" placeholder="O que o aluno deve estudar/praticar até a próxima aula"></textarea>
-
-        <label>Nota da aula</label>
-        <textarea id="l-nota" placeholder="Observações livres sobre a aula"></textarea>
-        <button type="submit" class="btn btn-primary">Salvar aula</button>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">Salvar aula</button>
+          <button type="button" class="btn btn-ghost" id="btn-limpar-aula">Limpar</button>
+        </div>
       </form>
     </div>
 
     <div class="card">
       <h2>Aulas anteriores</h2>
       <div class="grid-2">
-        <div><label>Aluno</label>
-          <select id="filtro-aluno"><option value="">Todos</option>${opts}</select>
-        </div>
-        <div><label>Ano</label>
-          <select id="filtro-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select>
-        </div>
+        <div><label>Aluno</label><select id="filtro-aluno"><option value="">Todos</option>${opts}</select></div>
+        <div><label>Ano</label><select id="filtro-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select></div>
       </div>
       <label>Mês</label>
       <select id="filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}">${m.slice(3)}</option>`).join("")}</select>
-      <div id="aulas-anteriores-list" style="margin-top:12px">${renderAulasAnterioresList()}</div>
+      <button type="button" class="btn btn-primary btn-small" id="btn-buscar-aulas">Buscar</button>
+      <div id="aulas-anteriores-list" style="margin-top:12px">${aulasAnterioresBuscou ? renderAulasAnterioresList() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
     </div>
   `;
 }
@@ -424,12 +451,13 @@ function renderAulasAnterioresList() {
   return list.map(l => {
     const tagClass = l.presenca === "Falta" ? "tag-falta" : l.presenca === "Professor faltou" ? "tag-agendada" : l.presenca === "Reposição" ? "tag-reposicao" : "tag-presente";
     const habilidades = l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : []);
-    const temaResumo = [...(l.temposVerbais || []), ...(l.subtemas || [])].join(", ") || l.tema || "sem tema registrado";
+    const temaResumo = [...(l.temposVerbais || []), ...(l.subtemas || [])].filter(Boolean);
+    if (l.subtemaOutro) temaResumo.push(l.subtemaOutro);
     return `
     <div class="row-item">
       <div class="row-main">
         <div class="row-title">${esc(studentName(l.alunoId))} <span class="tag ${tagClass}">${esc(l.presenca || "—")}</span></div>
-        <div class="row-sub">${fmtDate(l.data)} · ${esc(habilidades.join(", ") || "—")} — ${esc(temaResumo)}</div>
+        <div class="row-sub">${fmtDate(l.data)} · ${esc(habilidades.join(", ") || "—")} — ${esc(temaResumo.join(", ") || l.tema || "sem tema registrado")}</div>
       </div>
       <div class="row-actions">
         <button class="btn btn-ghost btn-small" data-edit-lesson="${l.id}">Editar</button>
@@ -439,18 +467,13 @@ function renderAulasAnterioresList() {
   }).join("");
 }
 
-function atualizarUltimaTarefa() {
-  const alunoId = document.getElementById("l-aluno")?.value;
-  const curId = document.getElementById("l-id")?.value;
-  const box = document.getElementById("ultima-tarefa-box");
-  const texto = document.getElementById("ultima-tarefa-texto");
-  if (!box || !texto) return;
-  if (!alunoId) { box.classList.add("section-hidden"); return; }
-  const mine = lessons().filter(l => l.alunoId === alunoId && l.id !== curId && l.tarefaProxima)
-    .sort((a, b) => (b.data || "").localeCompare(a.data || ""));
-  if (!mine.length) { box.classList.add("section-hidden"); return; }
-  texto.innerHTML = `<strong>O que foi pedido na última aula (${fmtDate(mine[0].data)}):</strong> ${esc(mine[0].tarefaProxima)}`;
-  box.classList.remove("section-hidden");
+function buscarAulasAnteriores() {
+  filtroAnteriores.aluno = document.getElementById("filtro-aluno").value;
+  filtroAnteriores.ano = document.getElementById("filtro-ano").value;
+  filtroAnteriores.mes = document.getElementById("filtro-mes").value;
+  aulasAnterioresBuscou = true;
+  document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
+  wireLessonRowButtons();
 }
 
 function toggleFaltaExtra() {
@@ -465,6 +488,12 @@ function toggleFaltaExtra() {
   }
 }
 
+function limparFormularioAula() {
+  clearFormDraft("lesson-form");
+  toast("Formulário limpo.");
+  render();
+}
+
 function submitLesson(e) {
   e.preventDefault();
   const id = document.getElementById("l-id").value || uid();
@@ -474,17 +503,15 @@ function submitLesson(e) {
     id,
     data: document.getElementById("l-data").value,
     alunoId: document.getElementById("l-aluno").value,
-    habilidades: readChecklist("hab-check"),
-    temposVerbais: readChecklist("tempo-check"),
-    subtemas: readChecklist("sub-check"),
+    habilidades: readMultiSelect("l-habilidades"),
+    temposVerbais: readMultiSelect("l-tempos"),
+    subtemas: readMultiSelect("l-subtemas"),
     subtemaOutro: document.getElementById("l-sub-outro").value.trim(),
     presenca,
     aviso24h,
     atraso15: document.getElementById("l-atraso15").checked,
-    dificuldades: readChecklist("dif-check"),
-    dificuldadeOutra: document.getElementById("l-dif-outra").value.trim(),
-    tarefaProxima: document.getElementById("l-tarefa-proxima").value.trim(),
-    nota: document.getElementById("l-nota").value.trim()
+    dificuldades: readMultiSelect("l-dificuldades"),
+    dificuldadeOutra: document.getElementById("l-dif-outra").value.trim()
   };
   if (!data.alunoId || !data.data) return;
   let list = lessons();
@@ -611,8 +638,13 @@ function mediaAssessment(a) {
 }
 function semestreOf(dateStr) {
   if (!dateStr) return null;
-  const mes = Number(dateStr.slice(5, 7));
-  return mes <= 6 ? "1º semestre" : "2º semestre";
+  return Number(dateStr.slice(5, 7)) <= 6 ? "1º semestre" : "2º semestre";
+}
+function statusNivelamentoAluno(s) {
+  const mine = assessments().filter(a => a.alunoId === s.id).sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  if (!mine.length) return { status: "Sem nivelamento", ultima: null };
+  const vencido = hojeISO() > addMonths(mine[0].data, 6);
+  return { status: vencido ? "Vencido" : "Em dia", ultima: mine[0] };
 }
 
 function renderNivelamento() {
@@ -620,29 +652,16 @@ function renderNivelamento() {
   const todos = assessments();
   const anos = [...new Set(todos.map(a => (a.data || "").slice(0, 4)).filter(Boolean))].sort().reverse();
 
-  // Resumo por aluno: última avaliação e status do timer de 6 meses
-  const resumoAlunos = students().map(s => {
-    const mine = todos.filter(a => a.alunoId === s.id).sort((a, b) => (b.data || "").localeCompare(a.data || ""));
-    if (!mine.length) return { nome: s.nome, semAvaliacao: true };
-    const ultima = mine[0];
-    const proximo = addMonths(ultima.data, 6);
-    const vencido = hojeISO() > proximo;
-    const diasRestantes = Math.ceil((new Date(proximo) - new Date(hojeISO())) / 86400000);
-    return { nome: s.nome, semAvaliacao: false, data: ultima.data, media: mediaAssessment(ultima), proximo, vencido, diasRestantes };
+  const ativos = students().filter(s => s.status === "Ativo" || !s.status);
+  let emDia = 0, semNivel = 0, vencidos = 0;
+  ativos.forEach(s => {
+    const r = statusNivelamentoAluno(s);
+    if (r.status === "Em dia") emDia++;
+    else if (r.status === "Sem nivelamento") semNivel++;
+    else vencidos++;
   });
 
-  const resumoHtml = resumoAlunos.map(r => `
-    <div class="row-item">
-      <div class="row-main">
-        <div class="row-title">${esc(r.nome)} ${r.semAvaliacao ? `<span class="tag tag-pendente">sem nivelamento</span>` : r.vencido ? `<span class="tag tag-falta">nivelamento vencido</span>` : `<span class="tag tag-concluida">em dia</span>`}</div>
-        ${!r.semAvaliacao ? `<div class="row-sub">Último: ${fmtDate(r.data)} · Média: ${r.media !== null ? r.media.toFixed(1) : "—"} · Próximo: ${fmtDate(r.proximo)}${!r.vencido ? ` (${r.diasRestantes} dia(s))` : ""}</div>` : ""}
-      </div>
-    </div>
-  `).join("");
-
-  // Lista filtrável
-  let listaFiltrada = todos.slice();
-  const listaHtml = listaFiltrada.length ? listaFiltrada
+  const listaHtml = todos.length ? todos.slice()
     .sort((a, b) => (b.data || "").localeCompare(a.data || ""))
     .map(a => `
     <div class="row-item">
@@ -659,9 +678,14 @@ function renderNivelamento() {
 
   return `
     <div class="card">
-      <h2>Status por aluno <span class="count">${students().length}</span></h2>
-      ${resumoHtml || `<div class="empty-state">Cadastre alunos para acompanhar o nivelamento.</div>`}
+      <h2>Painel indicativo <span class="count">alunos ativos</span></h2>
+      <div class="stat-grid">
+        <div class="stat-box success"><div class="stat-num">${emDia}</div><div class="stat-label">Em dia</div></div>
+        <div class="stat-box warn"><div class="stat-num">${semNivel}</div><div class="stat-label">Sem nivelamento</div></div>
+        <div class="stat-box danger"><div class="stat-num">${vencidos}</div><div class="stat-label">Nivelamento vencido</div></div>
+      </div>
     </div>
+
     <div class="card">
       <h2 id="assessment-form-title">Novo nivelamento</h2>
       <form id="assessment-form">
@@ -683,6 +707,21 @@ function renderNivelamento() {
         <button type="submit" class="btn btn-primary">Salvar nivelamento</button>
       </form>
     </div>
+
+    <div class="card">
+      <h2>Status por aluno</h2>
+      <div class="grid-2">
+        <div><label>Nome</label><input type="text" id="busca-nivel-nome"></div>
+        <div><label>Status</label>
+          <select id="busca-nivel-status">
+            <option value="">Todos</option><option>Em dia</option><option>Sem nivelamento</option><option>Vencido</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary btn-small" id="btn-buscar-nivel-status">Buscar</button>
+      <div id="nivel-status-resultado" style="margin-top:14px">${nivelStatusBuscou ? renderStatusPorAlunoResultado() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
+    </div>
+
     <div class="card">
       <h2>Histórico de nivelamentos</h2>
       <div class="grid-2">
@@ -696,6 +735,29 @@ function renderNivelamento() {
       <div id="nivel-lista" style="margin-top:12px">${listaHtml}</div>
     </div>
   `;
+}
+
+function renderStatusPorAlunoResultado() {
+  const nome = (document.getElementById("busca-nivel-nome")?.value || "").trim().toLowerCase();
+  const status = document.getElementById("busca-nivel-status")?.value || "";
+  let list = students();
+  if (nome) list = list.filter(s => s.nome.toLowerCase().includes(nome));
+  const comStatus = list.map(s => ({ s, r: statusNivelamentoAluno(s) })).filter(x => !status || x.r.status === status);
+  if (!comStatus.length) return `<div class="empty-state">Nenhum aluno encontrado com esse filtro.</div>`;
+  const tagFor = { "Em dia": "tag-concluida", "Sem nivelamento": "tag-pendente", "Vencido": "tag-falta" };
+  return comStatus.map(({ s, r }) => `
+    <div class="row-item">
+      <div class="row-main">
+        <div class="row-title">${esc(s.nome)} <span class="tag ${tagFor[r.status]}">${r.status}</span></div>
+        ${r.ultima ? `<div class="row-sub">Último: ${fmtDate(r.ultima.data)} · Média: ${mediaAssessment(r.ultima) !== null ? mediaAssessment(r.ultima).toFixed(1) : "—"}</div>` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+function buscarStatusPorAluno() {
+  nivelStatusBuscou = true;
+  document.getElementById("nivel-status-resultado").innerHTML = renderStatusPorAlunoResultado();
 }
 
 function renderNivelListaFiltrada() {
@@ -747,19 +809,15 @@ function submitAssessment(e) {
 
 // ===== DASHBOARD =====
 function renderDashboard() {
-  const st = students();
+  const stAtivos = students().filter(s => s.status === "Ativo" || !s.status);
   const ls = lessons();
   const mk = makeups();
   const totalPresente = ls.filter(l => l.presenca === "Presente").length;
   const totalFalta = ls.filter(l => l.presenca === "Falta").length;
   const pendentes = mk.filter(m => m.status === "Pendente").length;
-  const nivelVencidos = st.filter(s => {
-    const mine = assessments().filter(a => a.alunoId === s.id).sort((a, b) => (b.data || "").localeCompare(a.data || ""));
-    if (!mine.length) return false;
-    return hojeISO() > addMonths(mine[0].data, 6);
-  }).length;
+  const nivelVencidos = stAtivos.filter(s => statusNivelamentoAluno(s).status === "Vencido").length;
 
-  const perStudent = st.map(s => {
+  const perStudent = stAtivos.map(s => {
     const mine = ls.filter(l => l.alunoId === s.id);
     const pres = mine.filter(l => l.presenca === "Presente").length;
     const falt = mine.filter(l => l.presenca === "Falta").length;
@@ -780,7 +838,7 @@ function renderDashboard() {
       </td>
       <td>${p.pend}</td>
     </tr>
-  `).join("") : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px 0">Sem dados ainda.</td></tr>`;
+  `).join("") : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px 0">Sem alunos ativos com dados ainda.</td></tr>`;
 
   return `
     <div class="card">
@@ -793,7 +851,7 @@ function renderDashboard() {
       </div>
     </div>
     <div class="card">
-      <h2>Por aluno</h2>
+      <h2>Por aluno <span class="count">somente ativos</span></h2>
       <table class="student-table">
         <thead><tr><th>Aluno</th><th>Aulas</th><th>Faltas</th><th>% Presença</th><th>Repos. pend.</th></tr></thead>
         <tbody>${rowsHtml}</tbody>
@@ -824,21 +882,22 @@ function renderResumoIA() {
     <div class="card">
       <h2>Resumo para colar no Claude</h2>
       <label>Aluno</label>
-      <select id="ia-aluno"><option value="">Selecione um aluno</option>${opts}</select>
+      <select id="ia-aluno">
+        <option value="">Selecione um aluno</option>
+        <option value="__todos__">Todos</option>
+        ${opts}
+      </select>
       <button class="btn btn-primary btn-small" id="btn-gerar-ia" style="margin-top:10px">Gerar resumo</button>
       <div id="ia-result" style="margin-top:14px"></div>
     </div>
   `;
 }
 
-function gerarResumoIA() {
-  const alunoId = document.getElementById("ia-aluno").value;
-  const box = document.getElementById("ia-result");
-  if (!alunoId) { box.innerHTML = ""; return; }
+function construirResumoAluno(alunoId) {
   const nome = studentName(alunoId);
   const mine = lessons().filter(l => l.alunoId === alunoId);
-  const temas = [...new Set(mine.flatMap(l => [...(l.temposVerbais || []), ...(l.subtemas || []), l.tema]).filter(Boolean))];
-  const dificuldades = [...new Set(mine.flatMap(l => [...(l.dificuldades || []), l.dificuldadeOutra, l.dificuldade]).filter(Boolean))];
+  const temas = [...new Set(mine.flatMap(l => [...(l.temposVerbais || []), ...(l.subtemas || []), l.subtemaOutro, l.tema].filter(Boolean)))];
+  const dificuldades = [...new Set(mine.flatMap(l => [...(l.dificuldades || []), l.dificuldadeOutra, l.dificuldade].filter(Boolean)))];
   const faltas = mine.filter(l => l.presenca === "Falta").length;
   const pend = makeups().filter(m => m.alunoId === alunoId && m.status === "Pendente").length;
   const nivel = students().find(s => s.id === alunoId)?.nivel || "não informado";
@@ -850,17 +909,7 @@ function gerarResumoIA() {
   const ultimas5 = mine.slice().sort((a, b) => (b.data || "").localeCompare(a.data || "")).slice(0, 5);
   const habilidadesRecentes = new Set(ultimas5.flatMap(l => l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : [])));
   const habilidadesEsquecidas = SKILLS.filter(s => !habilidadesRecentes.has(s));
-
-  const ultimaTarefa = mine.filter(l => l.tarefaProxima).sort((a, b) => (b.data || "").localeCompare(a.data || ""))[0];
   const ultimaAssessment = assessments().filter(a => a.alunoId === alunoId).sort((a, b) => (b.data || "").localeCompare(a.data || ""))[0];
-
-  const sugestaoHtml = `
-    <div class="card" style="margin-top:0">
-      <h2>Sugestão automática <span class="count">sem IA · grátis</span></h2>
-      <p style="font-size:12.5px;margin:0 0 8px"><strong>Dificuldade recorrente:</strong> ${recorrentes.length ? esc(recorrentes.slice(0, 3).join("; ")) : "nenhuma dificuldade repetida ainda registrada."}</p>
-      <p style="font-size:12.5px;margin:0"><strong>Habilidades sem prática nas últimas 5 aulas:</strong> ${habilidadesEsquecidas.length ? esc(habilidadesEsquecidas.join(", ")) : "todas praticadas recentemente."}</p>
-    </div>
-  `;
 
   const texto =
 `Aluno: ${nome}
@@ -872,22 +921,101 @@ Temas já abordados: ${temas.length ? temas.join("; ") : "nenhum registrado"}
 Dificuldades observadas: ${dificuldades.length ? dificuldades.join("; ") : "nenhuma registrada"}
 Dificuldades recorrentes (repetidas): ${recorrentes.length ? recorrentes.join("; ") : "nenhuma"}
 Habilidades sem prática recente: ${habilidadesEsquecidas.length ? habilidadesEsquecidas.join(", ") : "nenhuma"}
-Última tarefa de casa pedida: ${ultimaTarefa ? ultimaTarefa.tarefaProxima : "nenhuma registrada"}
-Último nivelamento: ${ultimaAssessment ? `${fmtDate(ultimaAssessment.data)}, média ${mediaAssessment(ultimaAssessment)?.toFixed(1) ?? "—"}` : "nenhum registrado"}
+Último nivelamento: ${ultimaAssessment ? `${fmtDate(ultimaAssessment.data)}, média ${mediaAssessment(ultimaAssessment)?.toFixed(1) ?? "—"}` : "nenhum registrado"}`;
 
----
-Prompt sugerido: "Com base neste histórico, monte um plano para as próximas 3 aulas, priorizando as dificuldades recorrentes e as habilidades sem prática recente, evitando repetir os temas já abordados, adequado ao nível do aluno."`;
+  return { nome, texto, recorrentes, habilidadesEsquecidas };
+}
+
+function gerarResumoIA() {
+  const alunoId = document.getElementById("ia-aluno").value;
+  const box = document.getElementById("ia-result");
+  if (!alunoId) { box.innerHTML = ""; return; }
+
+  if (alunoId === "__todos__") {
+    const blocos = students().map(s => construirResumoAluno(s.id).texto);
+    const textoFinal = blocos.join("\n\n=====================\n\n") || "Nenhum aluno cadastrado.";
+    box.innerHTML = `
+      <div class="ia-output">${esc(textoFinal)}</div>
+      <button class="btn btn-ghost btn-small" id="btn-copiar-ia" style="margin-top:10px">Copiar texto</button>
+    `;
+    document.getElementById("btn-copiar-ia").addEventListener("click", () => {
+      navigator.clipboard.writeText(textoFinal).then(() => toast("Copiado! Cole no chat com o Claude."));
+    });
+    return;
+  }
+
+  const { texto, recorrentes, habilidadesEsquecidas } = construirResumoAluno(alunoId);
+  const sugestaoHtml = `
+    <div class="card" style="margin-top:0">
+      <h2>Sugestão automática <span class="count">sem IA · grátis</span></h2>
+      <p style="font-size:12.5px;margin:0 0 8px"><strong>Dificuldade recorrente:</strong> ${recorrentes.length ? esc(recorrentes.slice(0, 3).join("; ")) : "nenhuma dificuldade repetida ainda registrada."}</p>
+      <p style="font-size:12.5px;margin:0"><strong>Habilidades sem prática nas últimas 5 aulas:</strong> ${habilidadesEsquecidas.length ? esc(habilidadesEsquecidas.join(", ")) : "todas praticadas recentemente."}</p>
+    </div>
+  `;
+  const textoFinal = texto + `\n\n---\nPrompt sugerido: "Com base neste histórico, monte um plano para as próximas 3 aulas, priorizando as dificuldades recorrentes e as habilidades sem prática recente, evitando repetir os temas já abordados, adequado ao nível do aluno."`;
 
   box.innerHTML = sugestaoHtml + `
-    <div class="ia-output" id="ia-text">${esc(texto)}</div>
+    <div class="ia-output">${esc(textoFinal)}</div>
     <button class="btn btn-ghost btn-small" id="btn-copiar-ia" style="margin-top:10px">Copiar texto</button>
   `;
   document.getElementById("btn-copiar-ia").addEventListener("click", () => {
-    navigator.clipboard.writeText(texto).then(() => toast("Copiado! Cole no chat com o Claude."));
+    navigator.clipboard.writeText(textoFinal).then(() => toast("Copiado! Cole no chat com o Claude."));
   });
 }
 
-// ===== Handlers gerais (delegação após render) =====
+// ===== Handlers de linha (edição/exclusão) =====
+function wireStudentRowButtons() {
+  document.querySelectorAll("[data-edit-student]").forEach(b => b.addEventListener("click", () => {
+    const s = students().find(x => x.id === b.dataset.editStudent);
+    if (!s) return;
+    document.getElementById("s-id").value = s.id;
+    document.getElementById("s-nome").value = s.nome;
+    document.getElementById("s-nivel").value = s.nivel || "";
+    document.getElementById("s-status").value = s.status || "Ativo";
+    document.getElementById("s-horario").value = s.horario || "";
+    document.getElementById("s-contato").value = s.contato || "";
+    document.getElementById("s-freq").value = s.freq || "";
+    document.getElementById("student-form-title").textContent = "Editar aluno";
+    captureFormDraft("student-form");
+    document.getElementById("student-form-card").scrollIntoView({ behavior: "smooth" });
+  }));
+  document.querySelectorAll("[data-del-student]").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("Excluir este aluno? O histórico de aulas dele não será apagado.")) return;
+    saveStudents(students().filter(s => s.id !== b.dataset.delStudent));
+    toast("Aluno excluído.");
+    if (alunosBuscou) buscarAlunos(); else render();
+  }));
+}
+
+function wireLessonRowButtons() {
+  document.querySelectorAll("[data-edit-lesson]").forEach(b => b.addEventListener("click", () => {
+    const l = lessons().find(x => x.id === b.dataset.editLesson);
+    if (!l) return;
+    document.getElementById("l-id").value = l.id;
+    document.getElementById("l-data").value = l.data || "";
+    document.getElementById("l-aluno").value = l.alunoId || "";
+    document.getElementById("l-presenca").value = l.presenca || "Presente";
+    document.getElementById("l-atraso15").checked = !!l.atraso15;
+    toggleFaltaExtra();
+    if (l.aviso24h) document.getElementById("l-aviso24h").value = l.aviso24h;
+    setMultiSelect("l-habilidades", l.habilidades && l.habilidades.length ? l.habilidades : (l.habilidade ? [l.habilidade] : []));
+    setMultiSelect("l-tempos", l.temposVerbais || []);
+    setMultiSelect("l-subtemas", l.subtemas || []);
+    document.getElementById("l-sub-outro").value = l.subtemaOutro || "";
+    setMultiSelect("l-dificuldades", l.dificuldades || []);
+    document.getElementById("l-dif-outra").value = l.dificuldadeOutra || l.dificuldade || "";
+    document.getElementById("lesson-form-title").textContent = "Editar aula";
+    captureFormDraft("lesson-form");
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }));
+  document.querySelectorAll("[data-del-lesson]").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("Excluir este registro de aula?")) return;
+    saveLessons(lessons().filter(l => l.id !== b.dataset.delLesson));
+    toast("Registro excluído.");
+    render();
+  }));
+}
+
 function wireAssessmentRowButtons() {
   document.querySelectorAll("[data-edit-assessment]").forEach(b => b.addEventListener("click", () => {
     const a = assessments().find(x => x.id === b.dataset.editAssessment);
@@ -911,86 +1039,29 @@ function wireAssessmentRowButtons() {
   }));
 }
 
+// ===== Handlers gerais =====
 function attachHandlers() {
   const sf = document.getElementById("student-form");
   if (sf) { sf.addEventListener("submit", submitStudent); wireDraft("student-form"); }
+  const btnBuscarAluno = document.getElementById("btn-buscar-aluno");
+  if (btnBuscarAluno) btnBuscarAluno.addEventListener("click", buscarAlunos);
+  wireStudentRowButtons();
 
   const lf = document.getElementById("lesson-form");
-  if (lf) {
-    lf.addEventListener("submit", submitLesson);
-    wireDraft("lesson-form");
-  }
-
-  const mf = document.getElementById("makeup-form");
-  if (mf) { mf.addEventListener("submit", submitMakeup); wireDraft("makeup-form"); }
-
-  const af = document.getElementById("assessment-form");
-  if (af) { af.addEventListener("submit", submitAssessment); wireDraft("assessment-form"); }
+  if (lf) { lf.addEventListener("submit", submitLesson); wireDraft("lesson-form"); }
+  const btnLimparAula = document.getElementById("btn-limpar-aula");
+  if (btnLimparAula) btnLimparAula.addEventListener("click", limparFormularioAula);
 
   const lPresenca = document.getElementById("l-presenca");
   if (lPresenca) lPresenca.addEventListener("change", toggleFaltaExtra);
   toggleFaltaExtra();
 
-  const lAluno = document.getElementById("l-aluno");
-  if (lAluno) { lAluno.addEventListener("change", atualizarUltimaTarefa); atualizarUltimaTarefa(); }
-
-  const filtroAlunoEl = document.getElementById("filtro-aluno");
-  const filtroAnoEl = document.getElementById("filtro-ano");
-  const filtroMesEl = document.getElementById("filtro-mes");
-  if (filtroAlunoEl) {
-    filtroAlunoEl.value = filtroAnteriores.aluno;
-    filtroAlunoEl.addEventListener("change", () => {
-      filtroAnteriores.aluno = filtroAlunoEl.value;
-      document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
-      wireLessonRowButtons();
-    });
-  }
-  if (filtroAnoEl) {
-    filtroAnoEl.value = filtroAnteriores.ano;
-    filtroAnoEl.addEventListener("change", () => {
-      filtroAnteriores.ano = filtroAnoEl.value;
-      document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
-      wireLessonRowButtons();
-    });
-  }
-  if (filtroMesEl) {
-    filtroMesEl.value = filtroAnteriores.mes;
-    filtroMesEl.addEventListener("change", () => {
-      filtroAnteriores.mes = filtroMesEl.value;
-      document.getElementById("aulas-anteriores-list").innerHTML = renderAulasAnterioresList();
-      wireLessonRowButtons();
-    });
-  }
-
-  const filtroNivelAno = document.getElementById("filtro-nivel-ano");
-  const filtroNivelSem = document.getElementById("filtro-nivel-semestre");
-  if (filtroNivelAno) filtroNivelAno.addEventListener("change", renderNivelListaFiltrada);
-  if (filtroNivelSem) filtroNivelSem.addEventListener("change", renderNivelListaFiltrada);
-  wireAssessmentRowButtons();
-
-  document.querySelectorAll("[data-edit-student]").forEach(b => b.addEventListener("click", () => {
-    const s = students().find(x => x.id === b.dataset.editStudent);
-    if (!s) return;
-    document.getElementById("s-id").value = s.id;
-    document.getElementById("s-nome").value = s.nome;
-    document.getElementById("s-nivel").value = s.nivel || "";
-    document.getElementById("s-status").value = s.status || "Ativo";
-    document.getElementById("s-horario").value = s.horario || "";
-    document.getElementById("s-contato").value = s.contato || "";
-    document.getElementById("s-freq").value = s.freq || "";
-    document.getElementById("student-form-title").textContent = "Editar aluno";
-    captureFormDraft("student-form");
-    document.getElementById("student-form-card").scrollIntoView({ behavior: "smooth" });
-  }));
-  document.querySelectorAll("[data-del-student]").forEach(b => b.addEventListener("click", () => {
-    if (!confirm("Excluir este aluno? O histórico de aulas dele não será apagado.")) return;
-    saveStudents(students().filter(s => s.id !== b.dataset.delStudent));
-    toast("Aluno excluído.");
-    render();
-  }));
-
+  const btnBuscarAulas = document.getElementById("btn-buscar-aulas");
+  if (btnBuscarAulas) btnBuscarAulas.addEventListener("click", buscarAulasAnteriores);
   wireLessonRowButtons();
 
+  const mf = document.getElementById("makeup-form");
+  if (mf) { mf.addEventListener("submit", submitMakeup); wireDraft("makeup-form"); }
   document.querySelectorAll("[data-edit-makeup]").forEach(b => b.addEventListener("click", () => {
     const m = makeups().find(x => x.id === b.dataset.editMakeup);
     if (!m) return;
@@ -1012,6 +1083,16 @@ function attachHandlers() {
     toast("Reposição excluída.");
     render();
   }));
+
+  const af = document.getElementById("assessment-form");
+  if (af) { af.addEventListener("submit", submitAssessment); wireDraft("assessment-form"); }
+  const btnBuscarNivelStatus = document.getElementById("btn-buscar-nivel-status");
+  if (btnBuscarNivelStatus) btnBuscarNivelStatus.addEventListener("click", buscarStatusPorAluno);
+  const filtroNivelAno = document.getElementById("filtro-nivel-ano");
+  const filtroNivelSem = document.getElementById("filtro-nivel-semestre");
+  if (filtroNivelAno) filtroNivelAno.addEventListener("change", renderNivelListaFiltrada);
+  if (filtroNivelSem) filtroNivelSem.addEventListener("change", renderNivelListaFiltrada);
+  wireAssessmentRowButtons();
 
   const btnGerar = document.getElementById("btn-gerar-ia");
   if (btnGerar) btnGerar.addEventListener("click", gerarResumoIA);
@@ -1061,50 +1142,6 @@ function attachHandlers() {
     };
     reader.readAsText(file);
   });
-}
-
-function wireLessonRowButtons() {
-  document.querySelectorAll("[data-edit-lesson]").forEach(b => b.addEventListener("click", () => {
-    const l = lessons().find(x => x.id === b.dataset.editLesson);
-    if (!l) return;
-    document.getElementById("l-id").value = l.id;
-    document.getElementById("l-data").value = l.data || "";
-    document.getElementById("l-aluno").value = l.alunoId || "";
-    document.getElementById("l-presenca").value = l.presenca || "Presente";
-    document.getElementById("l-atraso15").checked = !!l.atraso15;
-    toggleFaltaExtra();
-    if (l.aviso24h) document.getElementById("l-aviso24h").value = l.aviso24h;
-    (l.habilidades || (l.habilidade ? [l.habilidade] : [])).forEach(v => {
-      const el = document.getElementById(`l-hab-${slug(v)}`);
-      if (el) el.checked = true;
-    });
-    (l.temposVerbais || []).forEach(v => {
-      const el = document.getElementById(`l-tempo-${slug(v)}`);
-      if (el) el.checked = true;
-    });
-    (l.subtemas || []).forEach(v => {
-      const el = document.getElementById(`l-sub-${slug(v)}`);
-      if (el) el.checked = true;
-    });
-    document.getElementById("l-sub-outro").value = l.subtemaOutro || "";
-    (l.dificuldades || []).forEach(v => {
-      const el = document.getElementById(`l-dif-${slug(v)}`);
-      if (el) el.checked = true;
-    });
-    document.getElementById("l-dif-outra").value = l.dificuldadeOutra || l.dificuldade || "";
-    document.getElementById("l-tarefa-proxima").value = l.tarefaProxima || "";
-    document.getElementById("l-nota").value = l.nota || "";
-    document.getElementById("lesson-form-title").textContent = "Editar aula";
-    atualizarUltimaTarefa();
-    captureFormDraft("lesson-form");
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }));
-  document.querySelectorAll("[data-del-lesson]").forEach(b => b.addEventListener("click", () => {
-    if (!confirm("Excluir este registro de aula?")) return;
-    saveLessons(lessons().filter(l => l.id !== b.dataset.delLesson));
-    toast("Registro excluído.");
-    render();
-  }));
 }
 
 // ===== Service Worker + instalação =====
