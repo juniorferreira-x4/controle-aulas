@@ -267,7 +267,7 @@ function renderAlunoRow(s) {
           <span class="tag tag-nivel">${esc(s.nivel || "—")}</span>
           ${s.status && s.status !== "Ativo" ? `<span class="tag ${tagClasse}">${esc(s.status)}</span>` : ""}
         </div>
-        <div class="row-sub">${(s.diasSemana || []).join(", ") || "sem dia fixo"}${s.horarioSlot ? " · " + esc(s.horarioSlot) : ""}</div>
+        <div class="row-sub">${(s.diasSemana || []).join(", ") || "sem dia fixo"}${s.horarioSlot ? " · " + esc(s.horarioSlot) : ""}${s.aniversario ? " · 🎂 " + esc(s.aniversario) : ""}</div>
       </div>
       <div class="row-actions">
         <button class="btn btn-ghost btn-small" data-edit-student="${s.id}">Editar</button>
@@ -277,12 +277,15 @@ function renderAlunoRow(s) {
 }
 
 function renderAlunos() {
+  const dias31 = Array.from({ length: 31 }, (_, i) => i + 1);
+  const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
   return `
-    <div class="grid-pair">
-      <div class="card" id="student-form-card">
+    <div class="split-2col">
+      <div class="card panel-fixed" id="student-form-card">
         <h2 id="student-form-title">Novo aluno</h2>
         <form id="student-form">
           <input type="hidden" id="s-id">
+          <input type="hidden" id="s-dias-semana" value="">
           <label>Nome completo</label>
           <input type="text" id="s-nome" required>
           <div class="grid-2">
@@ -301,23 +304,31 @@ function renderAlunos() {
           </div>
           <label>Dias da semana</label>
           <div class="weekday-picker">
-            ${WEEKDAYS.map(dia => `
-              <label class="weekday-option">
-                <input type="checkbox" id="s-dia-${dia.toLowerCase()}" class="s-dia-check" data-value="${dia}">${dia}
-              </label>`).join("")}
+            ${WEEKDAYS.map(dia => `<div class="weekday-option" data-value="${dia}">${dia}</div>`).join("")}
           </div>
           <label>Horário</label>
           <select id="s-horario">
             <option value="">—</option>
             ${TIME_SLOTS.map(t => `<option>${t}</option>`).join("")}
           </select>
+          <div class="grid-2">
+            <div><label>Aniversário — dia</label>
+              <select id="s-aniv-dia"><option value="">—</option>${dias31.map(d => `<option>${d}</option>`).join("")}</select>
+            </div>
+            <div><label>Aniversário — mês</label>
+              <select id="s-aniv-mes"><option value="">—</option>${meses.map((m, i) => `<option value="${i + 1}">${m}</option>`).join("")}</select>
+            </div>
+          </div>
           <label>Contato (WhatsApp)</label>
           <input type="text" id="s-contato">
-          <button type="submit" class="btn btn-primary">Salvar aluno</button>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Salvar aluno</button>
+            <button type="button" class="btn btn-primary" id="btn-limpar-novo-aluno">Limpar</button>
+          </div>
         </form>
       </div>
 
-      <div class="card">
+      <div class="card panel-grow">
         <h2>Buscar alunos</h2>
         <div class="grid-2">
           <div><label>Nome</label><input type="text" id="busca-aluno-nome"></div>
@@ -334,9 +345,9 @@ function renderAlunos() {
         </select>
         <div class="btn-row">
           <button type="button" class="btn btn-primary btn-small" id="btn-buscar-aluno">Buscar</button>
-          <button type="button" class="btn btn-ghost btn-small" id="btn-limpar-aluno">Limpar</button>
+          <button type="button" class="btn btn-primary btn-small" id="btn-limpar-aluno">Limpar</button>
         </div>
-        <div id="alunos-resultado" style="margin-top:14px">${alunosBuscou ? renderAlunosResultadoAtual() : `<div class="empty-state">Use os filtros acima e clique em Buscar para ver os alunos cadastrados.</div>`}</div>
+        <div id="alunos-resultado" class="panel-scroll" style="margin-top:14px">${alunosBuscou ? renderAlunosResultadoAtual() : `<div class="empty-state">Use os filtros acima e clique em Buscar para ver os alunos cadastrados.</div>`}</div>
       </div>
     </div>
   `;
@@ -371,11 +382,32 @@ function limparBuscaAlunos() {
   alunosBuscou = false;
   document.getElementById("alunos-resultado").innerHTML = `<div class="empty-state">Use os filtros acima e clique em Buscar para ver os alunos cadastrados.</div>`;
 }
+function limparNovoAluno() {
+  clearFormDraft("student-form");
+  toast("Formulário limpo.");
+  render();
+}
+
+function wireWeekdayPicker() {
+  const hidden = document.getElementById("s-dias-semana");
+  const selecionadosAtuais = hidden ? (hidden.value || "").split(",").filter(Boolean) : [];
+  document.querySelectorAll(".weekday-option").forEach(el => {
+    el.classList.toggle("selected", selecionadosAtuais.includes(el.dataset.value));
+    el.addEventListener("click", () => {
+      el.classList.toggle("selected");
+      const selecionados = Array.from(document.querySelectorAll(".weekday-option.selected")).map(o => o.dataset.value);
+      if (hidden) hidden.value = selecionados.join(",");
+      captureFormDraft("student-form");
+    });
+  });
+}
 
 function submitStudent(e) {
   e.preventDefault();
   const id = document.getElementById("s-id").value || uid();
-  const diasSemana = Array.from(document.querySelectorAll(".s-dia-check:checked")).map(el => el.dataset.value);
+  const diasSemana = (document.getElementById("s-dias-semana").value || "").split(",").filter(Boolean);
+  const anivDia = document.getElementById("s-aniv-dia").value;
+  const anivMes = document.getElementById("s-aniv-mes").value;
   const data = {
     id,
     nome: document.getElementById("s-nome").value.trim(),
@@ -383,6 +415,7 @@ function submitStudent(e) {
     status: document.getElementById("s-status").value,
     diasSemana,
     horarioSlot: document.getElementById("s-horario").value,
+    aniversario: (anivDia && anivMes) ? `${String(anivDia).padStart(2, "0")}/${String(anivMes).padStart(2, "0")}` : "",
     contato: document.getElementById("s-contato").value.trim()
   };
   if (!data.nome) return;
@@ -454,27 +487,30 @@ function renderCalendarioSemanal() {
   }).join("");
 
   return `
-    <div class="card card-full">
+    <div class="card panel-grow">
       <h2>Calendário semanal <span class="count">${label}</span></h2>
       <div class="week-nav">
         <button type="button" class="btn btn-ghost btn-small" id="btn-semana-anterior">‹ Semana anterior</button>
         <button type="button" class="btn btn-ghost btn-small" id="btn-semana-hoje">Hoje</button>
         <button type="button" class="btn btn-ghost btn-small" id="btn-semana-proxima">Próxima semana ›</button>
       </div>
-      <div class="week-grid">${cols}</div>
+      <div class="week-grid panel-scroll">${cols}</div>
     </div>
   `;
 }
 
 function renderAulaSelecionada() {
-  if (!aulaSelecionada) return "";
+  if (!aulaSelecionada) return `<div class="aula-selecionada-overlay"></div>`;
   const { alunoId, data, horario, lessonId } = aulaSelecionada;
   const lesson = lessonId ? lessons().find(l => l.id === lessonId) : null;
   const presencaAtual = lesson ? lesson.presenca : "Presente";
 
   return `
-    <div class="card card-full" id="aula-selecionada-card">
-      <h2>Aula selecionada</h2>
+    <div class="aula-selecionada-overlay active">
+    <div class="card" id="aula-selecionada-card">
+      <h2>Aula selecionada
+        <button type="button" class="btn btn-ghost btn-small" id="btn-fechar-aula-selecionada" style="margin-left:auto">Fechar</button>
+      </h2>
       <p style="font-size:13px;margin:0 0 14px;color:var(--text-muted)">
         <strong style="color:var(--heading)">${esc(studentName(alunoId))}</strong> · ${fmtDate(data)} · ${esc(horario)}
       </p>
@@ -524,9 +560,10 @@ function renderAulaSelecionada() {
 
         <div class="btn-row">
           <button type="submit" class="btn btn-primary">Salvar aula</button>
-          <button type="button" class="btn btn-ghost" id="btn-limpar-aula">Limpar</button>
+          <button type="button" class="btn btn-primary" id="btn-limpar-aula">Limpar</button>
         </div>
       </form>
+    </div>
     </div>
   `;
 }
@@ -536,7 +573,7 @@ function renderHistoricoAulasCard() {
   const anos = [...new Set(lessons().map(l => (l.data || "").slice(0, 4)).filter(Boolean))].sort().reverse();
   const meses = ["01-Jan", "02-Fev", "03-Mar", "04-Abr", "05-Mai", "06-Jun", "07-Jul", "08-Ago", "09-Set", "10-Out", "11-Nov", "12-Dez"];
   return `
-    <div class="card card-full">
+    <div class="card panel-grow">
       <h2>Histórico de aulas</h2>
       <div class="grid-2">
         <div><label>Aluno</label><select id="filtro-aluno"><option value="">Todos</option>${opts}</select></div>
@@ -546,9 +583,9 @@ function renderHistoricoAulasCard() {
       <select id="filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}">${m.slice(3)}</option>`).join("")}</select>
       <div class="btn-row">
         <button type="button" class="btn btn-primary btn-small" id="btn-buscar-aulas">Buscar</button>
-        <button type="button" class="btn btn-ghost btn-small" id="btn-limpar-aulas">Limpar</button>
+        <button type="button" class="btn btn-primary btn-small" id="btn-limpar-aulas">Limpar</button>
       </div>
-      <div id="aulas-anteriores-list" style="margin-top:12px">${aulasAnterioresBuscou ? renderHistoricoAulasList() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
+      <div id="aulas-anteriores-list" class="panel-scroll" style="margin-top:12px">${aulasAnterioresBuscou ? renderHistoricoAulasList() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
     </div>
   `;
 }
@@ -599,7 +636,7 @@ function limparHistoricoAulas() {
 }
 
 function renderAulas() {
-  return renderCalendarioSemanal() + renderAulaSelecionada() + renderHistoricoAulasCard();
+  return `<div class="split-2col">${renderCalendarioSemanal()}${renderHistoricoAulasCard()}</div>${renderAulaSelecionada()}`;
 }
 
 function toggleFaltaExtra() {
@@ -703,33 +740,38 @@ function renderReposicoes() {
   }).join("") : `<div class="empty-state"><div class="big">↺</div>Nenhuma reposição registrada.</div>`;
 
   return `
-    <div class="card card-full">
-      <h2>Reposições <span class="count">${list.length}</span></h2>
-      <p style="font-size:11.5px;color:var(--text-muted);margin:0 0 12px">
-        Cobrança e prazo calculados automaticamente. Falta do professor nunca é cobrada nem entra na cota do aluno. Ao salvar com data e horário de reposição preenchidos, a aula entra automaticamente no calendário da aba Aulas.
-      </p>
-      ${rows}
-    </div>
-    <div class="card card-full">
-      <h2 id="makeup-form-title">Nova reposição</h2>
-      <form id="makeup-form">
-        <input type="hidden" id="m-id">
-        <label>Aluno</label>
-        <select id="m-aluno" required><option value="">Selecione</option>${opts}</select>
-        <div class="grid-2">
-          <div><label>Data da aula perdida</label><input type="date" id="m-data-perdida"></div>
-          <div><label>Motivo</label><select id="m-motivo">${motivos.map(mo => `<option>${mo}</option>`).join("")}</select></div>
-        </div>
-        <div class="grid-2">
-          <div><label>Data reposição agendada</label><input type="date" id="m-data-agendada"></div>
-          <div><label>Horário</label>
-            <select id="m-horario"><option value="">—</option>${TIME_SLOTS.map(t => `<option>${t}</option>`).join("")}</select>
+    <div class="split-2col">
+      <div class="card panel-grow">
+        <h2 id="makeup-form-title">Nova reposição</h2>
+        <form id="makeup-form" class="panel-scroll">
+          <input type="hidden" id="m-id">
+          <label>Aluno</label>
+          <select id="m-aluno" required><option value="">Selecione</option>${opts}</select>
+          <div class="grid-2">
+            <div><label>Data da aula perdida</label><input type="date" id="m-data-perdida"></div>
+            <div><label>Motivo</label><select id="m-motivo">${motivos.map(mo => `<option>${mo}</option>`).join("")}</select></div>
           </div>
-        </div>
-        <label>Observação</label>
-        <textarea id="m-obs"></textarea>
-        <button type="submit" class="btn btn-primary">Salvar reposição</button>
-      </form>
+          <div class="grid-2">
+            <div><label>Data reposição agendada</label><input type="date" id="m-data-agendada"></div>
+            <div><label>Horário</label>
+              <select id="m-horario"><option value="">—</option>${TIME_SLOTS.map(t => `<option>${t}</option>`).join("")}</select>
+            </div>
+          </div>
+          <label>Observação</label>
+          <textarea id="m-obs"></textarea>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Salvar reposição</button>
+            <button type="button" class="btn btn-primary" id="btn-limpar-reposicao">Limpar</button>
+          </div>
+        </form>
+      </div>
+      <div class="card panel-grow">
+        <h2>Reposições <span class="count">${list.length}</span></h2>
+        <p style="font-size:11.5px;color:var(--text-muted);margin:0 0 12px">
+          Cobrança e prazo calculados automaticamente. Falta do professor nunca é cobrada nem entra na cota do aluno. Ao salvar com data e horário de reposição preenchidos, a aula entra automaticamente no calendário da aba Aulas.
+        </p>
+        <div class="panel-scroll">${rows}</div>
+      </div>
     </div>
   `;
 }
@@ -744,6 +786,12 @@ function preencherFormularioReposicao(m, travarCampos) {
   document.getElementById("m-obs").value = m.obs || "";
   ["m-aluno", "m-data-perdida", "m-motivo"].forEach(id => { document.getElementById(id).disabled = !!travarCampos; });
   captureFormDraft("makeup-form");
+}
+
+function limparReposicao() {
+  clearFormDraft("makeup-form");
+  toast("Formulário limpo.");
+  render();
 }
 
 function submitMakeup(e) {
@@ -826,63 +874,70 @@ function renderNivelamento() {
   `).join("") : `<div class="empty-state">Nenhum nivelamento registrado com esse filtro.</div>`;
 
   return `
-    <div class="grid-pair">
-      <div class="card">
-        <h2>Painel indicativo <span class="count">alunos ativos</span></h2>
-        <div class="stat-grid">
-          <div class="stat-box success"><div class="stat-num">${emDia}</div><div class="stat-label">Em dia</div></div>
-          <div class="stat-box warn"><div class="stat-num">${semNivel}</div><div class="stat-label">Sem nivelamento</div></div>
-          <div class="stat-box danger" style="grid-column:1/-1"><div class="stat-num">${vencidos}</div><div class="stat-label">Nivelamento vencido</div></div>
+    <div class="split-2col">
+      <div class="split-col">
+        <div class="card panel-fixed">
+          <h2>Painel indicativo <span class="count">alunos ativos</span></h2>
+          <div class="stat-grid">
+            <div class="stat-box success"><div class="stat-num">${emDia}</div><div class="stat-label">Em dia</div></div>
+            <div class="stat-box warn"><div class="stat-num">${semNivel}</div><div class="stat-label">Sem nivelamento</div></div>
+            <div class="stat-box danger" style="grid-column:1/-1"><div class="stat-num">${vencidos}</div><div class="stat-label">Nivelamento vencido</div></div>
+          </div>
+        </div>
+
+        <div class="card panel-grow">
+          <h2 id="assessment-form-title">Novo nivelamento</h2>
+          <form id="assessment-form" class="panel-scroll">
+            <input type="hidden" id="a-id">
+            <div class="grid-2">
+              <div><label>Aluno</label><select id="a-aluno" required><option value="">Selecione</option>${opts}</select></div>
+              <div><label>Data do teste</label><input type="date" id="a-data" value="${hojeISO()}" required></div>
+            </div>
+            <div class="grid-2">
+              <div><label>Listening (0-10)</label><input type="number" id="a-listening" min="0" max="10" step="0.5"></div>
+              <div><label>Reading (0-10)</label><input type="number" id="a-reading" min="0" max="10" step="0.5"></div>
+            </div>
+            <div class="grid-2">
+              <div><label>Writing (0-10)</label><input type="number" id="a-writing" min="0" max="10" step="0.5"></div>
+              <div><label>Speaking (0-10)</label><input type="number" id="a-speaking" min="0" max="10" step="0.5"></div>
+            </div>
+            <label>Observações</label>
+            <textarea id="a-obs"></textarea>
+            <div class="btn-row">
+              <button type="submit" class="btn btn-primary">Salvar nivelamento</button>
+              <button type="button" class="btn btn-primary" id="btn-limpar-nivelamento">Limpar</button>
+            </div>
+          </form>
         </div>
       </div>
 
-      <div class="card">
-        <h2 id="assessment-form-title">Novo nivelamento</h2>
-        <form id="assessment-form">
-          <input type="hidden" id="a-id">
+      <div class="split-col">
+        <div class="card panel-grow">
+          <h2>Status por aluno</h2>
           <div class="grid-2">
-            <div><label>Aluno</label><select id="a-aluno" required><option value="">Selecione</option>${opts}</select></div>
-            <div><label>Data do teste</label><input type="date" id="a-data" value="${hojeISO()}" required></div>
+            <div><label>Nome</label><input type="text" id="busca-nivel-nome"></div>
+            <div><label>Status</label>
+              <select id="busca-nivel-status"><option value="">Todos</option><option>Em dia</option><option>Sem nivelamento</option><option>Vencido</option></select>
+            </div>
           </div>
-          <div class="grid-2">
-            <div><label>Listening (0-10)</label><input type="number" id="a-listening" min="0" max="10" step="0.5"></div>
-            <div><label>Reading (0-10)</label><input type="number" id="a-reading" min="0" max="10" step="0.5"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary btn-small" id="btn-buscar-nivel-status">Buscar</button>
+            <button type="button" class="btn btn-primary btn-small" id="btn-limpar-nivel-status">Limpar</button>
           </div>
-          <div class="grid-2">
-            <div><label>Writing (0-10)</label><input type="number" id="a-writing" min="0" max="10" step="0.5"></div>
-            <div><label>Speaking (0-10)</label><input type="number" id="a-speaking" min="0" max="10" step="0.5"></div>
-          </div>
-          <label>Observações</label>
-          <textarea id="a-obs"></textarea>
-          <button type="submit" class="btn btn-primary">Salvar nivelamento</button>
-        </form>
-      </div>
-    </div>
+          <div id="nivel-status-resultado" class="panel-scroll" style="margin-top:14px">${nivelStatusBuscou ? renderStatusPorAlunoResultado() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
+        </div>
 
-    <div class="card card-full">
-      <h2>Status por aluno</h2>
-      <div class="grid-2">
-        <div><label>Nome</label><input type="text" id="busca-nivel-nome"></div>
-        <div><label>Status</label>
-          <select id="busca-nivel-status"><option value="">Todos</option><option>Em dia</option><option>Sem nivelamento</option><option>Vencido</option></select>
+        <div class="card panel-grow">
+          <h2>Histórico de nivelamentos</h2>
+          <div class="grid-2">
+            <div><label>Ano</label><select id="filtro-nivel-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select></div>
+            <div><label>Semestre</label>
+              <select id="filtro-nivel-semestre"><option value="">Todos</option><option value="1">1º semestre</option><option value="2">2º semestre</option></select>
+            </div>
+          </div>
+          <div id="nivel-lista" class="panel-scroll" style="margin-top:12px">${listaHtml}</div>
         </div>
       </div>
-      <div class="btn-row">
-        <button type="button" class="btn btn-primary btn-small" id="btn-buscar-nivel-status">Buscar</button>
-        <button type="button" class="btn btn-ghost btn-small" id="btn-limpar-nivel-status">Limpar</button>
-      </div>
-      <div id="nivel-status-resultado" style="margin-top:14px">${nivelStatusBuscou ? renderStatusPorAlunoResultado() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
-    </div>
-
-    <div class="card card-full">
-      <h2>Histórico de nivelamentos</h2>
-      <div class="grid-2">
-        <div><label>Ano</label><select id="filtro-nivel-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select></div>
-        <div><label>Semestre</label>
-          <select id="filtro-nivel-semestre"><option value="">Todos</option><option value="1">1º semestre</option><option value="2">2º semestre</option></select>
-        </div>
-      </div>
-      <div id="nivel-lista" style="margin-top:12px">${listaHtml}</div>
     </div>
   `;
 }
@@ -938,6 +993,12 @@ function renderNivelListaFiltrada() {
     </div>
   `).join("") : `<div class="empty-state">Nenhum nivelamento registrado com esse filtro.</div>`;
   wireAssessmentRowButtons();
+}
+
+function limparNivelamento() {
+  clearFormDraft("assessment-form");
+  toast("Formulário limpo.");
+  render();
 }
 
 function submitAssessment(e) {
@@ -1003,46 +1064,51 @@ function renderDashboard() {
   `).join("") : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px 0">Sem alunos com esse filtro.</td></tr>`;
 
   return `
-    <div class="grid-pair">
-      <div class="card">
-        <h2>Visão geral</h2>
-        <div class="grid-2">
-          <div><label>Ano</label><select id="dash-filtro-ano"><option value="">Todos</option>${anos.map(a => `<option ${dashboardFiltro.ano === a ? "selected" : ""}>${a}</option>`).join("")}</select></div>
-          <div><label>Semestre</label><select id="dash-filtro-semestre"><option value="">Todos</option><option value="1" ${dashboardFiltro.semestre === "1" ? "selected" : ""}>1º semestre</option><option value="2" ${dashboardFiltro.semestre === "2" ? "selected" : ""}>2º semestre</option></select></div>
-        </div>
-        <label>Mês</label>
-        <select id="dash-filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}" ${dashboardFiltro.mes === m.slice(0, 2) ? "selected" : ""}>${m.slice(3)}</option>`).join("")}</select>
-        <div class="btn-row">
-          <button type="button" class="btn btn-primary btn-small" id="btn-buscar-dashboard">Buscar</button>
-          <button type="button" class="btn btn-ghost btn-small" id="btn-limpar-dashboard">Limpar</button>
-        </div>
-        <div class="stat-grid" style="margin-top:16px">
-          <div class="stat-box"><div class="stat-num">${totalPresente}</div><div class="stat-label">Aulas dadas (período)</div></div>
-          <div class="stat-box"><div class="stat-num">${totalFalta}</div><div class="stat-label">Faltas (período)</div></div>
-          <div class="stat-box"><div class="stat-num">${pendentes}</div><div class="stat-label">Reposições pendentes</div></div>
-          <div class="stat-box"><div class="stat-num">${nivelVencidos}</div><div class="stat-label">Nivelamentos vencidos</div></div>
+    <div class="split-2col">
+      <div class="card panel-grow">
+        <h2>Por aluno</h2>
+        <label>Status</label>
+        <select id="dash-status-aluno" style="max-width:220px">
+          ${["Ativo", "Inativo", "Trancado", "Todos"].map(s => `<option ${dashboardStatusFiltro === s ? "selected" : ""}>${s}</option>`).join("")}
+        </select>
+        <div class="panel-scroll" style="margin-top:12px">
+          <table class="student-table">
+            <thead><tr><th>Aluno</th><th>Aulas</th><th>Faltas</th><th>% Presença</th><th>Repos. pend.</th></tr></thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
         </div>
       </div>
-      <div class="card">
-        <h2>Backup dos dados</h2>
-        <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 10px">Este app guarda os dados só neste dispositivo/navegador. Para levar os dados para outro aparelho, exporte aqui e importe lá.</p>
-        <div class="btn-row" style="margin-top:0">
-          <button class="btn btn-primary btn-small" id="btn-export">Exportar backup (.json)</button>
-          <button class="btn btn-ghost btn-small" id="btn-import-trigger">Importar backup</button>
+
+      <div class="split-col">
+        <div class="card panel-grow">
+          <h2>Visão geral</h2>
+          <div class="grid-2">
+            <div><label>Ano</label><select id="dash-filtro-ano"><option value="">Todos</option>${anos.map(a => `<option ${dashboardFiltro.ano === a ? "selected" : ""}>${a}</option>`).join("")}</select></div>
+            <div><label>Semestre</label><select id="dash-filtro-semestre"><option value="">Todos</option><option value="1" ${dashboardFiltro.semestre === "1" ? "selected" : ""}>1º semestre</option><option value="2" ${dashboardFiltro.semestre === "2" ? "selected" : ""}>2º semestre</option></select></div>
+          </div>
+          <label>Mês</label>
+          <select id="dash-filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}" ${dashboardFiltro.mes === m.slice(0, 2) ? "selected" : ""}>${m.slice(3)}</option>`).join("")}</select>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary btn-small" id="btn-buscar-dashboard">Buscar</button>
+            <button type="button" class="btn btn-primary btn-small" id="btn-limpar-dashboard">Limpar</button>
+          </div>
+          <div class="stat-grid" style="margin-top:16px">
+            <div class="stat-box"><div class="stat-num">${totalPresente}</div><div class="stat-label">Aulas dadas (período)</div></div>
+            <div class="stat-box"><div class="stat-num">${totalFalta}</div><div class="stat-label">Faltas (período)</div></div>
+            <div class="stat-box"><div class="stat-num">${pendentes}</div><div class="stat-label">Reposições pendentes</div></div>
+            <div class="stat-box"><div class="stat-num">${nivelVencidos}</div><div class="stat-label">Nivelamentos vencidos</div></div>
+          </div>
         </div>
-        <input type="file" id="file-import" accept=".json" style="display:none">
+        <div class="card panel-fixed">
+          <h2>Backup dos dados</h2>
+          <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 10px">Este app guarda os dados só neste dispositivo/navegador. Para levar os dados para outro aparelho, exporte aqui e importe lá.</p>
+          <div class="btn-row" style="margin-top:0">
+            <button class="btn btn-primary btn-small" id="btn-export">Exportar backup (.json)</button>
+            <button class="btn btn-primary btn-small" id="btn-import-trigger">Importar backup</button>
+          </div>
+          <input type="file" id="file-import" accept=".json" style="display:none">
+        </div>
       </div>
-    </div>
-    <div class="card card-full">
-      <h2>Por aluno</h2>
-      <label>Status</label>
-      <select id="dash-status-aluno" style="max-width:220px">
-        ${["Ativo", "Inativo", "Trancado", "Todos"].map(s => `<option ${dashboardStatusFiltro === s ? "selected" : ""}>${s}</option>`).join("")}
-      </select>
-      <table class="student-table" style="margin-top:12px">
-        <thead><tr><th>Aluno</th><th>Aulas</th><th>Faltas</th><th>% Presença</th><th>Repos. pend.</th></tr></thead>
-        <tbody>${rowsHtml}</tbody>
-      </table>
     </div>
   `;
 }
@@ -1053,15 +1119,15 @@ function renderResumoIA() {
   const anos = [...new Set(makeups().map(m => (m.dataPerdida || "").slice(0, 4)).filter(Boolean))].sort().reverse();
   const meses = ["01-Jan", "02-Fev", "03-Mar", "04-Abr", "05-Mai", "06-Jun", "07-Jul", "08-Ago", "09-Set", "10-Out", "11-Nov", "12-Dez"];
   return `
-    <div class="grid-pair">
-      <div class="card">
+    <div class="split-2col">
+      <div class="card panel-grow">
         <h2>Resumo para colar no Claude</h2>
         <label>Aluno</label>
         <select id="ia-aluno"><option value="">Selecione um aluno</option><option value="__todos__">Todos</option>${opts}</select>
         <button class="btn btn-primary btn-small" id="btn-gerar-ia" style="margin-top:14px">Gerar resumo</button>
-        <div id="ia-result" style="margin-top:14px"></div>
+        <div id="ia-result" class="panel-scroll" style="margin-top:14px"></div>
       </div>
-      <div class="card">
+      <div class="card panel-grow">
         <h2>Relatório de reposições em aberto</h2>
         <div class="grid-2">
           <div><label>Aluno</label><select id="ia-rep-aluno"><option value="">Todos</option>${opts}</select></div>
@@ -1070,7 +1136,7 @@ function renderResumoIA() {
         <label>Mês</label>
         <select id="ia-rep-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}">${m.slice(3)}</option>`).join("")}</select>
         <button class="btn btn-primary btn-small" id="btn-gerar-ia-rep" style="margin-top:14px">Gerar relatório</button>
-        <div id="ia-rep-result" style="margin-top:14px"></div>
+        <div id="ia-rep-result" class="panel-scroll" style="margin-top:14px"></div>
       </div>
     </div>
   `;
@@ -1180,8 +1246,12 @@ function wireStudentRowButtons() {
     document.getElementById("s-nome").value = s.nome;
     document.getElementById("s-nivel").value = s.nivel || "";
     document.getElementById("s-status").value = s.status || "Ativo";
-    document.querySelectorAll(".s-dia-check").forEach(cb => { cb.checked = (s.diasSemana || []).includes(cb.dataset.value); });
+    document.querySelectorAll(".weekday-option").forEach(el => { el.classList.toggle("selected", (s.diasSemana || []).includes(el.dataset.value)); });
+    document.getElementById("s-dias-semana").value = (s.diasSemana || []).join(",");
     document.getElementById("s-horario").value = s.horarioSlot || "";
+    const [ad, am] = (s.aniversario || "").split("/");
+    document.getElementById("s-aniv-dia").value = ad ? String(Number(ad)) : "";
+    document.getElementById("s-aniv-mes").value = am ? String(Number(am)) : "";
     document.getElementById("s-contato").value = s.contato || "";
     document.getElementById("student-form-title").textContent = "Editar aluno";
     captureFormDraft("student-form");
@@ -1238,7 +1308,9 @@ function wireAssessmentRowButtons() {
 function attachHandlers() {
   // Alunos
   const sf = document.getElementById("student-form");
-  if (sf) { sf.addEventListener("submit", submitStudent); wireDraft("student-form"); }
+  if (sf) { sf.addEventListener("submit", submitStudent); wireDraft("student-form"); wireWeekdayPicker(); }
+  const btnLimparNovoAluno = document.getElementById("btn-limpar-novo-aluno");
+  if (btnLimparNovoAluno) btnLimparNovoAluno.addEventListener("click", limparNovoAluno);
   const btnBuscarAluno = document.getElementById("btn-buscar-aluno");
   if (btnBuscarAluno) btnBuscarAluno.addEventListener("click", buscarAlunos);
   const btnLimparAluno = document.getElementById("btn-limpar-aluno");
@@ -1265,6 +1337,10 @@ function attachHandlers() {
     wireDraft("lesson-form", lessonDraftKey());
     ["l-habilidades", "l-tempos", "l-subtemas", "l-dificuldades"].forEach(wireMultiDropdown);
   }
+  const btnFecharAula = document.getElementById("btn-fechar-aula-selecionada");
+  if (btnFecharAula) btnFecharAula.addEventListener("click", () => { aulaSelecionada = null; render(); });
+  const overlay = document.querySelector(".aula-selecionada-overlay.active");
+  if (overlay) overlay.addEventListener("click", (ev) => { if (ev.target === overlay) { aulaSelecionada = null; render(); } });
   const btnLimparAula = document.getElementById("btn-limpar-aula");
   if (btnLimparAula) btnLimparAula.addEventListener("click", limparFormularioAula);
   const lPresenca = document.getElementById("l-presenca");
@@ -1281,6 +1357,8 @@ function attachHandlers() {
   // Reposições
   const mf = document.getElementById("makeup-form");
   if (mf) { mf.addEventListener("submit", submitMakeup); wireDraft("makeup-form"); }
+  const btnLimparRep = document.getElementById("btn-limpar-reposicao");
+  if (btnLimparRep) btnLimparRep.addEventListener("click", limparReposicao);
   document.querySelectorAll("[data-marcar-makeup]").forEach(b => b.addEventListener("click", () => {
     const m = makeups().find(x => x.id === b.dataset.marcarMakeup);
     if (!m) return;
@@ -1306,6 +1384,8 @@ function attachHandlers() {
   // Nivelamento
   const af = document.getElementById("assessment-form");
   if (af) { af.addEventListener("submit", submitAssessment); wireDraft("assessment-form"); }
+  const btnLimparNivelamento = document.getElementById("btn-limpar-nivelamento");
+  if (btnLimparNivelamento) btnLimparNivelamento.addEventListener("click", limparNivelamento);
   const btnBuscarNivelStatus = document.getElementById("btn-buscar-nivel-status");
   if (btnBuscarNivelStatus) btnBuscarNivelStatus.addEventListener("click", buscarStatusPorAluno);
   const btnLimparNivelStatus = document.getElementById("btn-limpar-nivel-status");
