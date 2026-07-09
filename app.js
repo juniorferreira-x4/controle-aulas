@@ -64,18 +64,24 @@ function generateTimeSlots(startHour, endHour, stepMin) {
 const TIME_SLOTS = generateTimeSlots(7, 22, 15);
 
 // ===== Regras do contrato =====
+function toLocalISO(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 function addDays(dateStr, days) {
   const d = new Date(dateStr + "T00:00:00");
   d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
+  return toLocalISO(d);
 }
 function addMonths(dateStr, months) {
   const d = new Date(dateStr + "T00:00:00");
   d.setMonth(d.getMonth() + months);
-  return d.toISOString().slice(0, 10);
+  return toLocalISO(d);
 }
 function monthKeyOf(dateStr) { return dateStr ? dateStr.slice(0, 7) : "sem-data"; }
-function hojeISO() { return new Date().toISOString().slice(0, 10); }
+function hojeISO() { return toLocalISO(new Date()); }
 
 function prazoInfo(m) {
   if (!m.dataPerdida) return { prazo: null, expirada: false, diasRestantes: null };
@@ -395,12 +401,12 @@ function getMondayISO(offsetWeeks) {
   const day = d.getDay();
   const diffToMonday = (day === 0 ? -6 : 1 - day);
   d.setDate(d.getDate() + diffToMonday + offsetWeeks * 7);
-  return d.toISOString().slice(0, 10);
+  return toLocalISO(d);
 }
 function weekDates(offsetWeeks) {
   const monday = new Date(getMondayISO(offsetWeeks) + "T00:00:00");
   const dates = [];
-  for (let i = 0; i < 5; i++) { const d = new Date(monday); d.setDate(monday.getDate() + i); dates.push(d.toISOString().slice(0, 10)); }
+  for (let i = 0; i < 5; i++) { const d = new Date(monday); d.setDate(monday.getDate() + i); dates.push(toLocalISO(d)); }
   return dates;
 }
 function blocosDaSemana(offsetWeeks) {
@@ -499,10 +505,6 @@ function renderAulaSelecionada() {
         <div id="feriado-aviso" class="section-hidden">
           <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">Feriado combinado: nenhuma reposição é gerada.</p>
         </div>
-
-        <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-weight:400;font-size:13px;margin-top:14px">
-          <input type="checkbox" id="l-atraso15" style="width:auto" ${lesson?.atraso15 ? "checked" : ""}> Aluno chegou com mais de 15 min de atraso
-        </label>
 
         <label>Habilidade(s) em foco</label>
         ${multiDropdownHtml("l-habilidades", SKILLS, lesson?.habilidades || [])}
@@ -637,7 +639,6 @@ function submitLesson(e) {
     subtemaOutro: document.getElementById("l-sub-outro").value.trim(),
     presenca,
     aviso24h,
-    atraso15: document.getElementById("l-atraso15").checked,
     dificuldades: readMultiDropdown("l-dificuldades"),
     dificuldadeOutra: document.getElementById("l-dif-outra").value.trim()
   };
@@ -1002,23 +1003,34 @@ function renderDashboard() {
   `).join("") : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:16px 0">Sem alunos com esse filtro.</td></tr>`;
 
   return `
-    <div class="card">
-      <h2>Visão geral</h2>
-      <div class="grid-2">
-        <div><label>Ano</label><select id="dash-filtro-ano"><option value="">Todos</option>${anos.map(a => `<option ${dashboardFiltro.ano === a ? "selected" : ""}>${a}</option>`).join("")}</select></div>
-        <div><label>Semestre</label><select id="dash-filtro-semestre"><option value="">Todos</option><option value="1" ${dashboardFiltro.semestre === "1" ? "selected" : ""}>1º semestre</option><option value="2" ${dashboardFiltro.semestre === "2" ? "selected" : ""}>2º semestre</option></select></div>
+    <div class="grid-pair">
+      <div class="card">
+        <h2>Visão geral</h2>
+        <div class="grid-2">
+          <div><label>Ano</label><select id="dash-filtro-ano"><option value="">Todos</option>${anos.map(a => `<option ${dashboardFiltro.ano === a ? "selected" : ""}>${a}</option>`).join("")}</select></div>
+          <div><label>Semestre</label><select id="dash-filtro-semestre"><option value="">Todos</option><option value="1" ${dashboardFiltro.semestre === "1" ? "selected" : ""}>1º semestre</option><option value="2" ${dashboardFiltro.semestre === "2" ? "selected" : ""}>2º semestre</option></select></div>
+        </div>
+        <label>Mês</label>
+        <select id="dash-filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}" ${dashboardFiltro.mes === m.slice(0, 2) ? "selected" : ""}>${m.slice(3)}</option>`).join("")}</select>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary btn-small" id="btn-buscar-dashboard">Buscar</button>
+          <button type="button" class="btn btn-ghost btn-small" id="btn-limpar-dashboard">Limpar</button>
+        </div>
+        <div class="stat-grid" style="margin-top:16px">
+          <div class="stat-box"><div class="stat-num">${totalPresente}</div><div class="stat-label">Aulas dadas (período)</div></div>
+          <div class="stat-box"><div class="stat-num">${totalFalta}</div><div class="stat-label">Faltas (período)</div></div>
+          <div class="stat-box"><div class="stat-num">${pendentes}</div><div class="stat-label">Reposições pendentes</div></div>
+          <div class="stat-box"><div class="stat-num">${nivelVencidos}</div><div class="stat-label">Nivelamentos vencidos</div></div>
+        </div>
       </div>
-      <label>Mês</label>
-      <select id="dash-filtro-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}" ${dashboardFiltro.mes === m.slice(0, 2) ? "selected" : ""}>${m.slice(3)}</option>`).join("")}</select>
-      <div class="btn-row">
-        <button type="button" class="btn btn-primary btn-small" id="btn-buscar-dashboard">Buscar</button>
-        <button type="button" class="btn btn-ghost btn-small" id="btn-limpar-dashboard">Limpar</button>
-      </div>
-      <div class="stat-grid" style="margin-top:16px">
-        <div class="stat-box"><div class="stat-num">${totalPresente}</div><div class="stat-label">Aulas dadas (período)</div></div>
-        <div class="stat-box"><div class="stat-num">${totalFalta}</div><div class="stat-label">Faltas (período)</div></div>
-        <div class="stat-box"><div class="stat-num">${pendentes}</div><div class="stat-label">Reposições pendentes</div></div>
-        <div class="stat-box"><div class="stat-num">${nivelVencidos}</div><div class="stat-label">Nivelamentos vencidos</div></div>
+      <div class="card">
+        <h2>Backup dos dados</h2>
+        <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 10px">Este app guarda os dados só neste dispositivo/navegador. Para levar os dados para outro aparelho, exporte aqui e importe lá.</p>
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-primary btn-small" id="btn-export">Exportar backup (.json)</button>
+          <button class="btn btn-ghost btn-small" id="btn-import-trigger">Importar backup</button>
+        </div>
+        <input type="file" id="file-import" accept=".json" style="display:none">
       </div>
     </div>
     <div class="card card-full">
@@ -1032,30 +1044,71 @@ function renderDashboard() {
         <tbody>${rowsHtml}</tbody>
       </table>
     </div>
-    <div class="card card-full">
-      <h2>Backup dos dados</h2>
-      <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 10px">Este app guarda os dados só neste dispositivo/navegador. Para levar os dados para outro aparelho, exporte aqui e importe lá.</p>
-      <div class="btn-row" style="margin-top:0">
-        <button class="btn btn-primary btn-small" id="btn-export">Exportar backup (.json)</button>
-        <button class="btn btn-ghost btn-small" id="btn-import-trigger">Importar backup</button>
-      </div>
-      <input type="file" id="file-import" accept=".json" style="display:none">
-    </div>
   `;
 }
 
 // ===== RESUMO IA =====
 function renderResumoIA() {
   const opts = students().map(s => `<option value="${s.id}">${esc(s.nome)}</option>`).join("");
+  const anos = [...new Set(makeups().map(m => (m.dataPerdida || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+  const meses = ["01-Jan", "02-Fev", "03-Mar", "04-Abr", "05-Mai", "06-Jun", "07-Jul", "08-Ago", "09-Set", "10-Out", "11-Nov", "12-Dez"];
   return `
-    <div class="card">
-      <h2>Resumo para colar no Claude</h2>
-      <label>Aluno</label>
-      <select id="ia-aluno"><option value="">Selecione um aluno</option><option value="__todos__">Todos</option>${opts}</select>
-      <button class="btn btn-primary btn-small" id="btn-gerar-ia" style="margin-top:14px">Gerar resumo</button>
-      <div id="ia-result" style="margin-top:14px"></div>
+    <div class="grid-pair">
+      <div class="card">
+        <h2>Resumo para colar no Claude</h2>
+        <label>Aluno</label>
+        <select id="ia-aluno"><option value="">Selecione um aluno</option><option value="__todos__">Todos</option>${opts}</select>
+        <button class="btn btn-primary btn-small" id="btn-gerar-ia" style="margin-top:14px">Gerar resumo</button>
+        <div id="ia-result" style="margin-top:14px"></div>
+      </div>
+      <div class="card">
+        <h2>Relatório de reposições em aberto</h2>
+        <div class="grid-2">
+          <div><label>Aluno</label><select id="ia-rep-aluno"><option value="">Todos</option>${opts}</select></div>
+          <div><label>Ano</label><select id="ia-rep-ano"><option value="">Todos</option>${anos.map(a => `<option>${a}</option>`).join("")}</select></div>
+        </div>
+        <label>Mês</label>
+        <select id="ia-rep-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}">${m.slice(3)}</option>`).join("")}</select>
+        <button class="btn btn-primary btn-small" id="btn-gerar-ia-rep" style="margin-top:14px">Gerar relatório</button>
+        <div id="ia-rep-result" style="margin-top:14px"></div>
+      </div>
     </div>
   `;
+}
+
+function gerarRelatorioReposicoesIA() {
+  const alunoId = document.getElementById("ia-rep-aluno").value;
+  const ano = document.getElementById("ia-rep-ano").value;
+  const mes = document.getElementById("ia-rep-mes").value;
+  const box = document.getElementById("ia-rep-result");
+  const cobrancas = mapaCobranca();
+
+  let list = makeups().filter(m => estadoReposicao(m) === "Pendente");
+  if (alunoId) list = list.filter(m => m.alunoId === alunoId);
+  if (ano) list = list.filter(m => (m.dataPerdida || "").slice(0, 4) === ano);
+  if (mes) list = list.filter(m => (m.dataPerdida || "").slice(5, 7) === mes);
+  list = list.sort((a, b) => (a.dataPerdida || "").localeCompare(b.dataPerdida || ""));
+
+  if (!list.length) {
+    box.innerHTML = `<div class="empty-state">Nenhuma reposição em aberto com esse filtro.</div>`;
+    return;
+  }
+
+  const linhas = list.map(m => {
+    const cob = cobrancas[m.id] || { label: "—", detalhe: "" };
+    const prazo = prazoInfo(m);
+    return `- ${studentName(m.alunoId)} | aula perdida em ${fmtDate(m.dataPerdida)} | motivo: ${m.motivo} | cobrança: ${cob.label} (${cob.detalhe}) | prazo p/ remarcar: ${prazo.prazo ? fmtDate(prazo.prazo) : "—"}${prazo.expirada ? " (EXPIRADA)" : prazo.diasRestantes !== null ? ` (${prazo.diasRestantes} dia(s) restante(s))` : ""}${m.obs ? " | obs: " + m.obs : ""}`;
+  });
+
+  const texto = `Relatório de reposições em aberto (${list.length})\n\n${linhas.join("\n")}`;
+
+  box.innerHTML = `
+    <div class="ia-output">${esc(texto)}</div>
+    <button class="btn btn-ghost btn-small" id="btn-copiar-ia-rep" style="margin-top:10px">Copiar texto</button>
+  `;
+  document.getElementById("btn-copiar-ia-rep").addEventListener("click", () => {
+    navigator.clipboard.writeText(texto).then(() => toast("Copiado! Cole no chat com o Claude."));
+  });
 }
 
 function construirResumoAluno(alunoId) {
@@ -1279,6 +1332,8 @@ function attachHandlers() {
   // Resumo IA
   const btnGerar = document.getElementById("btn-gerar-ia");
   if (btnGerar) btnGerar.addEventListener("click", gerarResumoIA);
+  const btnGerarRep = document.getElementById("btn-gerar-ia-rep");
+  if (btnGerarRep) btnGerarRep.addEventListener("click", gerarRelatorioReposicoesIA);
 
   // Tema
   const btnTheme = document.getElementById("btn-theme");

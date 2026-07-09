@@ -164,9 +164,9 @@ nav.tabbar button .icon { font-size: 17px; }
 
 /* Seletor de dias da semana (aba Alunos) */
 .weekday-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
-.weekday-option { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 34px; border: 1px solid var(--paper-line); border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--paper); color: var(--text); user-select: none; }
+.weekday-option { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 34px; border: 1px solid transparent; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--paper); color: var(--text); user-select: none; margin-top: 0; }
 .weekday-option input { display: none; }
-.weekday-option:has(input:checked) { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.weekday-option:has(input:checked) { background: var(--ink); color: var(--on-ink); border-color: var(--accent); }
 
 /* Dropdown de múltipla seleção (estética limpa, substitui checklist expandida) */
 .multi-dropdown { position: relative; margin-top: 2px; }
@@ -200,10 +200,13 @@ nav.tabbar button .icon { font-size: 17px; }
 
 /* ===== Layout desktop ===== */
 @media (min-width: 900px) {
-  main { max-width: 1100px; }
-  .grid-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  main { max-width: 1180px; }
+  .grid-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; margin-bottom: 16px; }
   .grid-pair > .card { margin-bottom: 0; }
+  .grid-pair-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; margin-bottom: 16px; }
+  .grid-pair-3 > .card { margin-bottom: 0; }
   .week-grid { grid-template-columns: repeat(5, 1fr); }
+  .card { padding: 16px 20px; }
 }
 
 @media (max-width: 380px) {
