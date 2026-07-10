@@ -347,7 +347,7 @@ function renderAlunos() {
           <button type="button" class="btn btn-primary btn-small" id="btn-buscar-aluno">Buscar</button>
           <button type="button" class="btn btn-primary btn-small" id="btn-limpar-aluno">Limpar</button>
         </div>
-        <div id="alunos-resultado" class="panel-scroll" style="margin-top:14px">${alunosBuscou ? renderAlunosResultadoAtual() : `<div class="empty-state">Use os filtros acima e clique em Buscar para ver os alunos cadastrados.</div>`}</div>
+        <div id="alunos-resultado" class="panel-scroll" style="margin-top:16px">${alunosBuscou ? renderAlunosResultadoAtual() : `<div class="empty-state">Use os filtros acima e clique em Buscar para ver os alunos cadastrados.</div>`}</div>
       </div>
     </div>
   `;
@@ -585,7 +585,7 @@ function renderHistoricoAulasCard() {
         <button type="button" class="btn btn-primary btn-small" id="btn-buscar-aulas">Buscar</button>
         <button type="button" class="btn btn-primary btn-small" id="btn-limpar-aulas">Limpar</button>
       </div>
-      <div id="aulas-anteriores-list" class="panel-scroll" style="margin-top:12px">${aulasAnterioresBuscou ? renderHistoricoAulasList() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
+      <div id="aulas-anteriores-list" class="panel-scroll" style="margin-top:16px">${aulasAnterioresBuscou ? renderHistoricoAulasList() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
     </div>
   `;
 }
@@ -636,7 +636,7 @@ function limparHistoricoAulas() {
 }
 
 function renderAulas() {
-  return `<div class="split-2col">${renderCalendarioSemanal()}${renderHistoricoAulasCard()}</div>${renderAulaSelecionada()}`;
+  return `<div class="split-2col split-aulas">${renderCalendarioSemanal()}${renderHistoricoAulasCard()}</div>${renderAulaSelecionada()}`;
 }
 
 function toggleFaltaExtra() {
@@ -924,7 +924,7 @@ function renderNivelamento() {
             <button type="button" class="btn btn-primary btn-small" id="btn-buscar-nivel-status">Buscar</button>
             <button type="button" class="btn btn-primary btn-small" id="btn-limpar-nivel-status">Limpar</button>
           </div>
-          <div id="nivel-status-resultado" class="panel-scroll" style="margin-top:14px">${nivelStatusBuscou ? renderStatusPorAlunoResultado() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
+          <div id="nivel-status-resultado" class="panel-scroll" style="margin-top:16px">${nivelStatusBuscou ? renderStatusPorAlunoResultado() : `<div class="empty-state">Use os filtros acima e clique em Buscar.</div>`}</div>
         </div>
 
         <div class="card panel-grow">
@@ -935,7 +935,7 @@ function renderNivelamento() {
               <select id="filtro-nivel-semestre"><option value="">Todos</option><option value="1">1º semestre</option><option value="2">2º semestre</option></select>
             </div>
           </div>
-          <div id="nivel-lista" class="panel-scroll" style="margin-top:12px">${listaHtml}</div>
+          <div id="nivel-lista" class="panel-scroll" style="margin-top:16px">${listaHtml}</div>
         </div>
       </div>
     </div>
@@ -1071,7 +1071,7 @@ function renderDashboard() {
         <select id="dash-status-aluno" style="max-width:220px">
           ${["Ativo", "Inativo", "Trancado", "Todos"].map(s => `<option ${dashboardStatusFiltro === s ? "selected" : ""}>${s}</option>`).join("")}
         </select>
-        <div class="panel-scroll" style="margin-top:12px">
+        <div class="panel-scroll" style="margin-top:16px">
           <table class="student-table">
             <thead><tr><th>Aluno</th><th>Aulas</th><th>Faltas</th><th>% Presença</th><th>Repos. pend.</th></tr></thead>
             <tbody>${rowsHtml}</tbody>
@@ -1124,8 +1124,8 @@ function renderResumoIA() {
         <h2>Resumo para colar no Claude</h2>
         <label>Aluno</label>
         <select id="ia-aluno"><option value="">Selecione um aluno</option><option value="__todos__">Todos</option>${opts}</select>
-        <button class="btn btn-primary btn-small" id="btn-gerar-ia" style="margin-top:14px">Gerar resumo</button>
-        <div id="ia-result" class="panel-scroll" style="margin-top:14px"></div>
+        <button class="btn btn-primary btn-small" id="btn-gerar-ia" style="margin-top:16px">Gerar resumo</button>
+        <div id="ia-result" class="panel-scroll" style="margin-top:16px"></div>
       </div>
       <div class="card panel-grow">
         <h2>Relatório de reposições em aberto</h2>
@@ -1135,8 +1135,8 @@ function renderResumoIA() {
         </div>
         <label>Mês</label>
         <select id="ia-rep-mes"><option value="">Todos</option>${meses.map(m => `<option value="${m.slice(0, 2)}">${m.slice(3)}</option>`).join("")}</select>
-        <button class="btn btn-primary btn-small" id="btn-gerar-ia-rep" style="margin-top:14px">Gerar relatório</button>
-        <div id="ia-rep-result" class="panel-scroll" style="margin-top:14px"></div>
+        <button class="btn btn-primary btn-small" id="btn-gerar-ia-rep" style="margin-top:16px">Gerar relatório</button>
+        <div id="ia-rep-result" class="panel-scroll" style="margin-top:16px"></div>
       </div>
     </div>
   `;
@@ -1170,7 +1170,7 @@ function gerarRelatorioReposicoesIA() {
 
   box.innerHTML = `
     <div class="ia-output">${esc(texto)}</div>
-    <button class="btn btn-ghost btn-small" id="btn-copiar-ia-rep" style="margin-top:10px">Copiar texto</button>
+    <button class="btn btn-ghost btn-small" id="btn-copiar-ia-rep" style="margin-top:16px">Copiar texto</button>
   `;
   document.getElementById("btn-copiar-ia-rep").addEventListener("click", () => {
     navigator.clipboard.writeText(texto).then(() => toast("Copiado! Cole no chat com o Claude."));
@@ -1218,7 +1218,7 @@ function gerarResumoIA() {
   if (alunoId === "__todos__") {
     const blocos = students().map(s => construirResumoAluno(s.id).texto);
     const textoFinal = blocos.join("\n\n=====================\n\n") || "Nenhum aluno cadastrado.";
-    box.innerHTML = `<div class="ia-output">${esc(textoFinal)}</div><button class="btn btn-ghost btn-small" id="btn-copiar-ia" style="margin-top:10px">Copiar texto</button>`;
+    box.innerHTML = `<div class="ia-output">${esc(textoFinal)}</div><button class="btn btn-ghost btn-small" id="btn-copiar-ia" style="margin-top:16px">Copiar texto</button>`;
     document.getElementById("btn-copiar-ia").addEventListener("click", () => navigator.clipboard.writeText(textoFinal).then(() => toast("Copiado! Cole no chat com o Claude.")));
     return;
   }
@@ -1233,7 +1233,7 @@ function gerarResumoIA() {
   `;
   const textoFinal = texto + `\n\n---\nPrompt sugerido: "Com base neste histórico, monte um plano para as próximas 3 aulas, priorizando as dificuldades recorrentes e as habilidades sem prática recente, evitando repetir os temas já abordados, adequado ao nível do aluno."`;
 
-  box.innerHTML = sugestaoHtml + `<div class="ia-output">${esc(textoFinal)}</div><button class="btn btn-ghost btn-small" id="btn-copiar-ia" style="margin-top:10px">Copiar texto</button>`;
+  box.innerHTML = sugestaoHtml + `<div class="ia-output">${esc(textoFinal)}</div><button class="btn btn-ghost btn-small" id="btn-copiar-ia" style="margin-top:16px">Copiar texto</button>`;
   document.getElementById("btn-copiar-ia").addEventListener("click", () => navigator.clipboard.writeText(textoFinal).then(() => toast("Copiado! Cole no chat com o Claude.")));
 }
 

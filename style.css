@@ -85,8 +85,7 @@ main { max-width: 720px; margin: 0 auto; padding: 18px 16px 40px; }
 .card h2 { font-size: 14.5px; margin: 0 0 14px; color: var(--heading); font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .card h2 .count { font-family: var(--mono); font-size: 11px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 20px; padding: 2px 9px; color: var(--text-muted); font-weight: 400; }
 
-label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); margin-bottom: 4px; margin-top: 12px; }
-label:first-child { margin-top: 0; }
+label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); margin-bottom: 4px; margin-top: 16px; }
 
 input, select, textarea {
   width: 100%;
@@ -178,7 +177,7 @@ nav.tabbar button .icon { font-size: 17px; }
 .dd-option input { width: auto; margin: 0; }
 
 /* Espaçamento dedicado para campos "outro" que seguem um dropdown */
-.field-followup { margin-top: 12px; }
+.field-followup { margin-top: 16px; }
 
 /* Calendário semanal */
 .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
@@ -210,25 +209,26 @@ nav.tabbar button .icon { font-size: 17px; }
   }
   nav.tabbar { position: static; }
   main {
-    max-width: 1180px;
+    max-width: 1360px;
     flex: 1;
     min-height: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    padding: 16px 20px;
+    padding: 16px 24px;
   }
-  .card { padding: 16px 20px; }
+  .card { padding: 16px 22px; }
 
   /* Duas colunas preenchendo a altura disponível da aba */
-  .split-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; height: 100%; min-height: 0; }
-  .split-col { display: flex; flex-direction: column; gap: 16px; min-height: 0; height: 100%; }
+  .split-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; min-height: 0; }
+  .split-2col.split-aulas { grid-template-columns: 3fr 2fr; }
+  .split-col { display: flex; flex-direction: column; gap: 20px; min-height: 0; height: 100%; }
 
   /* Painel que cresce para preencher o espaço da coluna, com rolagem interna */
   .panel-grow { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-bottom: 0 !important; }
-  .panel-grow .panel-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+  .panel-grow .panel-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-right: 10px; margin-right: -10px; }
   .panel-fixed { flex-shrink: 0; margin-bottom: 0 !important; }
-  .panel-fixed .panel-scroll { max-height: 100%; overflow-y: auto; }
+  .panel-fixed .panel-scroll { max-height: 100%; overflow-y: auto; padding-right: 10px; margin-right: -10px; }
 
   .week-grid { grid-template-columns: repeat(5, 1fr); flex: 1; min-height: 0; }
   .week-day-col { max-height: 100%; overflow-y: auto; }
