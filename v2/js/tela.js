@@ -1,5 +1,5 @@
 // Tela do aluno. Três modos:
-//  ?s=ID  → link ao vivo no aparelho do aluno (Firestore, login anônimo): acompanha a aula e envia respostas;
+//  ?s=ID  → link ao vivo no aparelho do aluno (Firestore, sem conta): acompanha a aula e envia respostas;
 //  ?t=ID  → listening avulso (só o áudio de um texto);
 //  (nada) → janela no computador do professor, para compartilhar a tela (BroadcastChannel).
 import * as TTS from "./tts.js";

@@ -1,6 +1,6 @@
 // Service worker do Controle de Aulas v2.
 // Rede primeiro (para nunca ficar preso numa versão velha); cache só como reserva offline.
-const CACHE = "controle-aulas-v2-8";
+const CACHE = "controle-aulas-v2-9";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./config.js", "./manifest.json",
   "./js/app.js", "./js/aula.js", "./js/ctx.js", "./js/regras.js", "./js/banco.js", "./js/store.js", "./js/tts.js", "./js/drive.js", "./js/firebase.js", "./js/tela.js", "./js/sessao.js", "./banco/dicas.json", "./aluno.html",

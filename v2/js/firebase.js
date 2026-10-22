@@ -48,14 +48,15 @@ function guardarToken(cred) {
   if (cred && cred.accessToken) { token = cred.accessToken; tokenExpira = Date.now() + 50 * 60 * 1000; }
 }
 
-// Página do aluno: login anônimo + Firestore sem cache local.
+// Página do aluno: Firestore sem cache local. O login anônimo é opcional:
+// se não estiver ativado no projeto, segue sem login (as regras permitem).
 export async function iniciarFirebaseAluno(config) {
   const appMod = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
   const authMod = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
   const fsMod = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
   const app = appMod.initializeApp(config, "aluno");
   const auth = authMod.getAuth(app);
-  await authMod.signInAnonymously(auth);
+  try { await authMod.signInAnonymously(auth); } catch { /* login anônimo desativado: segue sem login */ }
   const db = fsMod.getFirestore(app);
   return { db, doc: fsMod.doc, collection: fsMod.collection, setDoc: fsMod.setDoc, onSnapshot: fsMod.onSnapshot };
 }
