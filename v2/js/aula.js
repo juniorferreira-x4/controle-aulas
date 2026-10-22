@@ -155,14 +155,16 @@ function desenharAula(v = document.getElementById("view")) {
   const total = timer.seg.reduce((s, x) => s + x, 0);
   const quando = `${DIAS_CURTO[diaSemana(aula.data)]} ${fmtData(aula.data)} · ${esc(aula.hora || "")}`;
   const sc = document.getElementById("q-corpo")?.scrollTop || 0;
-  const docs = [al.docAlunoUrl ? `<a class="btn btn-sm" href="${esc(al.docAlunoUrl)}" target="_blank" rel="noopener">Doc do aluno ${ICONES.externo}</a>` : "",
+  const docs = [
     al.docHomeworkUrl ? `<a class="btn btn-sm" href="${esc(al.docHomeworkUrl)}" target="_blank" rel="noopener">Doc homework ${ICONES.externo}</a>` : ""].join("");
   const st = statusConexao();
   const ehRep = aula.tipo === "reposicao" || aula.modelo === "reposicao";
   const meet = ehRep ? config().linkReposicao : al.linkMeet;
   const btnMeet = meet ? `<a class="btn btn-meet" href="${esc(meet)}" target="_blank" rel="noopener" style="grid-column:1 / -1">Entrar na reunião${ehRep ? " de reposição" : ""} ${ICONES.externo}</a>`
     : `<a class="btn" href="${ehRep ? "#/config" : `#/aluno/${esc(al.id)}`}" style="grid-column:1 / -1">Cadastrar link da reunião${ehRep ? " de reposição" : ""}</a>`;
-  const acoes = btnMeet + (!timer.iniciada
+  const btnDoc = al.docAlunoUrl ? `<a class="btn btn-doc" href="${esc(al.docAlunoUrl)}" target="_blank" rel="noopener" style="grid-column:1 / -1">Documento do aluno (Drive) ${ICONES.externo}</a>`
+    : `<a class="btn" href="#/aluno/${esc(al.id)}" style="grid-column:1 / -1">Cadastrar documento do aluno</a>`;
+  const acoes = btnMeet + btnDoc + (!timer.iniciada
     ? `<button class="btn" data-a="aula-tela" id="btn-tela">Tela do aluno <span class="dot ${st.cls}" id="dot-aluno">●</span></button>
        <button class="btn btn-primario" data-a="aula-iniciar">${ICONES.play} Iniciar aula</button>
        <button class="btn btn-perigo" data-a="aula-faltou" style="grid-column:1 / -1">Aluno faltou</button>`
@@ -381,7 +383,7 @@ function conteudoEtapa(id) {
         ${lista((conv
           ? ["Leia 3 a 5 erros anotados e peça para o aluno reformular cada frase.", "Reforce 2 expressões novas que ele usou bem.", "Elogie algo específico da conversa.", "Combine o tema da próxima aula e mostre o homework."]
           : ["Devolva as 2 ou 3 correções mais importantes da aula.", "Elogie algo específico que o aluno fez bem.", "Combine o foco da próxima aula e mostre o homework."]).map(p => li(p)))}
-        <div><button class="btn btn-primario" data-a="aula-encerrar">Encerrar aula ${ICONES.prox}</button></div></div>
+      </div>
       <div class="pilha" style="gap:8px"><h2 class="rotulo">Homework desta aula · na tela do aluno</h2>
         ${hw ? `<div class="item hw-previa">${esc(homeworkComoTexto(hw, al, aula.data))}</div>` : `<span class="sub">Escolha ${conv ? "um tema" : "um tópico"} para gerar o homework.</span>`}</div></div>` };
   }
@@ -714,18 +716,22 @@ function modalTelaAluno() {
         <div class="card destaque"><b>Link fixo do aluno</b>
           <span class="sub">É sempre o mesmo link para este aluno: mande uma vez e peça para ele salvar nos favoritos. Quando você entra na aula, a tela dele abre sozinha; o áudio do listening toca no computador dele, e você vê o que ele escreve enquanto escreve.</span>
           ${!nuvem ? `<span class="txt-alerta mini">Disponível depois do login com o Google (modo nuvem).</span>`
-            : link ? `<input type="text" readonly value="${esc(link)}" id="ta-link"><div class="linha"><button class="btn btn-sm" data-m="copiar">Copiar link</button>${linkWhats(A.al, "x") ? `<button class="btn btn-sm" data-m="whats">Enviar no WhatsApp</button>` : ""}</div>`
+            : link ? `<input type="text" readonly value="${esc(link)}" id="ta-link"><div class="linha"><button class="btn btn-sm btn-primario" data-m="abrir">Abrir o link ${ICONES.externo}</button><button class="btn btn-sm" data-m="copiar">Copiar link</button>${linkWhats(A.al, "x") ? `<button class="btn btn-sm" data-m="whats">Enviar no WhatsApp</button>` : ""}</div>`
             : `<div><button class="btn" data-m="gerar">Criar o link deste aluno</button></div>`}
+          ${!nuvem ? `<div><button class="btn btn-sm" data-m="abrir">Abrir a tela do aluno ${ICONES.externo}</button></div>` : ""}
         </div>
-        <div class="card"><b>Janela para compartilhar a tela</b>
-          <span class="sub">Abre uma janela no seu computador só com o conteúdo do aluno. Compartilhe só ela e ative o áudio do sistema na chamada.</span>
-          <div><button class="btn btn-sm" data-m="janela">Abrir janela</button></div></div>
       </div><div class="modal-rod"><button class="btn" data-m="fechar">Fechar</button></div></section>`;
     };
     abrirModal(desenhar(), { onAction: async (acao) => {
       try {
         if (acao === "fechar") return fecharModal();
-        if (acao === "janela") { const w = window.open(`${baseApp()}aluno.html`, "ca2-tela-aluno", "width=1280,height=800"); if (!w) toast("O navegador bloqueou a janela. Permita pop-ups para este site."); setTimeout(enviarTela, 800); return; }
+        // Abre em nova aba: o link fixo (nuvem) ou, no modo local, a tela espelhada neste computador.
+        if (acao === "abrir") {
+          const url = nuvem && A.al.sessaoFixa ? linkDoAluno(A.al.sessaoFixa) : `${baseApp()}aluno.html`;
+          const w = window.open(url, "_blank");
+          if (!w) toast("O navegador bloqueou a nova aba. Permita pop-ups para este site.");
+          setTimeout(enviarTela, 800); return;
+        }
         if (acao === "gerar") { await ativarLink(); document.querySelector("#modal-raiz .modal-fundo").innerHTML = desenhar(); return; }
         const link = linkDoAluno(A.al.sessaoFixa);
         if (acao === "copiar") return copiar(link);
@@ -782,6 +788,7 @@ Object.assign(ACOES, {
     if (temNuvem() && !Sessao.ativa(A.aula.id)) ativarLink().catch(falhaLink);
   },
   "aula-encerrar": async () => {
+    if (!confirm("Encerrar a aula? O aluno vê a tela final e você vai para o pós-aula.")) return;
     salvarTimer(); const t = A.timer; t.rodando = false; t.encerrada = true; LS.set(A.kTimer, t);
     A.exercicio = null; salvarExercicioNaAula();
     const hw = garantirHwPrevia();
