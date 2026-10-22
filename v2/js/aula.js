@@ -351,9 +351,7 @@ function estadoAluno() {
   } else if (e.id === "listening") {
     const tx = S.banco.textosPorId[aula.textoId];
     if (tx) {
-      B(tx.titulo, [], { audio: true, link: linkOuvir(tx.id), corpo: tx.texto, rate: A.rate });
-      if (A.mostrarTexto) B("", [tx.texto], { texto: true });
-      B("Questions", tx.perguntas); B("About you", tx.pessoais, { inicio: tx.perguntas.length + 1 });
+      B(tx.titulo, [], { audio: true, link: linkOuvir(tx.id), corpo: tx.texto, rate: A.rate }); // só o áudio: sem texto e sem perguntas
     }
   } else if (e.id === "fala" && t) {
     B("Let's talk", t.fala);

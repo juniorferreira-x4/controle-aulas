@@ -9,7 +9,7 @@ const PLAY = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor
 const PAUSA = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>`;
 try { if (localStorage.getItem("ca2_tema") === "claro") document.documentElement.dataset.tema = "claro"; } catch {}
 
-let rate = 1, rateAplicada = null, textoAtual = null, mostrarTexto = false;
+let rate = 1, rateAplicada = null, textoAtual = null;
 
 function player(corpo) {
   if (!TTS.suportado()) return `<p class="sub">This browser can't read the text aloud. Ask your teacher to read it.</p>`;
@@ -54,13 +54,9 @@ async function modoOuvir(id, r) {
       <div class="blocos">
         <section class="bloco"><h2>${esc(tx.nivel)} · listening</h2><div style="font-size:28px;font-weight:700">${esc(tx.titulo)}</div>
           ${player(tx.texto)}
-          <div><button class="btn" id="b-texto">${mostrarTexto ? "Hide the text" : "Show the text"}</button></div>
-          <p class="mini" style="margin:0">Listen first without the text. Then answer the questions with your teacher.</p></section>
-        <section class="bloco"><h2>Questions</h2>${ol(tx.perguntas)}<h2>About you</h2>${ol(tx.pessoais, tx.perguntas.length + 1)}</section>
-        ${mostrarTexto ? `<section class="bloco texto"><p>${esc(tx.texto)}</p></section>` : ""}
+          <p class="mini" style="margin:0">Listen carefully. Your teacher will ask you some questions.</p></section>
       </div>`;
     ligarPlayer();
-    document.getElementById("b-texto").onclick = () => { mostrarTexto = !mostrarTexto; desenhar(); };
   };
   TTS.aoCarregarVozes(() => {});
   desenhar();
@@ -82,7 +78,7 @@ function modoEspelho() {
     d.blocos.forEach(b => {
       if (b.grande) html += `<section class="bloco grande">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${b.itens.map(i => `<p>${esc(i)}</p>`).join("")}</section>`;
       else if (b.texto) html += `<section class="bloco texto"><p>${esc(b.itens[0])}</p></section>`;
-      else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; html += `<section class="bloco"><h2>Listening</h2><div style="font-size:26px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>`; }
+      else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; html += `<section class="bloco grande" style="text-align:left"><h2>Listening</h2><div style="font-size:26px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>`; }
       else html += `<section class="bloco">${b.titulo2 ? `<div style="font-size:24px;font-weight:700">${esc(b.titulo)}</div><h2>${esc(b.titulo2)}</h2>` : b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${ol(b.itens, b.inicio || 1)}</section>`;
     });
     html += `</div>`;
