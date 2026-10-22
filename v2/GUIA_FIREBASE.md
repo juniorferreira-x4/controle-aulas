@@ -31,16 +31,14 @@ service cloud.firestore {
     match /users/{uid}/{document=**} {
       allow read, write: if professor() && request.auth.uid == uid;
     }
-    // Sessão ao vivo da aula (link do aluno). Só quem tem o link lê; só o professor cria e altera.
+    // Sessão ao vivo da aula (link do aluno). Quem tem o link lê; só o professor cria e altera.
     match /sessoes/{sid} {
-      allow get: if request.auth != null;
+      allow get: if true;
       allow list, create, update, delete: if professor();
       // Respostas do aluno: só enquanto o link não expirou, só estes campos e com tamanho limitado.
       match /respostas/{rid} {
-        allow get: if request.auth != null;
-        allow list, delete: if professor();
-        allow create, update: if request.auth != null
-          && get(/databases/$(database)/documents/sessoes/$(sid)).data.expiraEm > request.time
+        allow list, get, delete: if professor();
+        allow create, update: if get(/databases/$(database)/documents/sessoes/$(sid)).data.expiraEm > request.time
           && request.resource.data.keys().hasOnly(['itens', 'texto', 'enviadoEm', 'visto'])
           && request.resource.data.get('texto', '').size() < 6000
           && request.resource.data.get('itens', []).size() <= 20;
@@ -50,7 +48,7 @@ service cloud.firestore {
 }
 ```
 
-6. Em **Authentication → Método de login**, ative também **Anônimo**. É o que permite ao aluno abrir o link da aula sem criar conta.
+6. (Opcional) Em **Authentication → Método de login → Adicionar novo provedor**, ative **Anônimo**. O link do aluno funciona com ou sem ele.
 7. Abra **Configurações (engrenagem) → Geral → Seus apps** e clique em **`</>`** (Web). Registre com o apelido `web`, sem Hosting, e copie o bloco `firebaseConfig`.
 8. Cole o bloco em `v2/config.js`, no lugar de `null`:
 
@@ -95,4 +93,4 @@ Se, no primeiro login, o Google mostrar o aviso “o Google não verificou este 
 - Na aula, clique em **Tela do aluno → Gerar link da aula** e mande o link para o aluno. Ele não precisa de conta.
 - A tela dele acompanha as etapas sozinha. O áudio do listening toca no aparelho dele, e os exercícios escritos que você enviar voltam para a sua tela na hora.
 - O link vale por 4 horas. O aluno só vê o conteúdo da aula e as próprias respostas, nunca os seus dados.
-- Exige o login **Anônimo** ativado (passo 6) e as regras acima publicadas.
+- Exige as regras acima publicadas. O login **Anônimo** não é necessário.
