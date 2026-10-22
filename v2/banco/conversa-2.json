@@ -1,0 +1,76 @@
+{
+  "temas": [
+    {
+      "id": "cv-carreira", "tema": "Careers and professional goals", "niveis": ["B1", "B2", "C1"],
+      "vocab": [["to get promoted", "ser promovido"], ["a career change", "mudança de carreira"], ["to network", "fazer networking"], ["a job interview", "entrevista de emprego"], ["soft skills", "habilidades comportamentais"], ["to quit", "pedir demissão"], ["a mentor", "mentor"], ["to stand out", "se destacar"]],
+      "perguntas": ["What did you want to be when you were a child?", "What do you like most about your job?", "Where do you see yourself in five years?", "Have you ever changed careers or thought about it?", "What soft skill is most important in your field?", "How do you prepare for a job interview?", "Have you ever had a mentor? How did they help you?", "What's the hardest decision you've made at work?", "Is it better to be a specialist or a generalist?", "What would make you quit a job immediately?"],
+      "aprofundar": ["Is loyalty to one company still valuable today?", "Should people choose a career for passion or for money?", "How will AI change your profession in the next 10 years?", "Are degrees losing value compared to skills and portfolios?", "Is it ethical to accept a job offer while planning to leave soon?", "Why do so many talented people feel stuck in their careers?"],
+      "debate": ["Passion is more important than salary when choosing a career.", "Changing jobs often is good for your career."],
+      "roleplay": [{"titulo": "Job interview", "situacao": "Interview for a job you'd love. Answer: 'Tell me about yourself', 'Biggest weakness', 'Why should we hire you?'", "papeis": "Aluno: candidato · Professor: recrutador"}],
+      "escrita": "Write your 'Tell me about yourself' answer for an interview (120–150 words)."
+    },
+    {
+      "id": "cv-meio-ambiente", "tema": "The environment and climate", "niveis": ["B1", "B2", "C1"],
+      "vocab": [["climate change", "mudança climática"], ["to recycle", "reciclar"], ["renewable energy", "energia renovável"], ["a carbon footprint", "pegada de carbono"], ["to waste", "desperdiçar"], ["sustainable", "sustentável"], ["a heatwave", "onda de calor"], ["to reduce", "reduzir"]],
+      "perguntas": ["Do you recycle at home? How?", "Have you noticed changes in the weather in your city?", "What do you do to waste less?", "Would you buy an electric car? Why?", "What's the biggest environmental problem in Brazil?", "Do you think individual actions make a difference?", "How often do you use plastic bags or bottles?", "Would you pay more for sustainable products?", "What do you think about the floods and heatwaves in recent years?", "What should your city do to be greener?"],
+      "aprofundar": ["Who should pay for climate change: rich countries, companies or individuals?", "Is economic growth compatible with protecting the environment?", "Should flying be more expensive because of its emissions?", "Are 'green' products really green, or just marketing?", "What role should Brazil play in protecting the Amazon?", "Is it too late to stop climate change?"],
+      "debate": ["Individual actions can't solve climate change; only governments can.", "Short flights should be banned where there are trains."],
+      "roleplay": [{"titulo": "Condo meeting", "situacao": "Propose a recycling system in your building. Convince a neighbor who thinks it's a waste of time.", "papeis": "Aluno: morador que propõe · Professor: vizinho cético"}],
+      "escrita": "Write an opinion paragraph: 'Individual actions matter / don't matter for the environment.'"
+    },
+    {
+      "id": "cv-relacoes", "tema": "Friendship and relationships", "niveis": ["A2", "B1", "B2"],
+      "vocab": [["to get along with", "se dar bem com"], ["to make friends", "fazer amigos"], ["to lose touch", "perder contato"], ["trust", "confiança"], ["to fall out with", "brigar com"], ["to make up", "fazer as pazes"], ["a close friend", "amigo próximo"], ["to rely on", "contar com"]],
+      "perguntas": ["How did you meet your best friend?", "Is it easy for you to make new friends?", "What makes a good friend?", "Have you lost touch with an old friend? Why?", "Do you prefer a few close friends or many friends?", "How do you usually spend time with friends?", "Have you ever fallen out with a friend? Did you make up?", "Can men and women be just friends?", "Is it harder to make friends as an adult? Why?", "Who can you always rely on?"],
+      "aprofundar": ["Are online friendships as real as offline ones?", "Should you tell a friend a painful truth?", "Why do friendships end without a clear reason?", "Is it possible to be friends with your boss?", "How has social media changed friendship?", "What's more important in a relationship: trust or communication?"],
+      "debate": ["Online friends are real friends.", "You should always tell your friends the truth, even if it hurts."],
+      "roleplay": [{"titulo": "Making up", "situacao": "You forgot your friend's birthday. Call them, apologize and invite them out.", "papeis": "Aluno: quem esqueceu · Professor: amigo chateado"}],
+      "escrita": "Write about a friend who is important to you and why (100–120 words)."
+    },
+    {
+      "id": "cv-cultura", "tema": "Movies, series and music", "niveis": ["A1", "A2", "B1", "B2"],
+      "vocab": [["a plot", "enredo"], ["a spoiler", "spoiler"], ["to binge-watch", "maratonar"], ["a soundtrack", "trilha sonora"], ["overrated", "superestimado"], ["the main character", "personagem principal"], ["a sequel", "continuação"], ["to recommend", "recomendar"]],
+      "perguntas": ["What are you watching these days?", "What's your favorite movie of all time? Why?", "Do you binge-watch series?", "What music do you listen to when you work?", "What's an overrated movie or series, in your opinion?", "Do you prefer watching at home or at the cinema?", "Have you ever cried during a movie?", "Do you watch with subtitles? In which language?", "What's a Brazilian movie or series you'd recommend?", "Which character would you like to be?"],
+      "aprofundar": ["Do streaming platforms make culture better or more repetitive?", "Should movies based on true stories be 100% accurate?", "Is music today worse than in the past, or just different?", "How do series influence the way people see other countries?", "Should artists be judged by their personal behavior?", "Is AI-generated music real art?"],
+      "debate": ["Books are always better than their movies.", "AI-generated art is real art."],
+      "roleplay": [{"titulo": "Choosing a movie", "situacao": "You and a friend want to watch different movies tonight. Convince them.", "papeis": "Aluno e professor: amigos com gostos diferentes"}],
+      "escrita": "Write a short review (100 words) of something you watched recently — without spoilers!"
+    },
+    {
+      "id": "cv-consumo", "tema": "Shopping and consumer habits", "niveis": ["A2", "B1", "B2"],
+      "vocab": [["to shop around", "pesquisar preços"], ["a refund", "reembolso"], ["second-hand", "usado / de segunda mão"], ["a brand", "marca"], ["to return", "devolver"], ["on sale", "em promoção"], ["to complain", "reclamar"], ["fast fashion", "moda rápida"]],
+      "perguntas": ["Do you prefer shopping online or in stores?", "What was the last thing you bought online?", "Have you ever returned something? Why?", "Do you buy second-hand things?", "Are you loyal to any brand?", "Do you shop on Black Friday? Is it worth it?", "What do you spend too much money on?", "Have you ever complained to a company? What happened?", "Do you read reviews before buying?", "What's something you'd never buy online?"],
+      "aprofundar": ["Is fast fashion acceptable, considering its impact?", "Do online reviews still help, or are they mostly fake?", "Why do people buy expensive brands?", "Should companies be forced to repair products instead of replacing them?", "Is minimalism a real lifestyle or a privilege?", "How does advertising manipulate us?"],
+      "debate": ["Fast fashion should be more heavily taxed.", "Online shopping is killing city centers."],
+      "roleplay": [{"titulo": "Asking for a refund", "situacao": "Your new phone stopped working after 10 days. Ask for a refund, not a repair.", "papeis": "Aluno: cliente · Professor: atendente da loja"}],
+      "escrita": "Write a complaint email (100–120 words) about a product that arrived broken."
+    },
+    {
+      "id": "cv-ia", "tema": "Artificial intelligence in daily life", "niveis": ["B1", "B2", "C1"],
+      "vocab": [["to rely on", "depender de"], ["to automate", "automatizar"], ["accurate", "preciso"], ["a chatbot", "chatbot"], ["to replace", "substituir"], ["privacy", "privacidade"], ["bias", "viés"], ["to double-check", "conferir de novo"]],
+      "perguntas": ["Do you use AI tools? For what?", "Has AI ever given you a wrong answer?", "What task would you love to automate?", "Do you trust AI for important decisions?", "Should students use AI for homework?", "Which jobs do you think AI will replace first?", "Do you worry about your privacy when using AI?", "Would you talk to an AI doctor?", "How do you double-check information you find online?", "What should AI never be allowed to do?"],
+      "aprofundar": ["Who is responsible when an AI makes a harmful mistake?", "Should AI-generated content be labeled by law?", "Will AI increase or reduce inequality?", "Can AI be creative, or only imitate?", "Should companies tell customers when they're talking to a bot?", "How should schools adapt to AI?"],
+      "debate": ["AI will create more jobs than it destroys.", "Students should be allowed to use AI in exams."],
+      "roleplay": [{"titulo": "Explaining AI to a grandparent", "situacao": "Explain what AI is and how it could help in their daily life — without technical words.", "papeis": "Aluno: neto/neta · Professor: avô desconfiado"}],
+      "escrita": "Write a paragraph: one way AI helps you and one risk that worries you."
+    },
+    {
+      "id": "cv-fim-de-semana", "tema": "Free time and weekends", "niveis": ["A1", "A2", "B1"],
+      "vocab": [["to hang out", "sair / passar tempo junto"], ["to chill", "relaxar"], ["a hobby", "hobby"], ["to sleep in", "dormir até tarde"], ["to go out", "sair"], ["a day off", "dia de folga"], ["to catch up with", "colocar o papo em dia com"], ["outdoors", "ao ar livre"]],
+      "perguntas": ["What did you do last weekend?", "What's your perfect Saturday?", "Do you have a hobby? How did you start?", "Do you prefer staying home or going out?", "What do you do on a rainy Sunday?", "Who do you usually hang out with?", "Do you sleep in on weekends?", "What new hobby would you like to try?", "What do people in your city do for fun?", "What are your plans for next weekend?"],
+      "aprofundar": ["Do adults have enough free time today?", "Why do hobbies become 'side hustles' so often?", "Is it important to have hobbies that have nothing to do with work?", "Are weekends getting shorter because of phones and emails?", "What's the difference between rest and entertainment?", "Should the work week be four days?"],
+      "debate": ["A four-day work week should be the norm.", "Hobbies shouldn't be turned into businesses."],
+      "roleplay": [{"titulo": "Making weekend plans", "situacao": "Plan a weekend with a friend who has different tastes and a small budget.", "papeis": "Aluno e professor: amigos planejando"}],
+      "escrita": "Describe your perfect weekend in 80–100 words."
+    },
+    {
+      "id": "cv-brasil", "tema": "Brazil through foreign eyes", "niveis": ["B1", "B2", "C1"],
+      "vocab": [["a stereotype", "estereótipo"], ["hospitality", "hospitalidade"], ["laid-back", "descontraído"], ["bureaucracy", "burocracia"], ["to stand in line", "ficar na fila"], ["diversity", "diversidade"], ["a cultural shock", "choque cultural"], ["to be proud of", "ter orgulho de"]],
+      "perguntas": ["What do foreigners usually think about Brazil?", "Which stereotypes about Brazil are true? Which are false?", "What makes you proud of being Brazilian?", "What would surprise a foreigner in their first week here?", "How would you describe Brazilians in three words?", "What Brazilian habit is hard to explain to foreigners?", "What should a tourist never do in Brazil?", "Which Brazilian food would you take abroad?", "Have you ever experienced a cultural shock abroad?", "What would you change about Brazil if you could?"],
+      "aprofundar": ["Is the 'jeitinho brasileiro' a virtue or a problem?", "Why do so many Brazilians want to live abroad?", "How does bureaucracy affect people's lives and businesses in Brazil?", "Is Brazil's diversity well represented in media?", "What could Brazil learn from other countries — and teach them?", "How do Brazilians abroad keep their identity?"],
+      "debate": ["The 'jeitinho brasileiro' does more harm than good.", "Brazil is a good country to start a business."],
+      "roleplay": [{"titulo": "Welcoming a foreign colleague", "situacao": "A colleague from Germany just arrived. Give tips about living and working in Brazil.", "papeis": "Aluno: brasileiro · Professor: estrangeiro curioso"}],
+      "escrita": "Write a short guide (120 words): 5 tips for a foreigner moving to your city."
+    }
+  ]
+}

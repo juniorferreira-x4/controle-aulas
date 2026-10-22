@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English class — Gutierrez Ferreira</title>
+<meta name="theme-color" content="#0E141B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { font-size: 18px; }
+  .tela { max-width: 1100px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; min-height: 100vh; }
+  .tela-cab { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--borda); padding-bottom: 12px; }
+  .tela-cab .marca-sup { font-size: 12px; }
+  .tela-etapa { font-size: 26px; font-weight: 700; }
+  .blocos { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; align-items: start; }
+  .bloco { border: 1px solid var(--borda); border-radius: 14px; background: var(--painel); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .bloco h2 { font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--acento-texto); }
+  .bloco ol { margin: 0; padding-left: 28px; display: flex; flex-direction: column; gap: 12px; font-size: 20px; line-height: 1.45; }
+  .bloco.grande { grid-column: 1 / -1; text-align: center; padding: 48px 24px; }
+  .bloco.grande p { margin: 0; font-size: 34px; font-weight: 600; line-height: 1.3; }
+  .bloco.texto { grid-column: 1 / -1; }
+  .bloco.texto p { margin: 0; font-size: 20px; line-height: 1.75; white-space: pre-line; color: var(--texto-2); }
+  .aguardando { margin: auto; text-align: center; color: var(--muted); }
+  @media (max-width: 520px) { .tela { padding: 16px; } .blocos { grid-template-columns: minmax(0, 1fr); } .bloco.grande p { font-size: 26px; } .bloco ol { font-size: 18px; } }
+</style>
+</head>
+<body>
+<main class="tela" id="tela"><div class="aguardando">Carregando…</div></main>
+<script type="module" src="js/tela.js"></script>
+</body>
+</html>

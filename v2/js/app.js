@@ -8,7 +8,8 @@ import {
 import {
   hojeISO, addDays, segundaDaSemana, fmtData, fmtDataLonga, diaSemana, DIAS_CURTO, DIAS_LONGO, NIVEIS, DIFS, DIF_LABEL,
   aulasNoPeriodo, semRegistro, jaPassou, mapaCobranca, simularCusto, situacaoGratisDoMes, prazoReposicao, reposicoesPendentes,
-  faltasNoPeriodo, aulasDadasDoAluno, sugerirPlano, mesDe, VALOR_REMARCACAO, ehVirtual, STATUS_LABEL
+  faltasNoPeriodo, aulasDadasDoAluno, sugerirPlano, mesDe, VALOR_REMARCACAO, ehVirtual, STATUS_LABEL,
+  PRECOS, MODALIDADE_LABEL, precoTabela, valorMensalEquivalente, fimDoPacote, brl, MODELO_ALUNO, MODELOS, modeloDaAula, sugerirTema, DIA_VENCIMENTO
 } from "./regras.js";
 import { renderAula, renderPos } from "./aula.js";
 import * as TTS from "./tts.js";
@@ -219,8 +220,10 @@ function telaSemana(v) {
 function cardProxima(prox) {
   if (!prox) return `<section class="card"><span class="rotulo">Próxima aula</span><span class="sub">Nenhuma aula nos próximos 14 dias.</span></section>`;
   const al = S.store.aluno(prox.alunoId);
-  const plano = sugerirPlano(S.banco, al, S.store.aulas, prox.id);
-  const t = S.banco.topicos[plano.topicoId];
+  const modelo = (prox.id && S.store.aula(prox.id)?.modelo) || modeloDaAula(al, S.store.aulas, prox.id);
+  const plano = modelo === "conversa" ? null : sugerirPlano(S.banco, al, S.store.aulas, prox.id);
+  const t = plano ? S.banco.topicos[plano.topicoId] : null;
+  const tema = modelo === "conversa" ? S.banco.temasPorId[sugerirTema(S.banco, al, S.store.aulas, prox.id)] : null;
   const dadas = aulasDadasDoAluno(S.store.aulas, al.id);
   const ultHw = dadas.find(a => a.homework);
   const dif = contarDificuldades(dadas.slice(0, 4));
@@ -230,7 +233,8 @@ function cardProxima(prox) {
     <div class="linha"><span style="font-size:20px;font-weight:700">${esc(al.nome)}</span>${tagNivel(al.nivel)}</div>
     <div class="pilha" style="font-size:13px">
       <div><span class="txt-muted">Homework a corrigir:</span> ${ultHw ? `${esc(ultHw.homework.topicoNome)} (${fmtData(ultHw.data)})` : "nenhum"}</div>
-      <div><span class="txt-muted">Tema sugerido:</span> ${t ? esc(t.nome) + ` · ${DIF_LABEL[plano.dif]}` : "—"}</div>
+      <div><span class="txt-muted">Modelo:</span> ${MODELOS[modelo]}</div>
+      <div><span class="txt-muted">${modelo === "conversa" ? "Tema" : "Tópico"} sugerido:</span> ${tema ? esc(tema.tema) : t ? esc(t.nome) + ` · ${DIF_LABEL[plano.dif]}` : "—"}</div>
       <div><span class="txt-muted">Dificuldades recentes:</span> ${dif.length ? esc(dif.slice(0, 3).map(d => d[0]).join(", ")) : "—"}</div>
     </div>
     ${linksDocs(al)}
@@ -607,7 +611,7 @@ function telaAlunos(v) {
     const hwTxt = ultHw ? { sim: "em dia", parcial: "parcial", nao: "não fez" }[ultHw.homeworkFeito] : "—";
     return `<tr>
       <td><a class="nome-link" href="#/aluno/${esc(al.id)}">${esc(al.nome)}</a></td>
-      <td>${tagSituacao(al.situacao)}</td><td>${tagNivel(al.nivel)}</td><td>${esc(al.plano ? al.plano + "/sem" : "—")}</td>
+      <td>${tagSituacao(al.situacao)}</td><td>${tagNivel(al.nivel)}</td><td>${al.plano ? `${esc(al.plano)}/sem · ${esc((MODALIDADE_LABEL[al.modalidade || "mensal"] || "").split(" ")[0])}<br><span class="mini">${brl(valorMensalEquivalente(al))}/mês</span>` : "—"}</td>
       <td class="mono" style="font-size:12px">${esc(horariosTexto(al))}</td>
       <td>${ultima ? fmtData(ultima.data) : "—"}</td>
       <td class="${g.disponivel ? "txt-ok" : "txt-alerta"}">${al.situacao === "ativo" ? (g.disponivel ? "disponível" : g.perdida ? "perdida" : "usada") : "—"}</td>
@@ -625,6 +629,7 @@ function telaAlunos(v) {
         <div class="kpis" role="group" aria-label="Filtrar por situação">
           ${filtroBtn("ativo", "Ativos", cont("ativo"))}${filtroBtn("trancado", "Trancados", cont("trancado"))}
           ${filtroBtn("inativo", "Inativos", cont("inativo"))}${filtroBtn("experimental", "Experimental", cont("experimental"))}${filtroBtn("todos", "Todos", todos.length)}
+          <div class="kpi"><span class="mini">Receita mensal prevista (ativos)</span><span class="v">${brl(todos.filter(a => a.situacao === "ativo").reduce((s, a) => s + (valorMensalEquivalente(a) || 0), 0))}</span></div>
         </div>
         ${lista.length ? `<div class="tabela-caixa"><table><thead><tr><th>Aluno</th><th>Situação</th><th>Nível</th><th>Plano</th><th>Horários</th><th>Última aula</th><th>Remarcação grátis (mês)</th><th>Faltas (mês)</th><th>Homework</th><th>Doc</th></tr></thead><tbody>${linhas}</tbody></table></div>`
           : `<div class="vazio">Nenhum aluno nesta lista.</div>`}
@@ -672,7 +677,7 @@ Object.assign(CAMPOS, {
 // ===================== CADASTRO =====================
 function telaCadastro(v, id) {
   const novo = id === "novo" || !id;
-  const al0 = novo ? { nome: "", situacao: "ativo", nivel: "", plano: "2x", horarios: [], inicioAgenda: hojeISO() } : S.store.aluno(id);
+  const al0 = novo ? { nome: "", situacao: "ativo", nivel: "", plano: "2x", modalidade: "mensal", valorPlano: precoTabela("2x", "mensal"), modeloAula: "auto", horarios: [], inicioAgenda: hojeISO(), inicioPlano: hojeISO() } : S.store.aluno(id);
   if (!al0) { v.innerHTML = `<div class="carregando">Aluno não encontrado. <a href="#/alunos">Voltar</a></div>`; return; }
   const al = JSON.parse(JSON.stringify(al0));
   S.cadastro = al;
@@ -701,7 +706,7 @@ function telaCadastro(v, id) {
             <div class="campo"><label for="c-whats">WhatsApp</label><input type="tel" id="c-whats" data-c="whatsapp" value="${esc(al.whatsapp || "")}" placeholder="21 99999-9999"></div>
             <div class="campo"><label for="c-sit">Situação</label><select id="c-sit" data-c="situacao">${opt("ativo", "Ativo", al.situacao)}${opt("trancado", "Trancado", al.situacao)}${opt("inativo", "Inativo", al.situacao)}${opt("experimental", "Aula experimental", al.situacao)}</select></div>
             <div class="campo"><label for="c-niv">Nível</label><select id="c-niv" data-c="nivel">${opt("", "A definir", al.nivel || "")}${NIVEIS.map(n => opt(n, n, al.nivel)).join("")}</select></div>
-            <div class="campo"><label for="c-plano">Plano</label><select id="c-plano" data-c="plano">${opt("1x", "1x por semana", al.plano)}${opt("2x", "2x por semana", al.plano)}${opt("3x", "3x por semana", al.plano)}</select></div>
+            <div class="campo"><label for="c-mod">Modelo de aula</label><select id="c-mod" data-c="modeloAula">${Object.entries(MODELO_ALUNO).map(([k, r]) => opt(k, r, al.modeloAula || "auto")).join("")}</select></div>
           </div>
           <div class="campo"><span class="campo-rotulo">Horários fixos</span>
             <div class="pilha" id="horarios">${(al.horarios || []).map((h, i) => linhaHorario(h, i)).join("")}</div>
@@ -710,6 +715,15 @@ function telaCadastro(v, id) {
             <div class="campo"><label for="c-ini">Agenda começa em</label><input type="date" id="c-ini" data-c="inicioAgenda" value="${esc(al.inicioAgenda || "")}"></div>
             <div class="campo"><label for="c-aniv">Aniversário (dd/mm)</label><input type="text" id="c-aniv" data-c="aniversario" value="${esc(al.aniversario || "")}" placeholder="15/03"></div>
           </div>
+        </section>
+        <section class="card"><h2 class="card-titulo">Plano e mensalidade</h2>
+          <div class="grid-2">
+            <div class="campo"><label for="c-plano">Plano</label><select id="c-plano" data-c="plano" data-preco="1">${opt("1x", "1x por semana", al.plano)}${opt("2x", "2x por semana", al.plano)}${opt("3x", "3x por semana", al.plano)}</select></div>
+            <div class="campo"><label for="c-modal">Modalidade</label><select id="c-modal" data-c="modalidade" data-preco="1">${["mensal", "trimestral", "semestral"].map(k => opt(k, MODALIDADE_LABEL[k], al.modalidade || "mensal")).join("")}</select></div>
+            <div class="campo"><label for="c-valor">Valor do período (R$)</label><input type="text" inputmode="decimal" id="c-valor" data-c="valorPlano" value="${esc(fmtValor(al.valorPlano ?? precoTabela(al.plano, al.modalidade)))}"></div>
+            <div class="campo"><label for="c-iniplano">Início do plano</label><input type="date" id="c-iniplano" data-c="inicioPlano" value="${esc(al.inicioPlano || "")}"></div>
+          </div>
+          <div class="item" id="info-plano">${infoPlano(al)}</div>
         </section>
         <section class="card"><h2 class="card-titulo">Documentos no Drive</h2>
           <div class="campo"><label for="c-doc">Documento do aluno (compartilhado)</label>
@@ -742,8 +756,32 @@ function telaCadastro(v, id) {
       </div>
     </div></div>`;
   v.querySelectorAll("[data-c]").forEach(el => el.addEventListener("input", () => { S.cadastro[el.dataset.c] = el.value; }));
-  v.querySelectorAll("[data-c]").forEach(el => el.addEventListener("change", () => { S.cadastro[el.dataset.c] = el.value; }));
+  v.querySelectorAll("[data-c]").forEach(el => el.addEventListener("change", () => {
+    S.cadastro[el.dataset.c] = el.value;
+    if (el.dataset.preco) { // plano ou modalidade mudou: valor volta para a tabela do contrato
+      const p = precoTabela(S.cadastro.plano, S.cadastro.modalidade);
+      S.cadastro.valorPlano = p; const inp = document.getElementById("c-valor"); if (inp) inp.value = fmtValor(p);
+    }
+    const info = document.getElementById("info-plano"); if (info) info.innerHTML = infoPlano(S.cadastro);
+  }));
   ligarHorarios(v);
+}
+
+function fmtValor(v) { return v == null || v === "" || isNaN(Number(v)) ? (v ?? "") : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function numValor(v) {
+  if (v == null || v === "") return null;
+  if (typeof v === "number") return v;
+  let t = String(v).trim().replace(/[^\d.,]/g, "");
+  if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+  const n = Number(t); return isNaN(n) ? null : n;
+}
+function infoPlano(al) {
+  const tab = precoTabela(al.plano, al.modalidade);
+  const val = numValor(al.valorPlano) ?? tab;
+  const mensal = valorMensalEquivalente({ ...al, valorPlano: val });
+  const fim = fimDoPacote(al);
+  const dif = tab != null && val != null && Math.abs(val - tab) > 0.009;
+  return `<span class="flex1">${brl(val)} por período · equivale a <b>${brl(mensal)}/mês</b> · vencimento dia ${DIA_VENCIMENTO}${fim ? ` · pacote até ${fmtDataLonga(fim)}` : ""}${dif ? `<br><span class="txt-alerta mini">Diferente da tabela do contrato (${brl(tab)}).</span>` : `<br><span class="mini">Valor da tabela do contrato 2026.</span>`}</span>`;
 }
 
 function linhaHorario(h, i) {
@@ -774,6 +812,12 @@ Object.assign(ACOES, {
     a.nome = (a.nome || "").trim();
     if (!a.nome) { toast("Informe o nome."); document.getElementById("c-nome")?.focus(); return; }
     if (!a.nivel) a.nivel = null;
+    if (a.valorPlano != null && a.valorPlano !== "") {
+      let txt = String(a.valorPlano).trim().replace(/[^\d.,]/g, "");
+      if (txt.includes(",")) txt = txt.replace(/\./g, "").replace(",", ".");
+      const n = Number(txt); a.valorPlano = isNaN(n) ? null : n;
+    } else a.valorPlano = null;
+    if (!a.modalidade) a.modalidade = "mensal";
     a.horarios = (a.horarios || []).filter(h => h.hora);
     const novo = !a.id;
     const orig = novo ? null : S.store.aluno(a.id);
@@ -817,13 +861,31 @@ function telaBiblioteca(v) {
   const t = B.topicos[S.bib.topicoId];
   const d = S.bib.dif;
   const arvore = Object.keys(B.porNivel).map(n => `<div class="grupo"><span class="grupo-t nv-${n}">${n}</span>
-    ${B.porNivel[n].map(x => `<button data-a="bib-top" data-t="${esc(x.id)}" aria-current="${x.id === t.id}"><span>${esc(x.nome)}</span></button>`).join("")}</div>`).join("");
+    ${B.porNivel[n].map(x => `<button data-a="bib-top" data-t="${esc(x.id)}" aria-current="${!S.bib.temaId && x.id === t.id}"><span>${esc(x.nome)}</span></button>`).join("")}</div>`).join("");
   const textos = B.textos.filter(x => x.topicos.includes(t.id));
   const mostrar = !!S.bib.respostas;
   const sec = (titulo, html) => `<section class="card"><h2 class="card-titulo">${titulo}</h2>${html}</section>`;
   const x = t[d];
+  const arvoreConv = `<div class="grupo"><span class="grupo-t txt-acento">CONVERSAÇÃO</span>${B.temas.map(tm => `<button data-a="bib-tema" data-t="${esc(tm.id)}" aria-current="${tm.id === S.bib.temaId}"><span>${esc(tm.tema)}</span></button>`).join("")}</div>`;
+  if (S.bib.temaId && B.temasPorId[S.bib.temaId]) {
+    const tm = B.temasPorId[S.bib.temaId];
+    v.innerHTML = `<div class="cols">
+      <nav class="arvore" aria-label="Tópicos">${arvore}${arvoreConv}</nav>
+      <div class="col-main">
+        <div class="linha"><div class="pilha flex1" style="gap:2px"><span class="tag txt-acento" style="align-self:flex-start">Conversação · ${esc(tm.niveis.join("–"))}</span><h1 style="font-size:22px">${esc(tm.tema)}</h1></div>
+          <button class="btn" data-a="bib-resp" aria-pressed="${mostrar}">${mostrar ? "Esconder tradução" : "Mostrar tradução"}</button></div>
+        <div class="grid-2">
+          ${sec("Vocabulário útil", `<ol class="lista-num">${tm.vocab.map(vv => `<li>${esc(vv[0])}${mostrar ? `<span class="resp">${esc(vv[1])}</span>` : ""}</li>`).join("")}</ol>`)}
+          ${sec("Perguntas", `<ol class="lista-num">${tm.perguntas.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`)}
+          ${sec("Aprofundar (B2+)", `<ol class="lista-num">${tm.aprofundar.map(p => `<li>${esc(p)}</li>`).join("")}</ol>`)}
+          ${sec("Debate e roleplay", `${tm.debate.map(dd => `<div style="font-weight:600">“${esc(dd)}”</div>`).join("")}<div class="sep"></div>${tm.roleplay.map(rp => `<div><b>${esc(rp.titulo)}</b><br>${esc(rp.situacao)}<br><span class="mini">${esc(rp.papeis)}</span></div>`).join("")}`)}
+        </div>
+        ${sec("Escrita (homework)", `<div>${esc(tm.escrita)}</div>`)}
+      </div></div>`;
+    return;
+  }
   v.innerHTML = `<div class="cols">
-    <nav class="arvore" aria-label="Tópicos">${arvore}<span class="mini" style="padding:0 12px">${Object.keys(B.topicos).length} tópicos · ${B.totalItens.toLocaleString("pt-BR")} itens · ${B.textos.length} textos</span></nav>
+    <nav class="arvore" aria-label="Tópicos">${arvore}${arvoreConv}<span class="mini" style="padding:0 12px">${Object.keys(B.topicos).length} tópicos · ${B.totalItens.toLocaleString("pt-BR")} itens · ${B.textos.length} textos</span></nav>
     <div class="col-main">
       <div class="linha"><div class="pilha flex1" style="gap:2px;min-width:240px"><span class="tag nv-${t.nivel}" style="align-self:flex-start">${t.nivel} · ${esc(t.categoria)}</span><h1 style="font-size:22px">${esc(t.nome)}</h1>
         <span class="mini">Subtópicos: ${esc(t.sub.join(" · "))}</span></div>
@@ -843,7 +905,8 @@ function telaBiblioteca(v) {
     </div></div>`;
 }
 Object.assign(ACOES, {
-  "bib-top": el => { S.bib.topicoId = el.dataset.t; render(); },
+  "bib-top": el => { S.bib.topicoId = el.dataset.t; S.bib.temaId = null; render(); },
+  "bib-tema": el => { S.bib.temaId = el.dataset.t; render(); },
   "bib-dif": el => { S.bib.dif = el.dataset.d; render(); },
   "bib-resp": () => { S.bib.respostas = !S.bib.respostas; render(); },
   "bib-ouvir": el => {
@@ -876,8 +939,11 @@ function telaConfig(v) {
       <section class="card"><h2 class="card-titulo">Aparência</h2>
         <div class="seg" role="group" aria-label="Tema"><button data-a="tema" data-t="escuro" aria-pressed="${cfg.tema === "escuro"}">Escuro</button><button data-a="tema" data-t="claro" aria-pressed="${cfg.tema === "claro"}">Claro</button></div>
         <div class="sep"></div>
-        <h2 class="card-titulo">Etapas da aula <span class="mini">(total ${soma} min)</span></h2>
-        <div class="pilha">${cfg.etapas.map((e, i) => `<div class="linha"><label for="et-${i}" style="flex:1">${esc(e.nome)}</label><input type="text" inputmode="numeric" id="et-${i}" data-et="${i}" value="${esc(e.min)}" style="width:80px"> <span class="mini">min</span></div>`).join("")}</div>
+        <h2 class="card-titulo">Etapas · aula estruturada <span class="mini">(total ${soma} min)</span></h2>
+        <div class="pilha">${cfg.etapas.map((e, i) => `<div class="linha"><label for="et-${i}" style="flex:1">${esc(e.nome)}</label><input type="text" inputmode="numeric" id="et-${i}" value="${esc(e.min)}" style="width:80px"> <span class="mini">min</span></div>`).join("")}</div>
+        <h2 class="card-titulo">Etapas · aula de conversação <span class="mini">(total ${cfg.etapasConversa.reduce((s, e) => s + Number(e.min || 0), 0)} min)</span></h2>
+        <span class="mini">Usada automaticamente para alunos B2 em diante (dá para mudar no cadastro de cada aluno ou na própria aula).</span>
+        <div class="pilha">${cfg.etapasConversa.map((e, i) => `<div class="linha"><label for="etc-${i}" style="flex:1">${esc(e.nome)}</label><input type="text" inputmode="numeric" id="etc-${i}" value="${esc(e.min)}" style="width:80px"> <span class="mini">min</span></div>`).join("")}</div>
         <div><button class="btn" data-a="salvar-etapas">Salvar etapas</button></div>
       </section>
       <section class="card"><h2 class="card-titulo">Checklist de dificuldades (pós-aula)</h2>
@@ -892,7 +958,7 @@ function telaConfig(v) {
         <div><button class="btn" data-a="salvar-email">Salvar texto</button></div>
       </section>
     </div>
-    <span class="mini">Banco de exercícios: ${Object.keys(S.banco.topicos).length} tópicos, ${S.banco.totalItens.toLocaleString("pt-BR")} itens e ${S.banco.textos.length} textos.</span>
+    <span class="mini">Banco de exercícios: ${Object.keys(S.banco.topicos).length} tópicos, ${S.banco.totalItens.toLocaleString("pt-BR")} itens, ${S.banco.textos.length} textos e ${S.banco.temas.length} temas de conversação.</span>
   </div>`;
 }
 
@@ -917,7 +983,8 @@ Object.assign(ACOES, {
   "sair": async () => { await S.fb.sair(); location.reload(); },
   "salvar-etapas": async () => {
     const etapas = config().etapas.map((e, i) => ({ ...e, min: Math.max(1, parseInt(document.getElementById(`et-${i}`).value, 10) || e.min) }));
-    await salvarCfg({ etapas }); render();
+    const etapasConversa = config().etapasConversa.map((e, i) => ({ ...e, min: Math.max(1, parseInt(document.getElementById(`etc-${i}`).value, 10) || e.min) }));
+    await salvarCfg({ etapas, etapasConversa }); render();
   },
   "salvar-dif": async () => {
     const lista = document.getElementById("cfg-dif").value.split("\n").map(s => s.trim()).filter(Boolean);

@@ -1,1 +1,1 @@
-{"versao": 1, "arquivos": ["a1-1.json", "a1-2.json", "a2-1.json", "a2-2.json", "b1-1.json", "b1-2.json", "b2-1.json", "b2-2.json"], "textos": ["textos-a.json", "textos-b.json"]}
+{"versao": 2, "arquivos": ["a1-1.json", "a1-2.json", "a2-1.json", "a2-2.json", "b1-1.json", "b1-2.json", "b2-1.json", "b2-2.json"], "textos": ["textos-a.json", "textos-b.json"], "conversa": ["conversa-1.json", "conversa-2.json"]}
