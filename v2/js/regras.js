@@ -51,7 +51,15 @@ export const ETAPAS_CONVERSA = [
   { id: "debate", nome: "Debate / roleplay", min: 14 },
   { id: "devolutiva", nome: "Devolutiva", min: 8 }
 ];
-export const MODELOS = { estruturada: "Estruturada", conversa: "Conversação" };
+// Reposição: 30 minutos, só exercícios (escritos, falados e misturados), sem listening nem homework check.
+export const ETAPAS_REPOSICAO = [
+  { id: "aquecimento", nome: "Aquecimento", min: 3 },
+  { id: "escritos", nome: "Exercícios escritos", min: 10 },
+  { id: "orais", nome: "Exercícios falados", min: 10 },
+  { id: "misto", nome: "Misto (escreve e fala)", min: 5 },
+  { id: "fechamento", nome: "Fechamento", min: 2 }
+];
+export const MODELOS = { estruturada: "Estruturada", conversa: "Conversação", reposicao: "Reposição 30'" };
 export const MODELO_ALUNO = { auto: "Automático (B2+ = conversação)", estruturada: "Sempre estruturada", conversa: "Sempre conversação", alternar: "Alternar a cada aula" };
 
 // Tabela do contrato 2026 (valores totais do período).
@@ -91,6 +99,52 @@ export function horaDoAluno(aluno, iso) {
   return h ? h.hora : null;
 }
 
+// ===== Feriados (nacionais + estado do RJ + cidade do Rio) =====
+// Páscoa pelo algoritmo de Meeus/Jones/Butcher.
+export function pascoa(ano) {
+  const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31), dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return toLocalISO(new Date(ano, mes - 1, dia));
+}
+// Lista padrão do ano. "facultativo" = ponto facultativo (começa desligado; dá para ligar em Ajustes).
+export function feriadosDoAno(ano) {
+  const p = pascoa(ano), f = (md, nome, esfera, facultativo = false) => ({ data: `${ano}-${md}`, nome, esfera, facultativo });
+  const m = (n, nome, esfera, facultativo = false) => ({ data: addDays(p, n), nome, esfera, facultativo });
+  return [
+    f("01-01", "Confraternização Universal", "nacional"),
+    f("01-20", "São Sebastião", "municipal"),
+    m(-48, "Carnaval (segunda)", "ponto facultativo", true),
+    m(-47, "Carnaval (terça)", "estadual"),
+    m(-2, "Paixão de Cristo", "nacional"),
+    f("04-21", "Tiradentes", "nacional"),
+    f("04-23", "São Jorge", "estadual"),
+    f("05-01", "Dia do Trabalho", "nacional"),
+    m(60, "Corpus Christi", "ponto facultativo", true),
+    f("09-07", "Independência", "nacional"),
+    f("10-12", "Nossa Senhora Aparecida", "nacional"),
+    f("11-02", "Finados", "nacional"),
+    f("11-15", "Proclamação da República", "nacional"),
+    f("11-20", "Consciência Negra", "nacional"),
+    f("12-25", "Natal", "nacional")
+  ].sort((x, y) => x.data.localeCompare(y.data));
+}
+// cfg: { feriadosDesligados: [datas], feriadosLigados: [datas facultativas ligadas], feriadosExtras: [{data, nome}] }
+export function feriadosAtivos(cfg, anos) {
+  const mapa = new Map();
+  const deslig = new Set(cfg.feriadosDesligados || []), lig = new Set(cfg.feriadosLigados || []);
+  anos.forEach(ano => feriadosDoAno(ano).forEach(x => {
+    const on = x.facultativo ? lig.has(x.data) : !deslig.has(x.data);
+    if (on) mapa.set(x.data, x.nome);
+  }));
+  (cfg.feriadosExtras || []).forEach(x => { if (x && x.data) mapa.set(x.data, x.nome || "Feriado"); });
+  return mapa;
+}
+let FERIADOS = new Map();
+export function definirFeriados(mapa) { FERIADOS = mapa instanceof Map ? mapa : new Map(); }
+export function feriadoEm(data) { return FERIADOS.get(data) || null; }
+
 // Aulas de um intervalo [ini, fim]: reais + virtuais dos horários fixos.
 export function aulasNoPeriodo(alunos, aulas, ini, fim) {
   const lista = [];
@@ -103,7 +157,10 @@ export function aulasNoPeriodo(alunos, aulas, ini, fim) {
       if (!hora) return;
       if (al.inicioAgenda && d < al.inicioAgenda) return;
       const existe = aulas.some(a => a.alunoId === al.id && a.data === d && a.tipo !== "reposicao");
-      if (!existe) lista.push({ key: chaveVirtual(al.id, d), alunoId: al.id, data: d, hora, tipo: "regular", status: "agendada", virtual: true });
+      if (existe) return;
+      // Feriado: não há aula, não gera reposição nem cobrança.
+      const fer = FERIADOS.get(d);
+      lista.push({ key: chaveVirtual(al.id, d), alunoId: al.id, data: d, hora, tipo: "regular", status: fer ? "feriado" : "agendada", feriadoNome: fer || undefined, virtual: true });
     });
   }
   lista.sort((a, b) => (a.data + (a.hora || "")).localeCompare(b.data + (b.hora || "")));
@@ -205,6 +262,15 @@ export function sugerirPlano(banco, aluno, aulas, aulaAtualId) {
   const dadas = aulasDadasDoAluno(aulas, aluno.id).filter(a => a.id !== aulaAtualId);
   const ultima = dadas.find(a => a.topicoId);
   const difPadrao = nivel === "A1" ? "facil" : "medio";
+  // Módulo atual marcado no cadastro: a aula é sempre dele (o professor decide quando avançar).
+  if (aluno.moduloAtual && banco.topicos[aluno.moduloAtual]) {
+    const ultMod = dadas.find(a => a.topicoId === aluno.moduloAtual);
+    let dif = ultMod ? (ultMod.nivelMaterial || difPadrao) : difPadrao;
+    if (ultMod && ultMod.avaliacaoMaterial === "facil_demais") dif = subirDif(dif);
+    if (ultMod && ultMod.avaliacaoMaterial === "dificil_demais") dif = descerDif(dif);
+    const n = (aluno.modulosFeitos || []).filter(id => banco.topicos[id] && id !== aluno.moduloAtual).length;
+    return { nivel, topicoId: aluno.moduloAtual, dif, motivo: `Módulo atual do aluno${n ? ` · revisão de ${n} módulo${n > 1 ? "s" : ""} concluído${n > 1 ? "s" : ""}` : ""}` };
+  }
   if (!topicos.length) return { nivel, topicoId: null, dif: difPadrao, motivo: "" };
   if (ultima && ultima.avaliacaoMaterial === "dificil_demais" && banco.topicos[ultima.topicoId]) {
     return { nivel, topicoId: ultima.topicoId, dif: descerDif(ultima.nivelMaterial || difPadrao), motivo: "Reforço: o material da última aula foi difícil demais" };
@@ -232,13 +298,32 @@ export function sugerirTexto(banco, nivel, topicoId, dif, usados) {
 }
 
 // ===== Homework automático =====
-function embaralhar(arr, seed) {
+// Módulos concluídos do aluno (para revisão cumulativa), sem o módulo atual.
+export function modulosRevisao(banco, aluno) {
+  return (aluno.modulosFeitos || []).filter(id => banco.topicos[id] && id !== aluno.moduloAtual);
+}
+// Quantos itens de revisão entram numa lista de n itens: ~30% do total (mínimo 1 se houver revisão).
+export function qtdRevisao(n) { return Math.max(1, Math.round(n * 0.3)); }
+// Itens de revisão de um campo (p, t, c, r) dos módulos concluídos, sorteados de forma estável.
+export function itensRevisao(banco, ids, dif, campo, n, seed) {
+  const pool = [];
+  ids.forEach(id => { const t = banco.topicos[id]; if (t && t[dif] && t[dif][campo]) t[dif][campo].forEach(x => pool.push({ x, topico: t.nome, id })); });
+  return embaralhar(pool, seed).slice(0, n);
+}
+// Mistura uma lista de n itens: ~70% do módulo atual + ~30% de revisão.
+export function misturar(atuais, banco, revisao, dif, campo, n, seed) {
+  if (!revisao || !revisao.length) return atuais.slice(0, n);
+  const nr = Math.min(qtdRevisao(n), n - 1);
+  const rev = itensRevisao(banco, revisao, dif, campo, nr, seed + 7).map(o => o.x);
+  return [...atuais.slice(0, n - rev.length), ...rev];
+}
+export function embaralhar(arr, seed) {
   const a = arr.slice(); let s = seed || Math.floor(Math.random() * 1e9);
   for (let i = a.length - 1; i > 0; i--) { s = (s * 9301 + 49297) % 233280; const j = Math.floor((s / 233280) * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
 
-export function gerarHomework(banco, topicoId, dif, avaliacao, textoId, seed) {
+export function gerarHomework(banco, topicoId, dif, avaliacao, textoId, seed, revisao = []) {
   const t = banco.topicos[topicoId];
   if (!t) return null;
   // Na aula usamos perguntas + tradução oral do nível escolhido.
@@ -246,13 +331,14 @@ export function gerarHomework(banco, topicoId, dif, avaliacao, textoId, seed) {
   let difTrad = dif === "dificil" ? "medio" : (avaliacao === "dificil_demais" ? descerDif(dif) : subirDif(dif));
   if (difTrad === dif) difTrad = dif === "facil" ? "medio" : "facil";
   const s = seed || Math.floor(Math.random() * 1e9);
-  const completar = embaralhar(t[dif].c, s).slice(0, 5);
-  const reescrever = embaralhar(t[dif].r, s + 1).slice(0, 3);
-  const traducao = embaralhar(t[difTrad].t, s + 2).slice(0, 3);
+  // ~70% do módulo atual + ~30% de revisão dos módulos concluídos (quando houver).
+  const completar = misturar(embaralhar(t[dif].c, s), banco, revisao, dif, "c", 5, s);
+  const reescrever = misturar(embaralhar(t[dif].r, s + 1), banco, revisao, dif, "r", 3, s + 1);
+  const traducao = misturar(embaralhar(t[difTrad].t, s + 2), banco, revisao, difTrad, "t", 3, s + 2);
   const escrita = embaralhar(t.escrita, s + 3)[0];
   const texto = textoId ? banco.textosPorId[textoId] : null;
   return {
-    topicoId, topicoNome: t.nome, nivel: t.nivel, dif, seed: s,
+    topicoId, topicoNome: t.nome + (revisao && revisao.length ? " + revisão" : ""), nivel: t.nivel, dif, seed: s,
     completar, reescrever, traducao, escrita,
     texto: texto ? { id: texto.id, titulo: texto.titulo, corpo: texto.texto, perguntas: texto.pessoais } : null,
     geradoEm: new Date().toISOString()
@@ -298,10 +384,12 @@ export function homeworkComoTexto(hw, aluno, dataAula, comRespostas = false) {
 // ===== Modelo da aula =====
 const NIVEIS_CONVERSA = ["B2", "C1", "C2"];
 export function modeloDaAula(aluno, aulas, aulaId) {
+  const esta = aulas.find(a => a.id === aulaId);
+  if (esta && esta.tipo === "reposicao") return "reposicao";
   const pref = aluno.modeloAula || "auto";
   if (pref === "estruturada" || pref === "conversa") return pref;
   if (pref === "alternar") {
-    const ult = aulasDadasDoAluno(aulas, aluno.id).find(a => a.id !== aulaId && a.modelo);
+    const ult = aulasDadasDoAluno(aulas, aluno.id).find(a => a.id !== aulaId && a.modelo && a.modelo !== "reposicao");
     return ult && ult.modelo === "estruturada" ? "conversa" : "estruturada";
   }
   return NIVEIS_CONVERSA.includes(aluno.nivel) ? "conversa" : "estruturada";

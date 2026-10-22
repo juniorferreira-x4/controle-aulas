@@ -2,7 +2,8 @@
 import { S, ACOES, CAMPOS, TELA, esc, toast, erro, navegar, config, tagNivel, copiar, ICONES } from "./ctx.js";
 import {
   fmtData, fmtDataLonga, diaSemana, DIAS_CURTO, DIFS, DIF_LABEL, hojeISO, aulasDadasDoAluno, sugerirPlano, sugerirTexto,
-  gerarHomework, gerarHomeworkConversa, homeworkComoTexto, aulasNoPeriodo, addDays, jaPassou, modeloDaAula, sugerirTema, MODELOS
+  gerarHomework, gerarHomeworkConversa, homeworkComoTexto, aulasNoPeriodo, addDays, jaPassou, modeloDaAula, sugerirTema, MODELOS,
+  modulosRevisao, itensRevisao, misturar
 } from "./regras.js";
 import * as TTS from "./tts.js";
 import { inserirNoTopo } from "./drive.js";
@@ -26,7 +27,11 @@ function opcoesTemas(sel) {
 function anteriores(aula) {
   return aulasDadasDoAluno(S.store.aulas, aula.alunoId).filter(a => a.id !== aula.id && (a.data + (a.hora || "")) <= (aula.data + (aula.hora || "")));
 }
-function etapasDoModelo(modelo) { const c = config(); return modelo === "conversa" ? c.etapasConversa : c.etapas; }
+function etapasDoModelo(modelo) { const c = config(); return modelo === "conversa" ? c.etapasConversa : modelo === "reposicao" ? c.etapasReposicao : c.etapas; }
+// Módulos concluídos do aluno, usados como revisão (~30%).
+function revisao() { return A ? modulosRevisao(S.banco, S.store.aluno(A.al.id) || A.al) : []; }
+function nomesRevisao() { return revisao().map(id => S.banco.topicos[id].nome); }
+function seedAula() { return hash(A.aula.id); }
 function vizinha(d) { return d === "facil" ? "medio" : d === "medio" ? "dificil" : "medio"; }
 const lista = (itens, inicio = 1, cls = "") => `<ol class="lista-num ${cls}" start="${inicio}">${itens.join("")}</ol>`;
 const li = (txt, resp, mostrar) => `<li>${esc(txt)}${mostrar && resp ? `<span class="resp">${esc(resp)}</span>` : ""}</li>`;
@@ -57,7 +62,7 @@ export function renderAula(v, id) {
   if (timer.iniciada === undefined) timer.iniciada = timer.rodando || timer.seg.some(x => x >= 1);
   if (timer.seg.length !== etapas.length) timer.seg = etapas.map((_, i) => timer.seg[i] || 0);
   if (timer.etapa >= etapas.length) timer.etapa = 0;
-  A = { aula, al, etapas, kTimer, timer, resp: false, mostrarTexto: false, aqIdx: hash(aula.id) % 7, maisEx: false, rate: al.nivel === "A1" ? 0.85 : 1,
+  A = { aula, al, etapas, kTimer, timer, resp: false, mostrarTexto: false, aqIdx: hash(aula.id) % 6, maisEx: false, rate: al.nivel === "A1" ? 0.85 : 1,
     dicas: {}, exercicio: null, respostas: {}, comentario: "", vendo: null };
   // Exercício que estava aberto (se a página recarregou) e respostas já recebidas.
   (aula.exercicios || []).forEach(x => { if (x.resposta) A.respostas[x.id] = x.resposta; });
@@ -153,7 +158,11 @@ function desenharAula(v = document.getElementById("view")) {
   const docs = [al.docAlunoUrl ? `<a class="btn btn-sm" href="${esc(al.docAlunoUrl)}" target="_blank" rel="noopener">Doc do aluno ${ICONES.externo}</a>` : "",
     al.docHomeworkUrl ? `<a class="btn btn-sm" href="${esc(al.docHomeworkUrl)}" target="_blank" rel="noopener">Doc homework ${ICONES.externo}</a>` : ""].join("");
   const st = statusConexao();
-  const acoes = !timer.iniciada
+  const ehRep = aula.tipo === "reposicao" || aula.modelo === "reposicao";
+  const meet = ehRep ? config().linkReposicao : al.linkMeet;
+  const btnMeet = meet ? `<a class="btn btn-meet" href="${esc(meet)}" target="_blank" rel="noopener" style="grid-column:1 / -1">Entrar na reunião${ehRep ? " de reposição" : ""} ${ICONES.externo}</a>`
+    : `<a class="btn" href="${ehRep ? "#/config" : `#/aluno/${esc(al.id)}`}" style="grid-column:1 / -1">Cadastrar link da reunião${ehRep ? " de reposição" : ""}</a>`;
+  const acoes = btnMeet + (!timer.iniciada
     ? `<button class="btn" data-a="aula-tela" id="btn-tela">Tela do aluno <span class="dot ${st.cls}" id="dot-aluno">●</span></button>
        <button class="btn btn-primario" data-a="aula-iniciar">${ICONES.play} Iniciar aula</button>
        <button class="btn btn-perigo" data-a="aula-faltou" style="grid-column:1 / -1">Aluno faltou</button>`
@@ -164,13 +173,13 @@ function desenharAula(v = document.getElementById("view")) {
     : `<button class="btn" data-a="aula-tela" id="btn-tela">Tela do aluno <span class="dot ${st.cls}" id="dot-aluno">●</span></button>
        <button class="btn" data-a="aula-play">${timer.rodando ? `${ICONES.pausa} Pausar` : `${ICONES.play} Continuar`}</button>
        <button class="btn" data-a="aula-prox" ${ultima ? "disabled" : ""}>Próxima etapa ${ICONES.prox}</button>
-       <button class="btn ${ultima ? "btn-primario" : ""}" data-a="aula-encerrar">Encerrar aula</button>`;
+       <button class="btn ${ultima ? "btn-primario" : ""}" data-a="aula-encerrar">Encerrar aula</button>`);
   const c = conteudoEtapa(e.id);
   v.innerHTML = `
     <div class="cab-aula">
       <a class="btn btn-sm" href="#/semana">${ICONES.voltar} Semana</a>
       <b style="font-size:17px">${esc(al.nome)}</b>${tagNivel(al.nivel)}<span class="sub">${quando}${aula.tipo === "reposicao" ? " · reposição" : ""}</span>
-      <div class="seg" role="group" aria-label="Modelo da aula">${Object.entries(MODELOS).map(([k, r]) => `<button class="btn-sm" data-a="aula-modelo" data-m="${k}" aria-pressed="${aula.modelo === k}">${r}</button>`).join("")}</div>
+      <div class="seg" role="group" aria-label="Modelo da aula">${Object.entries(MODELOS).filter(([k]) => k !== "reposicao" || aula.tipo === "reposicao" || aula.modelo === "reposicao").map(([k, r]) => `<button class="btn-sm" data-a="aula-modelo" data-m="${k}" aria-pressed="${aula.modelo === k}">${r}</button>`).join("")}</div>
       <span class="flex1"></span>
       ${docs}
       <div class="cron"><span class="mini">Aula</span><span class="grande" id="cr-total">${mmss(total)}</span><span class="peq">/ ${mmss(meta)}</span></div>
@@ -240,10 +249,11 @@ function conteudoEtapa(id) {
   const r = A.resp;
 
   if (id === "aquecimento") {
-    const perguntas = S.banco.aquecimento[al.nivel] || S.banco.aquecimento[nivel] || S.banco.aquecimento.A2;
+    const { lista: perguntas, topicos: tps } = perguntasAquecimento();
+    const tq = tps ? S.banco.topicos[tps[A.aqIdx % perguntas.length]] : null;
     const ant = anteriores(aula)[0];
     return { cab: `<button class="btn btn-sm" data-a="aq-outra">Outra pergunta</button>`, corpo: `<div class="grid-2">
-      <section class="card destaque"><span class="rotulo acento">Pergunta</span>
+      <section class="card destaque"><span class="rotulo acento">Pergunta${tq ? ` · ${esc(tq.nome)}${tq.id !== aula.topicoId ? " (revisão)" : ""}` : ""}</span>
         <div style="font-size:22px;font-weight:600;line-height:1.35">${esc(perguntas[A.aqIdx % perguntas.length])}</div></section>
       <section class="card"><span class="rotulo">Retome o combinado da última aula</span>
         ${ant ? `<span class="sub">${fmtDataLonga(ant.data)}${ant.topicoId && S.banco.topicos[ant.topicoId] ? " · " + esc(S.banco.topicos[ant.topicoId].nome) : ""}${ant.temaId && S.banco.temasPorId[ant.temaId] ? " · " + esc(S.banco.temasPorId[ant.temaId].tema) : ""}</span>
@@ -276,12 +286,37 @@ function conteudoEtapa(id) {
       </section></div>` };
   }
 
-  if (id === "pratica") {
+  if (id === "escritos" || id === "misto") {
+    if (!t) return { corpo: `<span class="sub">Selecione um módulo no cadastro do aluno ou um tópico na etapa de exercícios falados.</span>` };
+    const d = aula.nivelMaterial || "medio", rv = nomesRevisao();
+    const cab = `<label for="sel-top" hidden>Tópico</label><select id="sel-top" data-i="aula-topico" style="max-width:280px">${opcoesTopicos(t.id)}</select>
+      <div class="seg" role="group" aria-label="Dificuldade">${DIFS.map(k => `<button class="btn-sm" data-a="aula-dif" data-d="${k}" aria-pressed="${k === d}">${DIF_LABEL[k]}</button>`).join("")}</div>`;
+    const info = `<div class="item"><b>${esc(t.nome)}</b>${rv.length ? ` <span class="mini">+ revisão: ${esc(rv.join(", "))}</span>` : ` <span class="mini">sem módulos concluídos para revisar</span>`}</div>`;
+    const botao = (tp, rot, desc) => `<button class="card opcao-ex" data-a="ex-enviar" data-t="${tp}" ${A.exercicio ? "disabled" : ""}><b>${rot}</b><span class="mini">${desc}</span></button>`;
+    if (id === "escritos") return { cab, corpo: `${info}
+      <span class="sub">Um exercício por vez. Você acompanha o que o aluno escreve no painel ao lado, marca ✓/✗ e libera a correção.</span>
+      <div class="grid-2 opcoes-ex">
+        ${botao("completar", "Completar", "Forma correta do verbo / palavra que falta")}
+        ${botao("reescrever", "Reescrever", "Negativa, pergunta, correção de erro")}
+        ${botao("traducao", "Traduzir escrevendo", "Frases do português para o inglês")}
+        ${botao("escrita5", "Escrita · 5 min", "Texto livre sobre o tema do módulo")}
+      </div>` };
+    const fala = [...t.fala.slice(0, 3), ...revisao().slice(0, 2).map(id2 => S.banco.topicos[id2].fala[0])];
+    return { cab, corpo: `${info}
+      <span class="sub">O aluno responde por escrito, lê em voz alta e você aprofunda oralmente.</span>
+      <div class="grid-2"><div class="pilha" style="gap:10px">${botao("responder", "Enviar perguntas para responder por escrito", "Módulo atual + revisão. Depois ele lê as respostas para você.")}</div>
+        <div><h2 class="rotulo">Para aprofundar falando</h2>${lista(fala.map(p => li(p)))}</div></div>` };
+  }
+
+  if (id === "pratica" || id === "orais") {
     if (!t) return { corpo: `<span class="sub">Selecione um tópico.</span>` };
     const d = aula.nivelMaterial || "medio", x = t[d], dv = vizinha(d);
     const itens = itensPratica(), cur = Math.min(A.timer.prIdx || 0, itens.length - 1);
     const grupo = (tipo, extra) => itens.map((it, n) => ({ it, n })).filter(o => o.it.tipo === tipo && o.it.extra === extra)
-      .map(({ it, n }) => `<li class="clicavel ${n === cur ? "item-atual" : ""}" data-a="pr-ir" data-n="${n}">${esc(it.txt)}${it.resp && r ? `<span class="resp">${esc(it.resp)}</span>` : ""}</li>`);
+      .map(({ it, n }) => `<li class="clicavel ${n === cur ? "item-atual" : ""}" data-a="pr-ir" data-n="${n}">${esc(it.txt)}${it.rev ? ` <span class="tag tag-rev">${esc(it.rev)}</span>` : ""}${it.resp && r ? `<span class="resp">${esc(it.resp)}</span>` : ""}</li>`);
+    const comRev = itens.some(i => i.rev);
+    const rotExtra = comRev ? "Revisão dos módulos concluídos" : `Se sobrar tempo · ${DIF_LABEL[dv]}`;
+    const nP = itens.filter(i => i.tipo === "p" && !i.extra).length, nT = itens.filter(i => i.tipo === "t" && !i.extra).length;
     const atual = itens[cur];
     return {
       cab: `<label for="sel-top" hidden>Tópico</label><select id="sel-top" data-i="aula-topico" style="max-width:280px">${opcoesTopicos(t.id)}</select>
@@ -292,9 +327,9 @@ function conteudoEtapa(id) {
         <button class="btn btn-sm btn-primario" data-a="pr-prox" ${cur >= itens.length - 1 ? "disabled" : ""}>Próxima ${ICONES.prox}</button></div>
       <div class="grid-2">
         <div><h2 class="rotulo">Perguntas · ${DIF_LABEL[d]}</h2>${lista(grupo("p", false))}
-          <h2 class="rotulo txt-muted" style="margin-top:12px">Se sobrar tempo · ${DIF_LABEL[dv]}</h2>${lista(grupo("p", true), x.p.length + 1, "lista-extra")}</div>
+          <h2 class="rotulo txt-muted" style="margin-top:12px">${rotExtra}</h2>${lista(grupo("p", true), nP + 1, "lista-extra")}</div>
         <div><h2 class="rotulo">Tradução oral PT → EN · ${DIF_LABEL[d]}</h2>${lista(grupo("t", false))}
-          <h2 class="rotulo txt-muted" style="margin-top:12px">Se sobrar tempo · ${DIF_LABEL[dv]}</h2>${lista(grupo("t", true), x.t.length + 1, "lista-extra")}</div>
+          <h2 class="rotulo txt-muted" style="margin-top:12px">${rotExtra}</h2>${lista(grupo("t", true), nT + 1, "lista-extra")}</div>
       </div>
       <div><button class="btn btn-sm" data-a="aula-mais">${A.maisEx ? "Esconder exercícios extras" : "Mais exercícios (completar e reescrever)"}</button></div>
       ${A.maisEx ? `<div class="grid-2">
@@ -386,9 +421,15 @@ function caixaTextoAluno() {
     <span class="mini">Na tela do aluno aparece a estrutura trabalhada no topo e este texto logo abaixo.</span></section>`;
 }
 
+// Aquecimento: com módulo/tópico definido, as perguntas usam a estrutura do módulo atual (fácil)
+// mais algumas dos módulos concluídos; sem tópico (conversação), usa as perguntas do nível.
 function perguntasAquecimento() {
-  const { al } = A; const t = S.banco.topicos[A.aula.topicoId];
-  const n = S.banco.aquecimento[al.nivel] ? al.nivel : (t && S.banco.aquecimento[t.nivel] ? t.nivel : "A2");
+  const { al, aula } = A; const t = aula.modelo === "conversa" ? null : S.banco.topicos[aula.topicoId];
+  if (t) {
+    const rev = itensRevisao(S.banco, revisao(), "facil", "p", 3, seedAula());
+    return { n: t.nivel, lista: [...t.facil.p, ...rev.map(o => o.x)], topicos: [...t.facil.p.map(() => t.id), ...rev.map(o => o.id)] };
+  }
+  const n = S.banco.aquecimento[al.nivel] ? al.nivel : "A2";
   return { n, lista: S.banco.aquecimento[n] };
 }
 
@@ -400,21 +441,32 @@ function dicasDaEtapa() {
   const est = (D.estruturas || {})[aula.topicoId];
   const F = D.frases || {}; const fx = faixa(al.nivel);
   if (e.id === "aquecimento") {
-    const { n, lista } = perguntasAquecimento();
+    const { n, lista, topicos } = perguntasAquecimento();
+    if (topicos) { const e2 = (D.estruturas || {})[topicos[A.aqIdx % lista.length]]; return e2 ? { forma: e2.forma, exemplo: e2.exemplo, itens: [] } : null; }
     const arr = (D.aquecimento || {})[n];
     const itens = arr ? arr[A.aqIdx % lista.length] : null;
     return itens ? { itens } : null;
   }
-  if (e.id === "pratica" && est) return { forma: est.forma, exemplo: est.exemplo, itens: [] };
+  if ((e.id === "pratica" || e.id === "orais" || e.id === "escritos" || e.id === "misto") && est) return { forma: est.forma, exemplo: est.exemplo, itens: [] };
   if (e.id === "fala") return { forma: est ? est.forma : "", exemplo: est ? est.exemplo : "", itens: (F.fala || {})[fx] || [] };
   if (e.id === "tema" || e.id === "discussao") return { itens: (F.discussao || {})[fx] || [] };
   if (e.id === "debate") return { itens: (F.debate || {})[fx] || [] };
   return null;
 }
 
+// Itens da prática: módulo atual + (revisão dos módulos concluídos, ~30%) ou, sem revisão, o nível vizinho.
 function itensPratica() {
   const t = S.banco.topicos[A.aula.topicoId]; if (!t) return [];
-  const d = A.aula.nivelMaterial || "medio", dv = vizinha(d);
+  const d = A.aula.nivelMaterial || "medio", dv = vizinha(d), rv = revisao(), sd = seedAula();
+  if (rv.length) {
+    const np = Math.round(t[d].p.length * 3 / 7), nt = Math.round(t[d].t.length * 3 / 7);
+    return [
+      ...t[d].p.map(x => ({ tipo: "p", txt: x, extra: false })),
+      ...itensRevisao(S.banco, rv, d, "p", Math.max(1, np), sd).map(o => ({ tipo: "p", txt: o.x, extra: true, rev: o.topico })),
+      ...t[d].t.map(x => ({ tipo: "t", txt: x[0], resp: x[1], extra: false })),
+      ...itensRevisao(S.banco, rv, d, "t", Math.max(1, nt), sd + 1).map(o => ({ tipo: "t", txt: o.x[0], resp: o.x[1], extra: true, rev: o.topico }))
+    ];
+  }
   return [
     ...t[d].p.map(x => ({ tipo: "p", txt: x, extra: false })), ...t[dv].p.map(x => ({ tipo: "p", txt: x, extra: true })),
     ...t[d].t.map(x => ({ tipo: "t", txt: x[0], resp: x[1], extra: false })), ...t[dv].t.map(x => ({ tipo: "t", txt: x[0], resp: x[1], extra: true }))
@@ -423,7 +475,7 @@ function itensPratica() {
 function gerarHwPrevia(difHw) {
   const { aula, al } = A;
   if (aula.modelo === "conversa") return aula.temaId ? gerarHomeworkConversa(S.banco, aula.temaId, al.nivel) : null;
-  return aula.topicoId ? gerarHomework(S.banco, aula.topicoId, difHw || aula.nivelMaterial || "medio", "adequado", aula.textoId) : null;
+  return aula.topicoId ? gerarHomework(S.banco, aula.topicoId, difHw || aula.nivelMaterial || "medio", "adequado", aula.modelo === "reposicao" ? null : aula.textoId, undefined, revisao()) : null;
 }
 function garantirHwPrevia() {
   const hw = A.aula.homeworkPrevia;
@@ -478,7 +530,11 @@ function estadoAluno() {
     if (!hw) B("", ["Let's talk about your week!"], { grande: true });
     else if (hw.tipo === "conversa") homework = { titulo: hw.topicoNome, forma: "Expressions: " + hw.vocab.map(v => v[0]).join(" · "), exemplo: "", texto: aula.hwTextoAluno || "" };
     else { const est = (S.banco.dicas?.estruturas || {})[hw.topicoId] || {}; homework = { titulo: hw.topicoNome, forma: est.forma || "", exemplo: est.exemplo || "", texto: aula.hwTextoAluno || "" }; }
-  } else if (e.id === "pratica" && t) {
+  } else if (e.id === "escritos") {
+    B("", ["Writing practice"], { grande: true, titulo: "Your teacher will send you an exercise" });
+  } else if (e.id === "misto" && t) {
+    B("Let's talk", [...t.fala.slice(0, 3)]);
+  } else if ((e.id === "pratica" || e.id === "orais") && t) {
     // Um item por vez: o professor avança.
     const itens = itensPratica(), n = Math.min(A.timer.prIdx || 0, itens.length - 1), it = itens[n];
     if (it) {
@@ -507,7 +563,7 @@ function estadoAluno() {
   }
   const dc = dicasDaEtapa();
   const ex = A.exercicio;
-  const EN = { aquecimento: "Warm-up", homework: "Homework check", pratica: "Practice", listening: "Listening", fala: "Speaking", fechamento: "Wrap-up", tema: "Today's topic", discussao: "Discussion", debate: "Debate & role-play", devolutiva: "Feedback" };
+  const EN = { aquecimento: "Warm-up", homework: "Homework check", pratica: "Practice", listening: "Listening", fala: "Speaking", fechamento: "Wrap-up", tema: "Today's topic", discussao: "Discussion", debate: "Debate & role-play", devolutiva: "Feedback", escritos: "Writing practice", orais: "Speaking practice", misto: "Write and speak" };
   return {
     tipo: "estado", aulaId: aula.id, aluno: al.nome.split(" ")[0], etapa: EN[e.id] || e.nome, etapaId: e.id, blocos,
     dicas: dc ? { mostrar: !!A.dicas[A.timer.etapa], ...(A.dicas[A.timer.etapa] ? dc : { itens: [] }) } : null,
@@ -524,7 +580,8 @@ function linkOuvir(textoId) { return `${baseApp()}aluno.html?t=${encodeURICompon
 // ---------- exercícios escritos ----------
 function tiposExercicio() {
   if (A.aula.modelo === "conversa") return [["frases", "Frases com o vocabulário"], ["escrita5", "Escrita · 5 min"], ["escrita10", "Escrita · 10 min"]];
-  return [["traducao", "Traduzir escrevendo"], ["completar", "Completar"], ["reescrever", "Reescrever"], ["escrita5", "Escrita · 5 min"], ["escrita10", "Escrita · 10 min"]];
+  const base = [["traducao", "Traduzir escrevendo"], ["completar", "Completar"], ["reescrever", "Reescrever"], ["responder", "Responder perguntas (escrito)"], ["escrita5", "Escrita · 5 min"], ["escrita10", "Escrita · 10 min"]];
+  return base;
 }
 function criarExercicio(tipo) {
   const { aula } = A;
@@ -540,10 +597,17 @@ function criarExercicio(tipo) {
     return { id, tipo: "escrita", titulo: `Writing · ${min} minutes`, instrucao: "Write as much as you can. Don't worry about mistakes — your teacher will help.", itens: [prompt], gabarito: [], minutos: min, inicio: Date.now() };
   }
   if (!t) return null;
-  const x = t[d];
-  if (tipo === "traducao") return { id, tipo, titulo: "Translate into English", instrucao: "Write each sentence in English.", itens: x.t.map(i => i[0]), gabarito: x.t.map(i => i[1]) };
-  if (tipo === "completar") return { id, tipo, titulo: "Complete the sentences", instrucao: "Write only the missing word(s).", itens: x.c.map(i => i[0]), gabarito: x.c.map(i => i[1]) };
-  if (tipo === "reescrever") return { id, tipo, titulo: "Rewrite the sentences", instrucao: "Rewrite each sentence as asked in brackets.", itens: x.r.map(i => `${i[0]} (${i[1]})`), gabarito: x.r.map(i => i[2]) };
+  const x = t[d], rv = revisao(), sd = Date.now() % 100000;
+  // Módulo atual (~70%) + revisão dos módulos concluídos (~30%).
+  const mix = (campo, n) => misturar(x[campo], S.banco, rv, d, campo, n, sd);
+  if (tipo === "traducao") { const l = mix("t", Math.max(5, x.t.length)); return { id, tipo, titulo: "Translate into English", instrucao: "Write each sentence in English.", itens: l.map(i => i[0]), gabarito: l.map(i => i[1]) }; }
+  if (tipo === "completar") { const l = mix("c", Math.max(5, x.c.length)); return { id, tipo, titulo: "Complete the sentences", instrucao: "Write only the missing word(s).", itens: l.map(i => i[0]), gabarito: l.map(i => i[1]) }; }
+  if (tipo === "reescrever") { const l = mix("r", Math.max(3, x.r.length)); return { id, tipo, titulo: "Rewrite the sentences", instrucao: "Rewrite each sentence as asked in brackets.", itens: l.map(i => `${i[0]} (${i[1]})`), gabarito: l.map(i => i[2]) }; }
+  if (tipo === "responder") {
+    const rev = itensRevisao(S.banco, rv, d, "p", 2, sd).map(o => o.x);
+    const itens = [...x.p.slice(0, rev.length ? 2 : 4), ...rev];
+    return { id, tipo, titulo: "Answer in writing, then out loud", instrucao: "Write a full answer to each question. Then read your answers to your teacher.", itens, gabarito: itens.map(() => "") };
+  }
   return null;
 }
 function salvarExercicioNaAula() {
@@ -767,7 +831,7 @@ Object.assign(ACOES, {
     A.aula.modelo = m;
     prepararPlano();
     A.etapas = etapasDoModelo(m);
-    A.timer = { etapa: 0, seg: A.etapas.map(() => 0), rodando: A.timer.rodando, ultimo: Date.now() };
+    A.timer = { ...A.timer, etapa: 0, seg: A.etapas.map(() => 0), ultimo: Date.now(), prIdx: 0, textoLiberado: false };
     LS.set(A.kTimer, A.timer);
     await S.store.salvarAula(A.aula); desenharAula();
   },
@@ -848,16 +912,42 @@ export function renderPos(v, id) {
     obs: aula.observacao || aula.notaRapida || "",
     topicoId, temaId, dif: dif || "medio",
     hw: aula.homework || aula.homeworkPrevia || null,
-    enviarDrive: !!(S.fb && al.docHomeworkId)
+    enviarDrive: !!(S.fb && al.docHomeworkId),
+    moduloConcluido: false,
+    proxModulo: proximoModulo(al)
   };
   if (!P.hw) regenerar();
   desenharPos(v);
   TELA.limpar = () => { P = null; };
 }
 
+// Próximo módulo sugerido: o seguinte na ordem do banco que ainda não foi concluído.
+function proximoModulo(al) {
+  const feitos = new Set([...(al.modulosFeitos || []), al.moduloAtual].filter(Boolean));
+  const ordem = S.banco.ordem;
+  const i = al.moduloAtual ? ordem.indexOf(al.moduloAtual) : -1;
+  for (let k = 1; k <= ordem.length; k++) { const id = ordem[(i + k + ordem.length) % ordem.length]; if (!feitos.has(id)) return id; }
+  return null;
+}
+function cardModulo() {
+  if (P.modelo === "conversa") return "";
+  const al = S.store.aluno(P.al.id) || P.al;
+  const atual = al.moduloAtual && S.banco.topicos[al.moduloAtual];
+  const nFeitos = (al.modulosFeitos || []).filter(id => S.banco.topicos[id]).length;
+  const sel = (id, campo) => `<select data-i="${campo}" style="max-width:100%">${opcoesTopicos(id || "")}</select>`;
+  return `<section class="card"><h2 class="card-titulo">Módulo do aluno</h2>
+    ${atual ? `<div><span class="txt-muted">Atual:</span> <b>${esc(atual.nome)}</b> <span class="mini">· ${nFeitos} concluído${nFeitos === 1 ? "" : "s"}</span></div>
+      <label class="check"><input type="checkbox" data-i="pos-mod-ok" ${P.moduloConcluido ? "checked" : ""}>Concluímos este módulo nesta aula</label>
+      ${P.moduloConcluido ? `<div class="campo"><label>Próximo módulo</label>${sel(P.proxModulo, "pos-mod-prox")}<span class="mini">Ao salvar, “${esc(atual.nome)}” vai para os concluídos e entra na revisão das próximas aulas.</span></div>` : ""}`
+    : `<span class="sub">Este aluno ainda não tem módulo atual. Defina para a aula seguir o conteúdo que vocês estão trabalhando.</span>
+      <div class="campo"><label>Módulo atual</label>${sel(P.proxModulo, "pos-mod-prox")}</div>
+      <label class="check"><input type="checkbox" data-i="pos-mod-def" ${P.definirModulo ? "checked" : ""}>Definir ao salvar</label>`}
+    <a class="mini" href="#/aluno/${esc(al.id)}">Ver checklist completo no cadastro</a></section>`;
+}
+
 function regenerar(difHw) {
   if (P.modelo === "conversa") P.hw = gerarHomeworkConversa(S.banco, P.temaId, P.al.nivel);
-  else P.hw = gerarHomework(S.banco, P.topicoId, difHw || P.dif, P.avaliacao, P.aula.textoId);
+  else P.hw = gerarHomework(S.banco, P.topicoId, difHw || P.dif, P.avaliacao, P.modelo === "reposicao" ? null : P.aula.textoId, undefined, modulosRevisao(S.banco, S.store.aluno(P.al.id) || P.al));
 }
 
 function desenharPos(v = document.getElementById("view")) {
@@ -902,6 +992,7 @@ function desenharPos(v = document.getElementById("view")) {
           <div class="pilha"><h2 class="rotulo">Fez o homework da aula anterior?</h2>${seg("hwFeito", [["sim", "Sim"], ["parcial", "Parcial"], ["nao", "Não"], ["sem", "Não tinha"]], P.hwFeito)}</div>
           <div class="campo"><label for="pos-obs">Observação (opcional)</label><textarea id="pos-obs" data-i="pos-obs">${esc(P.obs)}</textarea></div>
         </section>
+        ${cardModulo()}
       </div>
       <div class="pilha-16">
         <section class="card destaque">
@@ -981,6 +1072,14 @@ Object.assign(ACOES, {
     el.disabled = true;
     try {
       await S.store.salvarAula(aula);
+      // Módulo: concluir o atual e passar para o próximo, ou definir o primeiro.
+      const alAtual = S.store.aluno(al.id) || al;
+      if (P.moduloConcluido && alAtual.moduloAtual) {
+        const feitos = [...new Set([...(alAtual.modulosFeitos || []), alAtual.moduloAtual])].filter(id => id !== P.proxModulo);
+        await S.store.salvarAluno({ ...alAtual, modulosFeitos: feitos, moduloAtual: P.proxModulo || null });
+      } else if (!alAtual.moduloAtual && P.definirModulo && P.proxModulo) {
+        await S.store.salvarAluno({ ...alAtual, moduloAtual: P.proxModulo });
+      }
       LS.del(`ca2_timer_${aula.id}`);
       if (P.enviarDrive && S.fb && al.docHomeworkId && P.hw) {
         el.textContent = "Enviando para o Drive…";
@@ -1005,6 +1104,9 @@ Object.assign(ACOES, {
 
 Object.assign(CAMPOS, {
   "pos-obs": el => { if (P) P.obs = el.value; },
+  "pos-mod-ok": el => { if (!P) return; P.moduloConcluido = el.checked; desenharPos(); },
+  "pos-mod-def": el => { if (P) P.definirModulo = el.checked; },
+  "pos-mod-prox": el => { if (P) P.proxModulo = el.value; },
   "pos-topico": el => { if (!P || el.value === P.topicoId) return; P.topicoId = el.value; regenerar(); desenharPos(); },
   "pos-tema": el => { if (!P || el.value === P.temaId) return; P.temaId = el.value; regenerar(); desenharPos(); },
   "pos-drive": el => { if (!P) return; P.enviarDrive = el.checked; const b = document.getElementById("btn-salvar-pos"); if (b) b.textContent = P.enviarDrive ? "Salvar e enviar homework" : "Salvar registro"; }

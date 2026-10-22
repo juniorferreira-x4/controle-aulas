@@ -284,3 +284,26 @@ td a.nome-link { color: var(--texto); font-weight: 600; text-decoration: none; }
   .esq-aula { overflow: visible; }
   .quadro { min-height: 60vh; }
 }
+
+/* Módulos, feriados, reunião e reposição */
+.tag-feriado { background: var(--alerta-fundo); color: var(--alerta); border: 1px solid var(--alerta-borda-2); font-size: 10px; margin-top: 4px; }
+.tag-rev { font-size: 10px; padding: 1px 6px; background: var(--painel-3); color: var(--muted); vertical-align: middle; }
+.btn-meet { background: var(--ok-fundo); border-color: var(--ok-borda); color: var(--ok); justify-content: center; font-weight: 600; }
+.btn-meet:hover { border-color: var(--ok); }
+.mod-nivel { border: 1px solid var(--borda); border-radius: 10px; padding: 8px 12px; }
+.mod-nivel > summary { cursor: pointer; display: flex; gap: 8px; align-items: baseline; }
+.mod-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 14px; padding-top: 8px; }
+.mod-grade .check { font-size: 13px; align-items: flex-start; }
+.fer-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 4px 18px; }
+.fer-item { font-size: 13px; gap: 8px; padding: 4px 0; }
+.opcoes-ex { gap: 12px; }
+.opcao-ex { text-align: left; cursor: pointer; gap: 4px; color: var(--texto); }
+.opcao-ex:hover:not([disabled]) { border-color: var(--acento-borda); }
+.opcao-ex[disabled] { opacity: .5; cursor: not-allowed; }
+/* Comunicação */
+.grid-com { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.com-dest { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px 14px; max-height: 260px; overflow: auto; }
+.com-dest .check { font-size: 13px; }
+.com-linha { gap: 8px; }
+.btn.feito { border-color: var(--ok-borda); color: var(--ok); }
+@media (max-width: 900px) { .grid-com { grid-template-columns: minmax(0, 1fr); } }
