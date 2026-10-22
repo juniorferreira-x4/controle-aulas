@@ -1,11 +1,11 @@
 // Service worker do Controle de Aulas v2.
 // Rede primeiro (para nunca ficar preso numa versão velha); cache só como reserva offline.
-const CACHE = "controle-aulas-v2-4";
+const CACHE = "controle-aulas-v2-6";
 const ASSETS = [
-  "./", "./index.html", "./style.css?v=1", "./config.js", "./manifest.json",
-  "./js/app.js", "./js/aula.js", "./js/ctx.js", "./js/regras.js", "./js/banco.js", "./js/store.js", "./js/tts.js", "./js/drive.js", "./js/firebase.js",
+  "./", "./index.html", "./style.css", "./config.js", "./manifest.json",
+  "./js/app.js", "./js/aula.js", "./js/ctx.js", "./js/regras.js", "./js/banco.js", "./js/store.js", "./js/tts.js", "./js/drive.js", "./js/firebase.js", "./js/tela.js", "./aluno.html",
   "./banco/index.json", "./banco/a1-1.json", "./banco/a1-2.json", "./banco/a2-1.json", "./banco/a2-2.json",
-  "./banco/b1-1.json", "./banco/b1-2.json", "./banco/b2-1.json", "./banco/b2-2.json", "./banco/textos-a.json", "./banco/textos-b.json",
+  "./banco/b1-1.json", "./banco/b1-2.json", "./banco/b2-1.json", "./banco/b2-2.json", "./banco/textos-a.json", "./banco/textos-b.json", "./banco/conversa-1.json", "./banco/conversa-2.json",
   "./icons/icon-192.png", "./icons/icon-512.png"
 ];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {})); self.skipWaiting(); });

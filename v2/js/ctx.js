@@ -1,5 +1,5 @@
 // Estado compartilhado e utilitários de interface.
-import { ehVirtual, parseVirtual, horaDoAluno, DIFICULDADES_PADRAO, ETAPAS_PADRAO } from "./regras.js";
+import { ehVirtual, parseVirtual, horaDoAluno, DIFICULDADES_PADRAO, ETAPAS_PADRAO, ETAPAS_CONVERSA } from "./regras.js";
 
 // Registro de ações de clique (data-a) e de campos (data-i), preenchido pelas telas.
 export const ACOES = {};
@@ -66,6 +66,7 @@ export function config() {
   const c = S.store.config || {};
   return {
     etapas: c.etapas && c.etapas.length ? c.etapas : ETAPAS_PADRAO,
+    etapasConversa: c.etapasConversa && c.etapasConversa.length ? c.etapasConversa : ETAPAS_CONVERSA,
     dificuldades: c.dificuldades && c.dificuldades.length ? c.dificuldades : DIFICULDADES_PADRAO,
     emailAssunto: c.emailAssunto || "Bora voltar com o inglês, {nome}?",
     emailCorpo: c.emailCorpo || "Oi, {nome}! Tudo bem?\n\nFaz um tempo desde a nossa última aula ({ultima}). Tenho alguns horários abertos e um formato de aula novo, com listening e homework personalizados.\n\nQuer marcar uma aula para retomar de onde paramos?\n\nAbraço,\nJunior\n\n(Se preferir não receber mais mensagens, é só responder \"parar\".)",

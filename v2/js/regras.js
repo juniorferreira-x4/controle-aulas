@@ -42,6 +42,40 @@ export const ETAPAS_PADRAO = [
   { id: "fala", nome: "Fala", min: 12 },
   { id: "fechamento", nome: "Fechamento", min: 3 }
 ];
+// Aula só de conversação (padrão automático para B2 em diante).
+export const ETAPAS_CONVERSA = [
+  { id: "aquecimento", nome: "Aquecimento", min: 5 },
+  { id: "homework", nome: "Homework", min: 5 },
+  { id: "tema", nome: "Tema e vocabulário", min: 8 },
+  { id: "discussao", nome: "Discussão", min: 20 },
+  { id: "debate", nome: "Debate / roleplay", min: 14 },
+  { id: "devolutiva", nome: "Devolutiva", min: 8 }
+];
+export const MODELOS = { estruturada: "Estruturada", conversa: "Conversação" };
+export const MODELO_ALUNO = { auto: "Automático (B2+ = conversação)", estruturada: "Sempre estruturada", conversa: "Sempre conversação", alternar: "Alternar a cada aula" };
+
+// Tabela do contrato 2026 (valores totais do período).
+export const PRECOS = {
+  "1x": { mensal: 400, trimestral: 1140, semestral: 2208 },
+  "2x": { mensal: 710, trimestral: 2023, semestral: 3919.20 },
+  "3x": { mensal: 1065, trimestral: 3035, semestral: 5878.80 }
+};
+export const MESES_MODALIDADE = { mensal: 1, trimestral: 3, semestral: 6 };
+export const MODALIDADE_LABEL = { mensal: "Mensal", trimestral: "Trimestral (5% off)", semestral: "Semestral (8% off)" };
+export const DIA_VENCIMENTO = 5;
+export function precoTabela(plano, modalidade) { return (PRECOS[plano] || {})[modalidade || "mensal"] ?? null; }
+export function valorMensalEquivalente(aluno) {
+  const total = aluno.valorPlano != null && aluno.valorPlano !== "" ? Number(aluno.valorPlano) : precoTabela(aluno.plano, aluno.modalidade);
+  if (total == null || isNaN(total)) return null;
+  return total / (MESES_MODALIDADE[aluno.modalidade || "mensal"] || 1);
+}
+export function fimDoPacote(aluno) {
+  if (!aluno.inicioPlano || !aluno.modalidade || aluno.modalidade === "mensal") return null;
+  const d = parseISO(aluno.inicioPlano); d.setMonth(d.getMonth() + MESES_MODALIDADE[aluno.modalidade]); d.setDate(d.getDate() - 1);
+  return toLocalISO(d);
+}
+export function brl(v) { return v == null || isNaN(v) ? "—" : Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
+
 export const VALOR_REMARCACAO = 80;
 export const PRAZO_REPOSICAO_DIAS = 21;
 
@@ -228,6 +262,15 @@ export function gerarHomework(banco, topicoId, dif, avaliacao, textoId, seed) {
 export function homeworkComoTexto(hw, aluno, dataAula, comRespostas = false) {
   if (!hw) return "";
   const L = [];
+  if (hw.tipo === "conversa") {
+    L.push(`HOMEWORK — ${fmtDataLonga(dataAula)} — ${hw.topicoNome}`, "");
+    L.push("1) Use each expression in a sentence about your own life:");
+    hw.vocab.forEach((v, i) => L.push(`   ${String.fromCharCode(97 + i)}) ${v[0]}${comRespostas ? `   (${v[1]})` : ""}`));
+    L.push("", `2) Writing: ${hw.escrita}`, "", "3) Prepare for our next class — answer in 3 or 4 sentences:");
+    hw.preparar.forEach((p, i) => L.push(`   ${String.fromCharCode(97 + i)}) ${p}`));
+    L.push("");
+    return L.join("\n");
+  }
   L.push(`HOMEWORK — ${fmtDataLonga(dataAula)} — ${hw.topicoNome}`);
   L.push("");
   L.push("1) Complete the sentences:");
@@ -250,4 +293,39 @@ export function homeworkComoTexto(hw, aluno, dataAula, comRespostas = false) {
   }
   L.push("");
   return L.join("\n");
+}
+
+// ===== Modelo da aula =====
+const NIVEIS_CONVERSA = ["B2", "C1", "C2"];
+export function modeloDaAula(aluno, aulas, aulaId) {
+  const pref = aluno.modeloAula || "auto";
+  if (pref === "estruturada" || pref === "conversa") return pref;
+  if (pref === "alternar") {
+    const ult = aulasDadasDoAluno(aulas, aluno.id).find(a => a.id !== aulaId && a.modelo);
+    return ult && ult.modelo === "estruturada" ? "conversa" : "estruturada";
+  }
+  return NIVEIS_CONVERSA.includes(aluno.nivel) ? "conversa" : "estruturada";
+}
+
+export function sugerirTema(banco, aluno, aulas, aulaId) {
+  const nivel = aluno.nivel || "B1";
+  const doNivel = banco.temas.filter(t => t.niveis.includes(nivel));
+  const base = doNivel.length ? doNivel : banco.temas;
+  const recentes = aulasDadasDoAluno(aulas, aluno.id).filter(a => a.id !== aulaId && a.temaId).slice(0, 12).map(a => a.temaId);
+  const livre = base.find(t => !recentes.includes(t.id));
+  return (livre || base[0] || {}).id || null;
+}
+
+export function gerarHomeworkConversa(banco, temaId, nivel, seed) {
+  const t = banco.temasPorId[temaId];
+  if (!t) return null;
+  const s = seed || Math.floor(Math.random() * 1e9);
+  const avancado = ["B2", "C1", "C2"].includes(nivel);
+  return {
+    tipo: "conversa", temaId, topicoNome: t.tema, nivel, seed: s,
+    vocab: embaralhar(t.vocab, s).slice(0, 5),
+    escrita: t.escrita,
+    preparar: embaralhar(avancado ? t.aprofundar : t.perguntas, s + 1).slice(0, 2),
+    geradoEm: new Date().toISOString()
+  };
 }

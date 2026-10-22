@@ -1,0 +1,76 @@
+{
+  "temas": [
+    {
+      "id": "cv-trabalho-remoto", "tema": "Remote work and the future of offices", "niveis": ["B1", "B2", "C1"],
+      "vocab": [["to commute", "ir e voltar do trabalho"], ["a hybrid model", "modelo híbrido"], ["to burn out", "esgotar-se"], ["work-life balance", "equilíbrio vida-trabalho"], ["to keep in touch", "manter contato"], ["face-to-face", "presencial"], ["to be distracted", "ficar distraído"], ["productivity", "produtividade"]],
+      "perguntas": ["Do you work from home, from an office, or both? Which do you prefer?", "What is the worst part of commuting in your city?", "What do you miss when you don't see your colleagues?", "How do you avoid distractions when you work at home?", "Do you think people work more or less at home? Why?", "What makes a good home office?", "How has your routine changed since remote work became common?", "Would you accept a lower salary to work from home? Why?", "How do you keep in touch with colleagues you never meet?", "What jobs can never be done remotely?"],
+      "aprofundar": ["Some companies are forcing people back to the office. Is that about productivity or control?", "How does remote work affect young professionals who are just starting their careers?", "What happens to city centers if offices stay empty?", "Can company culture exist without a physical space?", "Who benefits most from remote work: employees or employers?", "How should remote workers be evaluated — by hours or by results?"],
+      "debate": ["Companies should let employees choose where they work.", "Remote work is making people lonelier."],
+      "roleplay": [{"titulo": "Negotiating remote days", "situacao": "You want to work from home three days a week. Convince your manager (the teacher), who prefers the office.", "papeis": "Aluno: funcionário · Professor: gestor resistente"}],
+      "escrita": "Write a short email (100–150 words) to your manager asking for a hybrid schedule. Give two reasons and one guarantee."
+    },
+    {
+      "id": "cv-tecnologia", "tema": "Technology and our attention", "niveis": ["A2", "B1", "B2", "C1"],
+      "vocab": [["screen time", "tempo de tela"], ["to scroll", "rolar a tela"], ["to be addicted to", "ser viciado em"], ["a notification", "notificação"], ["to switch off", "desligar-se"], ["to focus on", "focar em"], ["a digital detox", "detox digital"], ["to waste time", "perder tempo"]],
+      "perguntas": ["How many hours a day do you think you use your phone?", "What app do you open first in the morning?", "Do notifications distract you? What do you do about it?", "Have you ever tried a digital detox? How was it?", "What did you do in your free time before smartphones?", "Do you think children should have phones? From what age?", "What technology could you never live without?", "Is there an app you deleted because it was wasting your time?", "Do you prefer reading on paper or on a screen?", "How do you feel when you forget your phone at home?"],
+      "aprofundar": ["Are tech companies responsible for our addiction to their apps?", "Should schools ban phones completely?", "Is it possible to be successful today without social media?", "How is technology changing the way we remember things?", "Does constant access to information make us smarter or more superficial?", "What rules do you think families should have about screens?"],
+      "debate": ["Social media does more harm than good.", "Phones should be banned in schools."],
+      "roleplay": [{"titulo": "The phone-free dinner", "situacao": "Convince a family member (the teacher) to accept a no-phones rule at dinner.", "papeis": "Aluno: quem propõe a regra · Professor: adolescente que não quer"}],
+      "escrita": "Describe your relationship with your phone in one paragraph. What would you like to change?"
+    },
+    {
+      "id": "cv-viagem", "tema": "Travel experiences", "niveis": ["A2", "B1", "B2"],
+      "vocab": [["to book", "reservar"], ["a layover", "escala"], ["to get lost", "se perder"], ["the sights", "pontos turísticos"], ["off the beaten track", "fora do roteiro turístico"], ["jet lag", "jet lag"], ["to pack", "fazer as malas"], ["a souvenir", "lembrancinha"]],
+      "perguntas": ["What's the best trip you've ever taken? Why?", "Do you prefer planning everything or improvising?", "Have you ever had a problem at an airport?", "What's a place in Brazil every foreigner should visit?", "Do you prefer beaches, mountains or cities?", "What do you always pack?", "Have you ever traveled alone? Would you?", "What's the most delicious food you tried on a trip?", "Where would you go if you had two free weeks next month?", "Do you buy souvenirs? What kind?"],
+      "aprofundar": ["Is mass tourism destroying popular destinations?", "Should tourists pay extra taxes in crowded cities?", "Is traveling necessary to understand other cultures, or can books and films do it?", "How has social media changed the way people travel?", "What's the difference between a tourist and a traveler?", "Is it ethical to fly often, considering climate change?"],
+      "debate": ["Tourists should pay a fee to visit crowded cities.", "Traveling alone is better than traveling with friends."],
+      "roleplay": [{"titulo": "Lost luggage", "situacao": "Your suitcase didn't arrive. Explain the problem at the airline desk and get a solution.", "papeis": "Aluno: passageiro · Professor: atendente pouco prestativo"}, {"titulo": "Hotel check-in problem", "situacao": "Your reservation is not in the system. Solve it politely but firmly.", "papeis": "Aluno: hóspede · Professor: recepcionista"}],
+      "escrita": "Write a review (120 words) of a place you visited, with one thing you loved and one thing to improve."
+    },
+    {
+      "id": "cv-saude", "tema": "Health, habits and stress", "niveis": ["A2", "B1", "B2", "C1"],
+      "vocab": [["to work out", "malhar"], ["a balanced diet", "dieta equilibrada"], ["to cut down on", "reduzir"], ["to get enough sleep", "dormir o suficiente"], ["to feel overwhelmed", "sentir-se sobrecarregado"], ["a check-up", "check-up"], ["to take a break", "fazer uma pausa"], ["a healthy routine", "rotina saudável"]],
+      "perguntas": ["What do you do to stay healthy?", "How many hours do you usually sleep?", "What's a habit you'd like to cut down on?", "What do you do when you feel stressed?", "Do you prefer exercising alone or in a group?", "How often do you go for a check-up?", "Is it easy to eat well in your routine? Why?", "What is the most stressful part of your week?", "Do you take breaks during work? How?", "Who in your life has the healthiest habits?"],
+      "aprofundar": ["Should companies be responsible for employees' mental health?", "Is the fitness culture on social media healthy or harmful?", "Why is it so hard to change habits, even when we know they're bad?", "Should unhealthy food be taxed?", "Is burnout a personal problem or a social problem?", "How much should the government interfere in people's health choices?"],
+      "debate": ["Unhealthy food should be more expensive.", "Companies should offer a four-day week for mental health."],
+      "roleplay": [{"titulo": "At the doctor's", "situacao": "Explain your symptoms (tiredness, headaches) and ask questions about the treatment.", "papeis": "Aluno: paciente · Professor: médico"}],
+      "escrita": "Write about one habit you want to change: why, how, and how you'll measure progress."
+    },
+    {
+      "id": "cv-dinheiro", "tema": "Money, spending and saving", "niveis": ["B1", "B2", "C1"],
+      "vocab": [["to save up for", "juntar dinheiro para"], ["a budget", "orçamento"], ["to afford", "ter condições de pagar"], ["an impulse buy", "compra por impulso"], ["to be in debt", "estar endividado"], ["to invest", "investir"], ["a bargain", "uma pechincha"], ["to make ends meet", "fechar as contas do mês"]],
+      "perguntas": ["Are you a saver or a spender?", "What was the last impulse buy you regret?", "Do you keep a budget? How?", "What would you save up for right now?", "Do you prefer paying in cash, by card or by Pix?", "What's something expensive that is worth the money?", "Who taught you about money?", "Do you compare prices before buying?", "Is it rude to talk about salary with friends?", "What's the best bargain you've ever found?"],
+      "aprofundar": ["Should financial education be compulsory in schools?", "Does money bring happiness after a certain point?", "Are credit cards a tool or a trap?", "Why do people buy things they don't need?", "Should salaries be public inside a company?", "Is it better to rent or to buy a home in Brazil today?"],
+      "debate": ["Salaries should be public inside companies.", "Money can buy happiness."],
+      "roleplay": [{"titulo": "Asking for a raise", "situacao": "Ask your manager for a 15% raise. Prepare three arguments.", "papeis": "Aluno: funcionário · Professor: gestor com orçamento apertado"}],
+      "escrita": "Give advice (120 words) to a 20-year-old who just got their first salary."
+    },
+    {
+      "id": "cv-educacao", "tema": "Education and learning", "niveis": ["A2", "B1", "B2", "C1"],
+      "vocab": [["to drop out", "abandonar os estudos"], ["a degree", "diploma"], ["to cram", "estudar em cima da hora"], ["hands-on", "prático"], ["to keep up with", "acompanhar"], ["a scholarship", "bolsa de estudos"], ["lifelong learning", "aprendizado contínuo"], ["to memorize", "decorar"]],
+      "perguntas": ["What was your favorite subject at school? Why?", "Who was your best teacher? What made them special?", "Do you prefer learning alone or in groups?", "Have you ever crammed for an exam? How did it go?", "What's the most useful thing you learned outside school?", "What would you like to learn next?", "Is a university degree still important? Why?", "What's the best way to learn a language, in your opinion?", "Do you learn better with videos, books or practice?", "What subject should every school teach?"],
+      "aprofundar": ["Should university be free for everyone?", "Will AI replace teachers?", "Are exams a fair way to measure learning?", "Should schools teach practical life skills instead of some traditional subjects?", "Is homework useful or a waste of time?", "Why do adults stop learning new things?"],
+      "debate": ["Homework should be abolished.", "A degree is less important than experience."],
+      "roleplay": [{"titulo": "Parent-teacher meeting", "situacao": "Your child is having problems at school. Talk to the teacher and agree on a plan.", "papeis": "Aluno: pai/mãe · Professor: professor da escola"}],
+      "escrita": "Describe the ideal school in 120 words."
+    },
+    {
+      "id": "cv-cidade", "tema": "City life and where we live", "niveis": ["A2", "B1", "B2"],
+      "vocab": [["traffic jam", "engarrafamento"], ["public transport", "transporte público"], ["a neighborhood", "bairro"], ["crowded", "lotado"], ["affordable", "acessível (preço)"], ["safety", "segurança"], ["green areas", "áreas verdes"], ["to move out", "mudar-se"]],
+      "perguntas": ["What do you like most about your neighborhood?", "What would you change in your city?", "How do you usually get around?", "Would you prefer to live in the city or in the countryside?", "What's the best place in your city to relax?", "Is your city safe? What do you do to feel safe?", "What's a hidden gem in your city?", "How has your neighborhood changed in the last years?", "Would you move to another city for a job?", "What's your dream city to live in?"],
+      "aprofundar": ["Should cars be banned from city centers?", "Why are housing prices so high in big cities?", "What makes a city good for children and elderly people?", "Is public transport a right or a service?", "How can cities be more prepared for climate disasters?", "Does living in a big city make people more stressed or more open-minded?"],
+      "debate": ["Cars should be banned from city centers.", "Living in a small town is better than living in a big city."],
+      "roleplay": [{"titulo": "Renting an apartment", "situacao": "Call a landlord, ask questions about an apartment and negotiate the rent.", "papeis": "Aluno: interessado · Professor: proprietário"}],
+      "escrita": "Write a short guide (120 words) to your neighborhood for a foreign visitor."
+    },
+    {
+      "id": "cv-comida", "tema": "Food and eating habits", "niveis": ["A1", "A2", "B1", "B2"],
+      "vocab": [["homemade", "caseiro"], ["to order in", "pedir comida"], ["a recipe", "receita"], ["spicy", "apimentado"], ["to be on a diet", "estar de dieta"], ["leftovers", "sobras"], ["a vegetarian", "vegetariano"], ["to taste", "provar / ter gosto de"]],
+      "perguntas": ["What's your favorite dish?", "Do you cook? What can you make?", "How often do you order food?", "What's a typical Sunday lunch in your family?", "Is there a food you hated as a child but love now?", "What's the strangest food you've ever tried?", "Do you prefer sweet or salty snacks?", "What food reminds you of your childhood?", "Would you become vegetarian? Why or why not?", "What's the best restaurant in your city?"],
+      "aprofundar": ["Should we eat less meat to protect the planet?", "Is fast food responsible for health problems, or are people responsible for their choices?", "How has food delivery changed family habits?", "Is cooking a skill everyone should learn at school?", "Should restaurants be required to show calories on menus?", "What does food say about a country's culture?"],
+      "debate": ["Everyone should learn to cook at school.", "Eating meat will be unacceptable in 30 years."],
+      "roleplay": [{"titulo": "Ordering with a problem", "situacao": "Order dinner at a restaurant. Your dish comes wrong. Complain politely.", "papeis": "Aluno: cliente · Professor: garçom"}],
+      "escrita": "Write the recipe of a dish you know how to make, with ingredients and steps."
+    }
+  ]
+}

@@ -151,12 +151,17 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
 .etapa { padding: 10px 12px; border-radius: 10px; background: var(--painel-2); border: 1px solid var(--borda); display: flex; flex-direction: column; gap: 6px; cursor: pointer; text-align: left; color: var(--texto-2); width: 100%; }
 .etapa .e1 { display: flex; justify-content: space-between; font-size: 12px; gap: 6px; }
 .etapa .e1 b { font-weight: 600; }
+.etapa .e2 { display: flex; gap: 6px; align-items: baseline; font-size: 13px; }
+.etapa .e2 .mono:first-child { font-weight: 600; color: var(--texto); }
+.etapa.estourou .e2 .mono:first-child { color: var(--alerta); }
 .etapa .barra-p { height: 3px; border-radius: 2px; background: var(--linha); overflow: hidden; }
 .etapa .barra-p i { display: block; height: 3px; background: var(--acento); }
 .etapa.feita .barra-p i { background: var(--ok); }
 .etapa.atual { background: var(--acento-fundo); border-color: var(--acento); color: var(--texto); }
 .etapa.estourou .barra-p i { background: var(--alerta); }
 .lista-num { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.5; }
+.lista-extra { opacity: .85; }
+.col-side.lateral { background: transparent; border-left: none; padding: 16px 24px 16px 0; }
 .lista-num li::marker { color: var(--muted-2); font-family: "JetBrains Mono", monospace; font-size: 12px; }
 .resp { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
 .player { display: flex; align-items: center; gap: 14px; }
@@ -205,6 +210,7 @@ td a.nome-link { color: var(--texto); font-weight: 600; text-decoration: none; }
   .cols { flex-direction: column; }
   .col-main { overflow: visible; padding: 16px; }
   .col-side { width: auto; border-left: none; border-top: 1px solid var(--borda); overflow: visible; }
+  .col-side.lateral { padding: 0 16px 16px; border-top: none; }
   .col-side.side-primeiro { order: -1; border-top: none; border-bottom: 1px solid var(--borda); }
   .rolavel { overflow: visible; padding: 16px; }
   .arvore { width: auto; border-right: none; border-bottom: 1px solid var(--borda); max-height: 260px; }
