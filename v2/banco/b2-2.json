@@ -1,0 +1,140 @@
+{
+  "nivel": "B2",
+  "topicos": [
+    {
+      "id": "b2-wish",
+      "nome": "Wish / If only",
+      "categoria": "Gramática",
+      "sub": ["Wish + past (presente)", "Wish + past perfect (passado)", "Wish + would (irritação)"],
+      "fique": ["'I wish I have' → I wish I had", "'I wish I would know' → I wish I knew", "'I wish I didn't go' (passado) → I wish I hadn't gone"],
+      "facil": {
+        "p": ["What do you wish you had right now?", "Where do you wish you were at this moment?", "What do you wish you could do better?", "Do you wish you lived in another city?", "What skill do you wish you had?", "Do you wish you had more free time?"],
+        "t": [["Eu queria ter mais tempo.", "I wish I had more time."], ["Queria estar de férias.", "I wish I were on vacation."], ["Ela queria saber falar francês.", "She wishes she could speak French."], ["Quem me dera morar na praia!", "If only I lived on the beach!"], ["Queria que você estivesse aqui.", "I wish you were here."]],
+        "c": [["I wish I ___ (have) a car.", "had"], ["I wish I ___ (be) taller.", "were"], ["She wishes she ___ (can) sing.", "could"], ["If only it ___ (be) Friday!", "were"], ["I wish you ___ (live) closer.", "lived"]],
+        "r": [["I wish I have more money.", "Corrija", "I wish I had more money."], ["I'm sad I can't swim.", "Use wish", "I wish I could swim."], ["I want to be on vacation now. (desejo irreal)", "Use wish", "I wish I were on vacation."]]
+      },
+      "medio": {
+        "p": ["What do you wish you had done differently at school?", "Is there something you wish you hadn't said?", "What do you wish people would stop doing?", "What do you wish your city had?", "Do you wish you had started English earlier?", "What do you wish you knew when you were 18?"],
+        "t": [["Eu queria ter estudado mais.", "I wish I had studied more."], ["Queria não ter dito aquilo.", "I wish I hadn't said that."], ["Queria que ele parasse de reclamar.", "I wish he would stop complaining."], ["Quem me dera eu tivesse aceitado.", "If only I had accepted."], ["Queria que não estivesse chovendo.", "I wish it weren't raining."]],
+        "c": [["I wish I ___ (study) more at school.", "had studied"], ["I wish I ___ (not / say) that.", "hadn't said"], ["I wish he ___ (stop) complaining.", "would stop"], ["If only I ___ (accept) the offer!", "had accepted"], ["I wish it ___ (not / rain) now.", "weren't raining"]],
+        "r": [["I regret not studying more.", "Use wish", "I wish I had studied more."], ["It annoys me that you're always late.", "Use wish + would", "I wish you wouldn't always be late."], ["I wish I didn't eat so much yesterday.", "Corrija", "I wish I hadn't eaten so much yesterday."]]
+      },
+      "dificil": {
+        "p": ["What do you wish governments would do about climate change?", "Is it healthy to think about what you wish you had done? Why?", "What do you wish your younger self had known about money?", "What do you wish more people understood about your profession?", "What habit do you wish your colleagues would change?", "Which invention do you wish had never been created?"],
+        "t": [["Eu preferia que você tivesse me contado antes.", "I'd rather you had told me earlier."], ["Quem me dera ter sabido disso a tempo.", "If only I had known that in time."], ["Já está na hora de você parar de se preocupar.", "It's time you stopped worrying."], ["Ela age como se fosse a dona da empresa.", "She acts as if she owned the company."], ["Eu gostaria que as pessoas lessem mais.", "I wish people read more. / I wish people would read more."]],
+        "c": [["I'd rather you ___ (tell) me earlier.", "had told"], ["It's time you ___ (stop) worrying.", "stopped"], ["She acts as if she ___ (own) the place.", "owned"], ["If only I ___ (know) in time!", "had known"], ["I wish people ___ (read) more.", "read / would read"]],
+        "r": [["You should stop worrying now.", "Use It's time", "It's time you stopped worrying."], ["She behaves like the boss, but she isn't.", "Use as if + past", "She behaves as if she were the boss."], ["I prefer that you told me earlier.", "Corrija", "I'd rather you had told me earlier."]]
+      },
+      "fala": ["Talk about 3 wishes for the present and 3 regrets about the past.", "Complaints game: 'I wish my neighbor would...'", "Advice to your younger self.", "Discuss: is regret useful or harmful?"],
+      "escrita": ["Write 4 wishes about your present and 4 about your past.", "Write a letter to your younger self ('I wish I had known...').", "Write 3 sentences with 'It's time' and 'I'd rather'."]
+    },
+    {
+      "id": "b2-contraste",
+      "nome": "Conectores de contraste (although, despite, however...)",
+      "categoria": "Gramática",
+      "sub": ["Although / even though", "Despite / in spite of", "However / nevertheless / whereas"],
+      "fique": ["'Despite of' → despite / in spite of", "'Despite it was late' → Despite it being late / Although it was late", "'However' no meio sem pontuação: '..., however, ...'"],
+      "facil": {
+        "p": ["You like your job. What is the worst part of it, although you like it?", "Would you live in a big city despite the traffic? Why?", "Tell me something you did even though you were tired.", "Remote work is comfortable. However, what are the problems?", "What would you never do, unless someone paid you a lot?", "Is your city nice even though it has problems?"],
+        "t": [["Embora estivesse cansado, fui à academia.", "Although I was tired, I went to the gym."], ["Apesar da chuva, saímos.", "Despite the rain, we went out."], ["Ela é rica. No entanto, não é feliz.", "She's rich. However, she isn't happy."], ["Mesmo que seja caro, vou comprar.", "Even though it's expensive, I'll buy it."], ["Eu gosto de café, enquanto meu marido prefere chá.", "I like coffee, whereas my husband prefers tea."]],
+        "c": [["___ it was raining, we went out.", "Although"], ["___ the rain, we went out.", "Despite"], ["It's expensive. ___, it's worth it.", "However"], ["I like the beach, ___ my wife prefers the mountains.", "whereas / while"], ["In spite ___ the traffic, we arrived on time.", "of"]],
+        "r": [["Despite of the price, I bought it.", "Corrija", "Despite the price, I bought it."], ["Although the rain, we played.", "Corrija", "Despite the rain, we played. / Although it rained, we played."], ["It was late. We kept working.", "Una com even though", "Even though it was late, we kept working."]]
+      },
+      "medio": {
+        "p": ["What's something you enjoy despite knowing it's bad for you?", "Compare two cities you know using whereas.", "Tell me about a decision you made in spite of other people's advice.", "Your company has good points. However, what would you change?", "What do you do even though you don't like it?", "Is social media useful despite its problems?"],
+        "t": [["Apesar de ter estudado, ele não passou.", "Despite having studied, he didn't pass."], ["Apesar de estar doente, ela foi trabalhar.", "In spite of being sick, she went to work."], ["O plano é bom; mesmo assim, é arriscado.", "The plan is good; nevertheless, it's risky."], ["Por mais que eu tente, não consigo acordar cedo.", "However hard I try, I can't wake up early."], ["Apesar de que é longe, vale a pena.", "Although it's far, it's worth it."]],
+        "c": [["Despite ___ (have) studied, he failed.", "having"], ["In spite of ___ (be) sick, she worked.", "being"], ["The plan is good; ___, it's risky.", "nevertheless"], ["___ hard I try, I can't wake up early.", "However"], ["Despite the fact ___ it was late, we stayed.", "that"]],
+        "r": [["Despite she was sick, she worked.", "Corrija (2 formas)", "Despite being sick, she worked. / Although she was sick, she worked."], ["I try a lot but I can't wake up early.", "Use 'However hard'", "However hard I try, I can't wake up early."], ["He's rich, but he's not happy. (formal)", "Use nevertheless", "He's rich. Nevertheless, he's not happy."]]
+      },
+      "dificil": {
+        "p": ["Is technology making us more connected, or less, despite appearances?", "Argue for something you like while admitting its disadvantages.", "Despite all the progress, what problems in Brazil haven't changed?", "Talk about a person you admire even though you disagree with them.", "Some say money doesn't bring happiness; nonetheless, people chase it. Why?", "How do you deliver bad news while keeping a positive tone?"],
+        "t": [["Por mais estranho que pareça, eu gosto de segunda-feira.", "Strange as it may seem, I like Mondays."], ["Mesmo assim, não estou convencido.", "Even so, I'm not convinced."], ["Ainda que fosse verdade, não mudaria nada.", "Even if it were true, it wouldn't change anything."], ["Por outro lado, os custos são altos.", "On the other hand, the costs are high."], ["Embora tenha suas falhas, o sistema funciona.", "While it has its flaws, the system works."]],
+        "c": [["Strange ___ it may seem, I like Mondays.", "as"], ["___ so, I'm not convinced.", "Even"], ["___ if it were true, it wouldn't matter.", "Even"], ["___ it has its flaws, the system works.", "While / Although"], ["The results were good, ___ the team was small. (dado que, apesar)", "considering / given that"]],
+        "r": [["Although it seems strange, I like Mondays.", "Use 'Strange as it may seem'", "Strange as it may seem, I like Mondays."], ["The system has flaws. But it works.", "Una com while", "While the system has its flaws, it works."], ["It's true but it doesn't change anything.", "Use even if (hipótese)", "Even if it were true, it wouldn't change anything."]]
+      },
+      "fala": ["Mini-debate with concessions: 'I see your point. However...'", "Compare two options using whereas/while.", "Talk about your job: good things despite the bad ones.", "Change perspective: argue the opposite side for 1 minute."],
+      "escrita": ["Write 6 sentences with although, despite, however, whereas, even though, nevertheless.", "Write a balanced paragraph about remote work.", "Rewrite 3 simple sentence pairs into one complex sentence."]
+    },
+    {
+      "id": "b2-narrative",
+      "nome": "Narrative tenses (contar histórias)",
+      "categoria": "Gramática",
+      "sub": ["Past simple + continuous + perfect", "Sequenciadores", "Ritmo da história"],
+      "fique": ["Tudo no simple past sem cenário: falta past continuous para o 'fundo'", "Ordem confusa: falta past perfect para o 'antes'", "'Then, then, then' → after that, eventually, in the end"],
+      "facil": {
+        "p": ["Tell me about the best day of your last vacation.", "What happened on your first day at your job?", "Tell me about a time you got lost.", "Tell me a funny story from your childhood.", "What happened the last time you went to a party?", "Tell me about a time something went wrong."],
+        "t": [["Eu estava andando quando vi um acidente.", "I was walking when I saw an accident."], ["Quando chegamos, o show já tinha começado.", "When we arrived, the show had already started."], ["Primeiro fomos à praia, depois jantamos.", "First we went to the beach, then we had dinner."], ["No fim, deu tudo certo.", "In the end, everything worked out."], ["De repente, as luzes apagaram.", "Suddenly, the lights went out."]],
+        "c": [["I ___ (walk) home when it ___ (start) to rain.", "was walking / started"], ["When we arrived, the film ___ (already / start).", "had already started"], ["___ (De repente), the phone rang.", "Suddenly"], ["___ (No fim), we found the hotel.", "In the end / Eventually"], ["While she ___ (cook), the guests ___ (arrive).", "was cooking / arrived"]],
+        "r": [["I walked home. It rained. I saw a dog.", "Crie cenário com past continuous", "I was walking home in the rain when I saw a dog."], ["When I arrived, the class started. (já tinha começado)", "Corrija", "When I arrived, the class had (already) started."], ["Then we ate, then we slept, then we left.", "Varie os sequenciadores", "After eating, we went to bed, and the next morning we left."]]
+      },
+      "medio": {
+        "p": ["Tell me about a travel disaster. What had gone wrong before?", "Tell me about how you met someone important in your life.", "Retell the plot of a movie in 2 minutes.", "Tell me about the most stressful day at work you remember.", "Tell me about a time you were really surprised.", "What's a family story everyone tells at gatherings?"],
+        "t": [["Já fazia horas que estávamos esperando quando o voo foi cancelado.", "We had been waiting for hours when the flight was cancelled."], ["Mal tinha saído de casa quando percebi que tinha esquecido a carteira.", "I had just left home when I realized I had forgotten my wallet."], ["Enquanto todos dormiam, alguém entrou na casa.", "While everyone was sleeping, someone came into the house."], ["Acabou que ela era a nova chefe.", "It turned out that she was the new boss."], ["Algumas horas depois, recebemos a notícia.", "A few hours later, we got the news."]],
+        "c": [["We ___ (wait) for hours when the flight ___ (be) cancelled.", "had been waiting / was"], ["It ___ out that she was the new boss.", "turned"], ["I had just left when I ___ (realize) I ___ (forget) my keys.", "realized / had forgotten"], ["A few hours ___, we got the news.", "later"], ["By the time the police ___ (arrive), the thief ___ (escape).", "arrived / had escaped"]],
+        "r": [["We waited for 3 hours, then they cancelled the flight.", "Use past perfect continuous", "We had been waiting for 3 hours when the flight was cancelled."], ["In the end she was the new boss — a surprise.", "Use 'It turned out'", "It turned out that she was the new boss."], ["The police arrived. The thief escaped before.", "Una com by the time", "By the time the police arrived, the thief had escaped."]]
+      },
+      "dificil": {
+        "p": ["Tell me a story with a twist ending — real or invented.", "Narrate a historical event as if you were there.", "Tell me about a turning point in your career, with background, events and consequences.", "Tell a story where a misunderstanding caused problems.", "Tell an urban legend from your city.", "Tell me about a time you had to make a decision under pressure."],
+        "t": [["Mal sabia ele que aquela seria sua última viagem.", "Little did he know that it would be his last trip."], ["Não fazia nem cinco minutos que eu tinha chegado quando o chefe me chamou.", "I had barely been there five minutes when the boss called me."], ["Ela ia pedir demissão, mas acabou sendo promovida.", "She was going to quit, but she ended up being promoted."], ["Olhando para trás, foi a melhor coisa que me aconteceu.", "Looking back, it was the best thing that ever happened to me."], ["Assim que a porta fechou, as luzes se apagaram.", "No sooner had the door closed than the lights went out."]],
+        "c": [["Little ___ he know what would happen.", "did"], ["She ___ (going to) quit, but she ended up ___ (be) promoted.", "was going to / being"], ["No sooner ___ the door closed than the lights went out.", "had"], ["___ back, it was the best decision.", "Looking"], ["I had barely ___ (arrive) when my boss called me.", "arrived"]],
+        "r": [["He didn't know it would be his last trip.", "Inversão com Little", "Little did he know it would be his last trip."], ["The door closed and immediately the lights went out.", "Use 'No sooner... than'", "No sooner had the door closed than the lights went out."], ["She planned to quit but they promoted her.", "Use 'was going to' + 'ended up'", "She was going to quit, but she ended up being promoted."]]
+      },
+      "fala": ["Tell a story in 3 minutes: background, problem, climax, ending.", "Story from 3 random words (e.g. key, rain, airport).", "Retell a news story with narrative tenses.", "Tell a true story and a false one — I guess which is true."],
+      "escrita": ["Write a 150-word story using all four narrative tenses.", "Write a story that begins 'It had been a long day...'", "Rewrite a flat story (only simple past) to make it more interesting."]
+    },
+    {
+      "id": "b2-futuro-avancado",
+      "nome": "Future Continuous & Future Perfect",
+      "categoria": "Gramática",
+      "sub": ["Ação em andamento no futuro", "Ação concluída até um ponto futuro", "By / by the time"],
+      "fique": ["'In 2030 I will finish' (antes de 2030) → By 2030 I will have finished", "'This time tomorrow I will lie on the beach' → I will be lying", "'By the time I will arrive' → By the time I arrive"],
+      "facil": {
+        "p": ["What will you be doing this time tomorrow?", "What will you have done by the end of today?", "Will you be working next Saturday?", "By next year, what will you have learned?", "What will you be doing at 10 p.m. tonight?", "Will you have finished your work by 6 p.m.?"],
+        "t": [["Amanhã a essa hora estarei viajando.", "This time tomorrow I'll be traveling."], ["Até sexta, terei terminado o relatório.", "By Friday, I'll have finished the report."], ["Você vai estar usando o carro amanhã?", "Will you be using the car tomorrow?"], ["Até lá, eles já terão saído.", "By then, they will have left."], ["Às oito eu vou estar jantando.", "At eight I'll be having dinner."]],
+        "c": [["This time next week I ___ (lie) on the beach.", "'ll be lying"], ["By 2030, I ___ (pay) off my apartment.", "will have paid"], ["___ you ___ (use) the car tonight?", "Will / be using"], ["By the time you arrive, we ___ (finish).", "will have finished"], ["At 9 tomorrow, I ___ (work).", "'ll be working"]],
+        "r": [["Tomorrow at 10 I will work.", "Use future continuous", "Tomorrow at 10 I'll be working."], ["In 2030 I will finish my degree. (antes de 2030)", "Use future perfect", "By 2030 I will have finished my degree."], ["By the time I will arrive, the class will start.", "Corrija", "By the time I arrive, the class will have started."]]
+      },
+      "medio": {
+        "p": ["Where do you think you'll be living in five years?", "What will you have achieved by the end of this year?", "What will people be doing differently in 2040?", "By the time you retire, what will you have done?", "Will you be traveling anywhere this summer?", "How long will you have worked at your company by next year?"],
+        "t": [["Em dezembro, terei trabalhado aqui por dez anos.", "In December, I'll have been working here for ten years."], ["Vai estar passando na mesma hora do jogo?", "Will it be on at the same time as the game?"], ["Até o fim do mês, terei gastado todo o orçamento.", "By the end of the month, I'll have spent the whole budget."], ["Você vai passar no mercado? Pode trazer leite?", "Will you be passing the market? Could you get some milk?"], ["Daqui a um ano, estaremos morando em Portugal.", "A year from now, we'll be living in Portugal."]],
+        "c": [["In December, I ___ (work) here for ten years.", "will have been working"], ["___ you be passing the bank? (pedido educado)", "Will"], ["A year from now, we ___ (live) in Portugal.", "'ll be living"], ["By the end of the month, I ___ (spend) everything.", "will have spent"], ["How many countries ___ you ___ (visit) by 40?", "will / have visited"]],
+        "r": [["Are you going to the market? Can you buy milk? (educado)", "Use future continuous", "Will you be going to the market? Could you buy some milk?"], ["In December it will be 10 years that I work here.", "Corrija", "In December, I'll have been working here for 10 years."], ["By the end of the year I will read 20 books.", "Corrija", "By the end of the year I will have read 20 books."]]
+      },
+      "dificil": {
+        "p": ["What will the job market look like when today's children graduate?", "By 2050, what will humanity have solved — and what not?", "What will you be doing to stay relevant professionally in 10 years?", "How will cities have changed by the time electric cars are the majority?", "What goals will you have reached by your next birthday?", "Will we be working fewer hours in the future? Why?"],
+        "t": [["Quando você ler isso, eu já terei ido embora.", "By the time you read this, I'll have left."], ["Ele deve estar chegando agora. (dedução)", "He'll be arriving about now."], ["Até lá, a tecnologia terá mudado completamente.", "By then, technology will have changed completely."], ["Não me liga às nove, vou estar em reunião.", "Don't call me at nine — I'll be in a meeting."], ["Ela vai ter se formado quando o filho nascer.", "She will have graduated by the time her son is born."]],
+        "c": [["By the time you read this, I ___ (leave).", "'ll have left"], ["Don't call at 9 — I ___ (have) a meeting.", "'ll be having"], ["He ___ (arrive) about now. (dedução)", "'ll be arriving"], ["By then, things ___ (change).", "will have changed"], ["She'll have graduated by the time her son ___ (be) born.", "is"]],
+        "r": [["Probably he is arriving now.", "Use 'will be + -ing' para dedução", "He'll be arriving about now."], ["When you read this I will already leave.", "Corrija", "By the time you read this, I'll have left."], ["I'll be in a meeting at 9, so don't call.", "Reescreva com future continuous", "Don't call at 9 — I'll be having a meeting."]]
+      },
+      "fala": ["Describe your life in 5, 10 and 20 years (future continuous + perfect).", "Predictions about technology and work by 2040.", "Plan a trip: where will you be, what will you have seen by day 5?", "Polite questions: 'Will you be using...?'"],
+      "escrita": ["Write a letter to yourself to be opened in 5 years.", "Write 5 predictions with 'By 2035...'", "Write 3 polite requests with future continuous."]
+    },
+    {
+      "id": "b2-debate",
+      "nome": "Debate estruturado e argumentação",
+      "categoria": "Funcional",
+      "sub": ["Apresentar posição", "Contra-argumentar", "Concluir e resumir"],
+      "fique": ["'I am agree' → I agree", "'Like I said' → As I said", "Argumentos sem exemplo — peça sempre um exemplo concreto", "'In the other hand' → On the other hand"],
+      "facil": {
+        "p": ["Should people work four days a week? Why?", "Is it better to rent or buy a home?", "Should children learn English from a very young age?", "Is it OK to use your phone during meals?", "Should tourism be limited in popular places?", "Are online classes as good as in-person classes?"],
+        "t": [["Em primeiro lugar...", "First of all..."], ["Além disso...", "Moreover... / In addition..."], ["Por exemplo...", "For example... / For instance..."], ["Por isso, eu acho que...", "That's why I think..."], ["Em resumo...", "To sum up... / In short..."]],
+        "c": [["___ of all, it's cheaper.", "First"], ["___ (Além disso), it's healthier.", "Moreover / In addition"], ["For ___, my company did it.", "instance"], ["To sum ___, I'm in favor.", "up"], ["On the other ___, it's risky.", "hand"]],
+        "r": [["I'm agree with the four-day week.", "Corrija", "I agree with the four-day week."], ["In the other hand, it's expensive.", "Corrija", "On the other hand, it's expensive."], ["It's good. It's good for health. It's good for money.", "Organize com conectores", "First, it's good for health. Moreover, it saves money."]]
+      },
+      "medio": {
+        "p": ["Should companies require employees to return to the office?", "Is university still worth it?", "Should social media platforms verify users' identities?", "Should there be a tax on sugary drinks?", "Is it ethical to keep animals in zoos?", "Should voting be mandatory?"],
+        "t": [["Entendo o argumento, mas os dados mostram outra coisa.", "I understand the argument, but the data shows something else."], ["Vamos supor que isso seja verdade...", "Let's assume that's true..."], ["Isso não necessariamente significa que...", "That doesn't necessarily mean that..."], ["O ponto principal é que...", "The main point is that..."], ["Concordo em parte, mas...", "I partly agree, but..."]],
+        "c": [["I understand the argument, ___ the data says otherwise.", "but"], ["Let's ___ that's true.", "assume"], ["That doesn't ___ mean it's bad.", "necessarily"], ["The main ___ is that it's unfair.", "point"], ["I ___ agree, but there's a problem.", "partly"]],
+        "r": [["You are wrong because no.", "Contra-argumente com educação e dado", "I see your point, but studies show that... For example,..."], ["Like I said, it's bad.", "Corrija", "As I said, it's bad."], ["It's obvious that it's better.", "Suavize (hedging)", "It seems to me that it's better, mainly because..."]]
+      },
+      "dificil": {
+        "p": ["Should AI-generated content be clearly labeled by law?", "Does economic growth always conflict with environmental protection?", "Should wealthy countries accept more immigrants?", "Is meritocracy a myth?", "Should governments regulate how much screen time children have?", "Is it fair to judge historical figures by today's values?"],
+        "t": [["Os críticos argumentariam que...", "Critics would argue that..."], ["Isso levanta a questão de...", "That raises the question of..."], ["Não se pode negar que...", "There's no denying that..."], ["Pesando os prós e contras, eu diria que...", "Weighing up the pros and cons, I'd say that..."], ["Concordo com a premissa, mas não com a conclusão.", "I agree with the premise, but not with the conclusion."]],
+        "c": [["Critics ___ argue that it's too expensive.", "would"], ["That ___ the question of who pays.", "raises"], ["There's no ___ that it works.", "denying"], ["___ up the pros and cons, I'm against it.", "Weighing"], ["I agree with the ___, but not the conclusion.", "premise"]],
+        "r": [["Everybody knows that it's true.", "Reformule com evidência", "There's growing evidence that... — for instance,..."], ["Your idea is stupid.", "Discorde de forma profissional", "I'm not sure that would work, because..."], ["So, that's it.", "Conclusão estruturada", "To sum up, although..., I believe... because..."]]
+      },
+      "fala": ["Structured debate: 1 min position, 1 min counter-argument, 30 s conclusion.", "Change perspective: defend the side you disagree with.", "Rapid reactions to 5 controversial statements.", "Present pros and cons of a decision at your company."],
+      "escrita": ["Write a 4-paragraph opinion essay (intro, argument, counter-argument, conclusion).", "Write a counter-argument to an opinion I give you.", "Write a 100-word summary of both sides of a debate."]
+    }
+  ]
+}

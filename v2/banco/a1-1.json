@@ -1,0 +1,140 @@
+{
+  "nivel": "A1",
+  "topicos": [
+    {
+      "id": "a1-to-be",
+      "nome": "Verb to be",
+      "categoria": "Gramática",
+      "sub": ["Afirmativa", "Negativa", "Perguntas", "Idade e profissão"],
+      "fique": ["Idade com HAVE: 'I have 30 years' → I am 30", "Esquecer o verbo: 'She teacher' → She is a teacher", "Pergunta sem inversão: 'You are tired?' → Are you tired?"],
+      "facil": {
+        "p": ["What is your name?", "How old are you?", "Where are you from?", "Are you tired today?", "Is your house big or small?", "What is your job?"],
+        "t": [["Eu sou professor.", "I am a teacher."], ["Ela não está em casa.", "She is not at home."], ["Você está feliz?", "Are you happy?"], ["Nós somos do Brasil.", "We are from Brazil."], ["O carro é azul.", "The car is blue."]],
+        "c": [["I ___ from Rio.", "am"], ["My sister ___ a doctor.", "is"], ["They ___ my friends.", "are"], ["___ you married?", "Are"], ["The book ___ on the table.", "is"]],
+        "r": [["He is a student.", "Negativa", "He is not (isn't) a student."], ["You are hungry.", "Pergunta", "Are you hungry?"], ["They are at work.", "Negativa", "They are not (aren't) at work."]]
+      },
+      "medio": {
+        "p": ["Who is your best friend? What is he or she like?", "Is your city expensive? Why?", "Where are your parents now?", "What is your favorite place in your house?", "Are you a morning person or a night person?", "Is English difficult for you? What part?"],
+        "t": [["Meu irmão tem 25 anos.", "My brother is 25 (years old)."], ["Nós não estamos atrasados.", "We are not late."], ["Onde estão as chaves?", "Where are the keys?"], ["Eu estou com fome e com frio.", "I am hungry and cold."], ["A reunião não é hoje, é amanhã.", "The meeting isn't today, it's tomorrow."]],
+        "c": [["My parents ___ (not) at home now.", "aren't"], ["Where ___ your office?", "is"], ["I ___ 34 years old.", "am"], ["___ the restaurant open on Sundays?", "Is"], ["You and I ___ in the same class.", "are"]],
+        "r": [["Your brother is an engineer.", "Pergunta", "Is your brother an engineer?"], ["I am afraid of dogs.", "Negativa", "I am not afraid of dogs."], ["The museum is closed.", "Pergunta com Why", "Why is the museum closed?"]]
+      },
+      "dificil": {
+        "p": ["What are you good at? What are you bad at?", "Who is the most interesting person in your family? Why?", "What is the best thing about your job, and what is the worst?", "Is it better to be rich or to be happy?", "What are you afraid of?", "Where were you born, and where are you now?"],
+        "t": [["Não é fácil ser professor no Brasil.", "It isn't easy to be a teacher in Brazil."], ["Você tem razão, eu estou errado.", "You are right, I am wrong."], ["Estou com sono porque é tarde.", "I am sleepy because it is late."], ["Qual é a sua cor favorita e por quê?", "What is your favorite color and why?"], ["Eles não estão com pressa, estão com fome.", "They aren't in a hurry, they are hungry."]],
+        "c": [["___ it cold in your city in July?", "Is"], ["My boss ___ (not) very patient.", "isn't"], ["How old ___ your children?", "are"], ["I ___ (not) sure about the answer.", "am not"], ["What ___ the problem?", "is"]],
+        "r": [["My keys are in the car.", "Pergunta com Where", "Where are my keys?"], ["She is 40.", "Pergunta com How old", "How old is she?"], ["I'm hungry. (use: 'estar com fome' sem HAVE)", "Explique por que não usamos HAVE", "Em inglês: I am hungry / thirsty / cold / afraid / right / 30."]]
+      },
+      "fala": ["Introduce yourself in 1 minute: name, age, city, job, family.", "Describe a person in your family using 5 adjectives.", "Talk about how you are today: tired? happy? hungry? Why?", "Describe your favorite room in your house."],
+      "escrita": ["Write 5 sentences about yourself using the verb to be.", "Write 5 sentences about your best friend (name, age, job, personality, city).", "Write 3 questions you want to ask a new friend, using the verb to be."]
+    },
+    {
+      "id": "a1-simple-present",
+      "nome": "Simple Present (afirmativa e negativa)",
+      "categoria": "Gramática",
+      "sub": ["I/you/we/they", "He/she/it com -s", "Negativa com don't/doesn't"],
+      "fique": ["Esquecer o -s: 'She work' → She works", "Usar to be junto: 'I am work' → I work", "Negativa errada: 'She don't like' → She doesn't like", "'He doesn't works' → He doesn't work"],
+      "facil": {
+        "p": ["Do you work or study?", "Do you like coffee?", "Does your mother cook?", "Do you live in a house or an apartment?", "Do you watch TV at night?", "Does your friend speak English?"],
+        "t": [["Eu trabalho em casa.", "I work at home."], ["Ela gosta de chocolate.", "She likes chocolate."], ["Nós não bebemos café.", "We don't drink coffee."], ["Ele mora no Rio.", "He lives in Rio."], ["Eles não falam inglês.", "They don't speak English."]],
+        "c": [["She ___ (work) in a bank.", "works"], ["I ___ (not / like) fish.", "don't like"], ["My brother ___ (play) soccer.", "plays"], ["We ___ (live) near the beach.", "live"], ["He ___ (not / drink) beer.", "doesn't drink"]],
+        "r": [["I play tennis.", "Use He", "He plays tennis."], ["She watches TV.", "Negativa", "She doesn't watch TV."], ["They eat meat.", "Negativa", "They don't eat meat."]]
+      },
+      "medio": {
+        "p": ["What does your best friend do?", "What do you usually eat for breakfast?", "Where does your family live?", "What music do you listen to?", "How do you go to work?", "What does your partner or friend do on weekends?"],
+        "t": [["Minha mãe acorda às seis.", "My mother wakes up at six."], ["Meu chefe não trabalha às sextas.", "My boss doesn't work on Fridays."], ["Ela estuda inglês duas vezes por semana.", "She studies English twice a week."], ["Eu não entendo essa palavra.", "I don't understand this word."], ["O ônibus sai às oito.", "The bus leaves at eight."]],
+        "c": [["My father ___ (watch) the news every night.", "watches"], ["She ___ (study) at night.", "studies"], ["It ___ (not / rain) much here.", "doesn't rain"], ["He ___ (go) to the gym on Mondays.", "goes"], ["My kids ___ (not / eat) vegetables.", "don't eat"]],
+        "r": [["I go to bed late.", "Use My sister", "My sister goes to bed late."], ["He has a car.", "Negativa", "He doesn't have a car."], ["We study on Saturdays.", "Use She + negativa", "She doesn't study on Saturdays."]]
+      },
+      "dificil": {
+        "p": ["What does a normal Monday look like for you?", "What do you do when you can't sleep?", "What does your job involve? Explain it to a child.", "What do people in your city do on Sunday?", "What habit do you want to change? Why?", "Who in your family cooks best? What does he or she cook?"],
+        "t": [["Ela não tem tempo para estudar durante a semana.", "She doesn't have time to study during the week."], ["Meu filho faz o dever de casa depois do jantar.", "My son does his homework after dinner."], ["O restaurante abre às onze e fecha à meia-noite.", "The restaurant opens at eleven and closes at midnight."], ["Ninguém na minha família fala inglês.", "Nobody in my family speaks English."], ["Ele sempre esquece o celular em casa.", "He always forgets his phone at home."]],
+        "c": [["My neighbor ___ (fix) cars on weekends.", "fixes"], ["The store ___ (not / open) on holidays.", "doesn't open"], ["She ___ (have) two jobs.", "has"], ["My grandparents ___ (not / use) the internet.", "don't use"], ["He ___ (try) to exercise every day.", "tries"]],
+        "r": [["I don't have a car, but my wife has one.", "Troque I por He e wife por brother", "He doesn't have a car, but his brother has one."], ["She work in a hospital and she don't like it.", "Corrija os erros", "She works in a hospital and she doesn't like it."], ["They go to the beach. They don't swim.", "Una com but", "They go to the beach, but they don't swim."]]
+      },
+      "fala": ["Describe your typical weekday from morning to night.", "Talk about a person you know: what does he or she do every day?", "Compare your weekday and your weekend.", "Talk about 3 things you don't do and why."],
+      "escrita": ["Write 6 sentences about your routine (3 affirmative, 3 negative).", "Write about the routine of a person in your family (use he/she).", "Write 5 sentences about what you like and don't like."]
+    },
+    {
+      "id": "a1-sp-perguntas",
+      "nome": "Simple Present: perguntas e short answers",
+      "categoria": "Gramática",
+      "sub": ["Do/Does", "Wh- questions", "Short answers"],
+      "fique": ["Pergunta sem auxiliar: 'You like pizza?' → Do you like pizza?", "'Does she works?' → Does she work?", "Short answer com o verbo principal: 'Yes, I like' → Yes, I do"],
+      "facil": {
+        "p": ["Do you have a dog?", "Does it rain a lot in your city?", "Do you speak Spanish?", "Does your father drive?", "Do you like your job?", "Do you cook every day?"],
+        "t": [["Você gosta de música?", "Do you like music?"], ["Ela mora sozinha?", "Does she live alone?"], ["Sim, eu gosto.", "Yes, I do."], ["Não, ele não trabalha.", "No, he doesn't."], ["Eles têm filhos?", "Do they have children?"]],
+        "c": [["___ you like tea? Yes, I ___.", "Do / do"], ["___ she work here? No, she ___.", "Does / doesn't"], ["___ they speak English?", "Do"], ["___ your brother play guitar?", "Does"], ["Do you live here? No, I ___.", "don't"]],
+        "r": [["You like pizza.", "Pergunta", "Do you like pizza?"], ["She drinks coffee.", "Pergunta", "Does she drink coffee?"], ["They work on Sundays.", "Pergunta + short answer negativa", "Do they work on Sundays? No, they don't."]]
+      },
+      "medio": {
+        "p": ["What time do you usually wake up?", "Where does your best friend work?", "How often do you go to the movies?", "What do you do after work?", "Which day of the week do you like most? Why?", "How does your partner or friend relax?"],
+        "t": [["Onde você trabalha?", "Where do you work?"], ["A que horas ela chega em casa?", "What time does she get home?"], ["O que seus pais fazem?", "What do your parents do?"], ["Com que frequência você viaja?", "How often do you travel?"], ["Quanto custa esse livro?", "How much does this book cost?"]],
+        "c": [["Where ___ your sister live?", "does"], ["What ___ you do on Saturdays?", "do"], ["How ___ he go to work?", "does"], ["What time ___ the class start?", "does"], ["Why ___ they study English?", "do"]],
+        "r": [["She lives in Niterói. (Where)", "Faça a pergunta", "Where does she live?"], ["I start work at 9. (What time)", "Faça a pergunta", "What time do you start work?"], ["He drinks three coffees a day. (How many)", "Faça a pergunta", "How many coffees does he drink a day?"]]
+      },
+      "dificil": {
+        "p": ["What do you do when you feel stressed?", "How long does it take you to get to work?", "What does your company sell or do?", "Who do you talk to when you have a problem?", "What does a good teacher do differently?", "Which app do you use most? What do you use it for?"],
+        "t": [["Quanto tempo você leva para chegar ao trabalho?", "How long does it take you to get to work?"], ["Quem cozinha na sua casa?", "Who cooks in your house?"], ["O que essa palavra significa?", "What does this word mean?"], ["Por que ela não gosta do trabalho dela?", "Why doesn't she like her job?"], ["Você se importa se eu abrir a janela?", "Do you mind if I open the window?"]],
+        "c": [["Who ___ (live) with you? (sujeito)", "lives"], ["What ___ 'busy' mean?", "does"], ["Why ___ your boss ___ (not / answer) emails?", "doesn't / answer"], ["Which bus ___ you take?", "do"], ["How much ___ it cost to park here?", "does"]],
+        "r": [["Someone calls me every morning. (Who)", "Pergunta sobre o sujeito", "Who calls you every morning?"], ["You call someone every morning. (Who)", "Pergunta sobre o objeto", "Who do you call every morning?"], ["Does she likes her new job? Yes, she likes.", "Corrija", "Does she like her new job? Yes, she does."]]
+      },
+      "fala": ["Interview me: ask me 8 questions about my routine.", "Play 'Guess the job': ask yes/no questions until you discover the job.", "Ask and answer questions about a famous person's life.", "Ask me 5 questions using How often, What time, Where, Why, Who."],
+      "escrita": ["Write 8 questions for a job interview using do/does.", "Write 5 questions to a new neighbor and imagine the answers.", "Write 5 yes/no questions with short answers."]
+    },
+    {
+      "id": "a1-there-is",
+      "nome": "There is / There are",
+      "categoria": "Gramática",
+      "sub": ["Singular e plural", "Negativa e perguntas", "Some / any"],
+      "fique": ["Usar HAVE no lugar: 'Have a bank here' → There is a bank here", "'There is two cars' → There are two cars", "Pergunta: 'There is a pharmacy?' → Is there a pharmacy?"],
+      "facil": {
+        "p": ["Is there a bank near your house?", "Are there many trees on your street?", "Is there a TV in your bedroom?", "How many people are there in your family?", "Is there a beach in your city?", "Are there students in your class?"],
+        "t": [["Tem um banco perto daqui.", "There is a bank near here."], ["Tem duas janelas no quarto.", "There are two windows in the bedroom."], ["Não tem leite na geladeira.", "There isn't any milk in the fridge."], ["Tem um supermercado aqui?", "Is there a supermarket here?"], ["Tem muitos carros na rua.", "There are many cars on the street."]],
+        "c": [["There ___ a cat in the garden.", "is"], ["There ___ three bedrooms in my house.", "are"], ["___ there a park near you?", "Is"], ["There ___ (not) any chairs.", "aren't"], ["___ there any good restaurants here?", "Are"]],
+        "r": [["There is a pharmacy on my street.", "Pergunta", "Is there a pharmacy on your street?"], ["There are some apples.", "Negativa", "There aren't any apples."], ["There is one book. (5)", "Plural", "There are five books."]]
+      },
+      "medio": {
+        "p": ["What is there in your living room?", "Are there any good places to eat in your neighborhood?", "Is there anything you want to change in your house?", "How many rooms are there in your apartment?", "What is there to do in your city on a weekend?", "Are there any parks near your work?"],
+        "t": [["Não tem nenhum restaurante bom no meu bairro.", "There aren't any good restaurants in my neighborhood."], ["Tem alguma farmácia aberta agora?", "Is there a pharmacy open now?"], ["Tem muita gente na praia hoje.", "There are a lot of people on the beach today."], ["Tem um problema com o meu computador.", "There is a problem with my computer."], ["Quantos alunos tem na sua turma?", "How many students are there in your class?"]],
+        "c": [["There ___ some water in the bottle.", "is"], ["There ___ (not) any parking spaces.", "aren't"], ["How many floors ___ there in your building?", "are"], ["There ___ a lot of traffic today.", "is"], ["___ there any questions?", "Are"]],
+        "r": [["My street has two schools.", "Use there are", "There are two schools on my street."], ["The room has no windows.", "Use there aren't", "There aren't any windows in the room."], ["Is there any eggs?", "Corrija", "Are there any eggs?"]]
+      },
+      "dificil": {
+        "p": ["Describe your neighborhood: what is there and what isn't there?", "Is there anything your city needs? What?", "What is there in your bag right now?", "Are there enough hospitals and schools where you live?", "Is there a place in your city that tourists don't know about?", "Is there a book or movie you recommend? Why?"],
+        "t": [["Tem algo errado com essa frase.", "There is something wrong with this sentence."], ["Não tem nada na geladeira para o jantar.", "There isn't anything in the fridge for dinner."], ["Tinha muita gente na festa? (there was/were)", "Were there a lot of people at the party?"], ["Tem alguém na porta.", "There is someone at the door."], ["Não tem motivo para ficar nervoso.", "There is no reason to be nervous."]],
+        "c": [["There ___ a lot of noise last night. (past)", "was"], ["There ___ nothing to do here.", "is"], ["___ there anyone at home?", "Is"], ["There ___ two meetings yesterday. (past)", "were"], ["There ___ (not) much time.", "isn't"]],
+        "r": [["My city has many museums but it doesn't have a good subway.", "Reescreva com there", "There are many museums in my city, but there isn't a good subway."], ["Have a problem with the internet.", "Corrija", "There is a problem with the internet."], ["There are some milk.", "Corrija", "There is some milk."]]
+      },
+      "fala": ["Describe your house room by room.", "Describe your neighborhood to a tourist.", "Look at the room you are in: say 8 things that there are and 3 that there aren't.", "Describe your ideal city."],
+      "escrita": ["Write 6 sentences describing your neighborhood with there is/there are.", "Write a short ad for an apartment (rooms, furniture, places nearby).", "Write 4 questions with Is there/Are there for a hotel."]
+    },
+    {
+      "id": "a1-possessivos",
+      "nome": "Pronomes e possessivos",
+      "categoria": "Gramática",
+      "sub": ["I/me/my/mine", "His vs her", "'s possessivo"],
+      "fique": ["His/her trocados: 'My mother and his job' → her job", "'The car of my father' → my father's car", "'Is my' → It's mine"],
+      "facil": {
+        "p": ["What is your mother's name?", "What is your favorite color?", "Is your house big?", "What is your best friend's name?", "Is this phone yours?", "What is your father's job?"],
+        "t": [["O nome dela é Ana.", "Her name is Ana."], ["O carro do meu pai é velho.", "My father's car is old."], ["Esse livro é meu.", "This book is mine."], ["O cachorro deles é grande.", "Their dog is big."], ["Qual é o seu número?", "What is your number?"]],
+        "c": [["My sister loves ___ (dela) job.", "her"], ["Paulo and ___ (dele) wife live here.", "his"], ["This is ___ (nosso) house.", "our"], ["Call ___ (me), please.", "me"], ["The dog wants ___ (dele/do cão) food.", "its"]],
+        "r": [["The house of my parents.", "Use 's", "My parents' house."], ["This bag is my bag.", "Use mine", "This bag is mine."], ["Maria and his brother.", "Corrija", "Maria and her brother."]]
+      },
+      "medio": {
+        "p": ["Tell me about your best friend's family.", "Whose car do you usually use?", "What is your neighbor like?", "Is your bedroom yours only or do you share it?", "What is your company's name? What does it do?", "Who are your parents' best friends?"],
+        "t": [["A irmã do meu marido mora em Lisboa.", "My husband's sister lives in Lisbon."], ["Esse é o problema deles, não o nosso.", "That's their problem, not ours."], ["De quem é essa mochila?", "Whose backpack is this?"], ["Ela sempre esquece as chaves dela.", "She always forgets her keys."], ["Me liga quando você chegar.", "Call me when you arrive."]],
+        "c": [["Is this pen ___ (sua)? No, it's ___ (dele).", "yours / his"], ["___ (De quem) phone is ringing?", "Whose"], ["The company changed ___ (seu = da empresa) logo.", "its"], ["My kids and ___ (deles) friends are here.", "their"], ["Tell ___ (ela) the truth.", "her"]],
+        "r": [["The friends of my brother are funny.", "Use 's", "My brother's friends are funny."], ["This is the car of them.", "Corrija", "This is their car. / This car is theirs."], ["I love she and she loves I.", "Corrija", "I love her and she loves me."]]
+      },
+      "dificil": {
+        "p": ["Whose opinion is most important to you? Why?", "Describe a friend of yours who is very different from you.", "Is your phone yours or your company's?", "Who in your family looks like you? Whose eyes do you have?", "What's your city's biggest problem?", "Talk about a gift you received. Whose idea was it?"],
+        "t": [["Um amigo meu trabalha no Google.", "A friend of mine works at Google."], ["A culpa não é sua, é minha.", "It's not your fault, it's mine."], ["O aniversário da mãe da Carla é amanhã.", "Carla's mother's birthday is tomorrow."], ["Eles mesmos fizeram o bolo.", "They made the cake themselves."], ["Cada um tem a sua opinião.", "Everyone has their own opinion."]],
+        "c": [["A cousin of ___ (meu) lives in Canada.", "mine"], ["The children's toys are everywhere. The toys are ___ (deles).", "theirs"], ["She did it by ___ (ela mesma).", "herself"], ["Is it John's or ___ (de James)?", "James's"], ["We love our city and ___ (seu) beaches.", "its"]],
+        "r": [["My friend works at Google. (Use 'a friend of')", "Reescreva", "A friend of mine works at Google."], ["It's the fault of me.", "Corrija", "It's my fault."], ["The room of the children is small.", "Use 's", "The children's room is small."]]
+      },
+      "fala": ["Show a photo (or imagine one) and describe the people: his, her, their.", "Talk about your family members and their jobs.", "Describe objects in your room: whose are they?", "Talk about a friend of yours."],
+      "escrita": ["Write 6 sentences about your family using my, his, her, their.", "Write 4 sentences with 's (Ana's car, my mother's job...).", "Write 3 sentences with mine, yours, his."]
+    }
+  ]
+}

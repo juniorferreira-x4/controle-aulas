@@ -36,3 +36,10 @@ Se preferir não usar GitHub diretamente:
 3. Vercel te dá uma URL pronta na hora.
 
 Qualquer um dos dois caminhos funciona igual — GitHub Pages é o mais usado por ser 100% gratuito e permanente.
+
+## Versão 2 (pasta `v2/`)
+
+- Ela é publicada junto com o resto do repositório, no endereço `https://SEU-USUARIO.github.io/controle-aulas/v2/`.
+- Para os dados ficarem na nuvem e o homework ir para o Drive, siga `v2/GUIA_FIREBASE.md`.
+- A cada atualização do app, aumente o número do cache em `v2/sw.js` (`controle-aulas-v2-N`).
+- O banco de exercícios fica em `v2/banco/`, em arquivos JSON por nível. Para incluir um tópico, copie a estrutura de um existente e adicione o arquivo em `v2/banco/index.json`.

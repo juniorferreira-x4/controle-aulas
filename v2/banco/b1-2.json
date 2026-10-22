@@ -1,0 +1,140 @@
+{
+  "nivel": "B1",
+  "topicos": [
+    {
+      "id": "b1-gerund-infinitive",
+      "nome": "Gerunds & Infinitives",
+      "categoria": "Gramática",
+      "sub": ["Verbo + -ing", "Verbo + to", "Preposição + -ing", "Stop / remember / try"],
+      "fique": ["'I enjoy to travel' → I enjoy traveling", "'I'm thinking in move' → I'm thinking of/about moving", "'I want go' → I want to go", "'Thank you for come' → Thank you for coming"],
+      "facil": {
+        "p": ["What do you enjoy doing on weekends?", "What do you want to do next year?", "Do you like cooking?", "What did you decide to do last weekend?", "What do you hate doing at home?", "Do you need to work tomorrow?"],
+        "t": [["Eu gosto de nadar.", "I like swimming."], ["Ela quer viajar.", "She wants to travel."], ["Eu odeio esperar.", "I hate waiting."], ["Decidimos ficar em casa.", "We decided to stay at home."], ["Ele terminou de comer.", "He finished eating."]],
+        "c": [["I enjoy ___ (read).", "reading"], ["She wants ___ (learn) French.", "to learn"], ["They decided ___ (move).", "to move"], ["I don't mind ___ (wait).", "waiting"], ["He hopes ___ (find) a job.", "to find"]],
+        "r": [["I enjoy to dance.", "Corrija", "I enjoy dancing."], ["I want go home.", "Corrija", "I want to go home."], ["She finished to work at 6.", "Corrija", "She finished working at 6."]]
+      },
+      "medio": {
+        "p": ["What are you thinking of doing on your next vacation?", "What's something you're good at doing?", "What do you avoid doing at work?", "What have you always wanted to learn?", "Are you interested in starting a business? Why?", "What do you look forward to doing this year?"],
+        "t": [["Estou pensando em mudar de emprego.", "I'm thinking of changing jobs."], ["Obrigado por ter vindo.", "Thank you for coming."], ["Ela é boa em resolver problemas.", "She's good at solving problems."], ["Estou ansioso para te ver.", "I'm looking forward to seeing you."], ["Evito dirigir à noite.", "I avoid driving at night."]],
+        "c": [["I'm interested in ___ (learn) Italian.", "learning"], ["Thanks for ___ (help) me.", "helping"], ["I'm looking forward to ___ (meet) you.", "meeting"], ["She refused ___ (answer).", "to answer"], ["Would you mind ___ (close) the door?", "closing"]],
+        "r": [["I'm thinking in buy a car.", "Corrija", "I'm thinking of buying a car."], ["I look forward to hear from you.", "Corrija", "I look forward to hearing from you."], ["She's good in to cook.", "Corrija", "She's good at cooking."]]
+      },
+      "dificil": {
+        "p": ["What did you stop doing that improved your life?", "What do you always remember to do before leaving home?", "Have you ever tried doing something completely new? What happened?", "What do you regret not doing?", "What would you never consider doing for money?", "What are you used to doing that you'd like to stop?"],
+        "t": [["Parei de fumar. (deixei o hábito)", "I stopped smoking."], ["Parei para fumar. (interrompi para)", "I stopped to smoke."], ["Lembre-se de trancar a porta.", "Remember to lock the door."], ["Eu me lembro de ter trancado a porta.", "I remember locking the door."], ["Tente reiniciar o computador.", "Try restarting the computer."]],
+        "c": [["I'll never forget ___ (see) the sea for the first time.", "seeing"], ["Don't forget ___ (call) your mother.", "to call"], ["He stopped ___ (smoke) last year. (deixou)", "smoking"], ["On the way home, I stopped ___ (buy) bread.", "to buy"], ["I regret ___ (not / study) more.", "not studying"]],
+        "r": [["I stopped to drink coffee — now I only drink tea.", "Corrija", "I stopped drinking coffee — now I only drink tea."], ["Remember locking the door when you leave.", "Corrija", "Remember to lock the door when you leave."], ["I regret not to travel more.", "Corrija", "I regret not traveling more."]]
+      },
+      "fala": ["Talk about your likes, dislikes and things you avoid doing.", "Talk about plans: things you're thinking of doing, hoping to do, planning to do.", "Tell me about a habit you stopped and why.", "Give tech-support advice with 'Try -ing'."],
+      "escrita": ["Write 8 sentences using enjoy, avoid, decide, hope, mind, plan, refuse, look forward to.", "Write a formal email ending with 'I look forward to hearing from you'.", "Write 3 pairs with stop/remember/try + -ing vs to."]
+    },
+    {
+      "id": "b1-relative-clauses",
+      "nome": "Relative Clauses (who, which, that, where, whose)",
+      "categoria": "Gramática",
+      "sub": ["Who / which / that", "Where / whose", "Omissão do pronome"],
+      "fique": ["'The man which' → the man who", "'The city that I live' → the city where I live / that I live in", "Repetir o objeto: 'The book that I read it' → the book that I read"],
+      "facil": {
+        "p": ["Who is a person who makes you laugh?", "What is a place where you feel relaxed?", "What's an app that you use every day?", "Do you have a friend who lives abroad?", "What's a food that you never eat?", "Who is the teacher who helped you the most?"],
+        "t": [["A mulher que mora ao lado é médica.", "The woman who lives next door is a doctor."], ["Esse é o livro que eu comprei.", "This is the book (that) I bought."], ["Essa é a casa onde eu nasci.", "This is the house where I was born."], ["Tenho um amigo que fala cinco línguas.", "I have a friend who speaks five languages."], ["O filme que vimos foi ótimo.", "The movie (that) we saw was great."]],
+        "c": [["The man ___ called you is my boss.", "who"], ["The car ___ I want is expensive.", "that / which"], ["That's the restaurant ___ we met.", "where"], ["She's the girl ___ father is a pilot.", "whose"], ["The phone ___ I bought is great.", "that / which"]],
+        "r": [["The man which works here is nice.", "Corrija", "The man who works here is nice."], ["The book that I read it was good.", "Corrija", "The book that I read was good."], ["I have a friend. He lives in Japan.", "Una com who", "I have a friend who lives in Japan."]]
+      },
+      "medio": {
+        "p": ["Describe a person whose work you admire.", "What's the best place where you've ever stayed?", "Tell me about a decision that changed your life.", "What kind of people do you like working with?", "What's a movie that everyone loves but you don't?", "Is there a place in your city where tourists never go?"],
+        "t": [["O cara com quem eu trabalho é muito engraçado.", "The guy I work with is really funny."], ["Ela é a pessoa cuja opinião mais importa.", "She's the person whose opinion matters most."], ["Lembra do dia em que nos conhecemos?", "Do you remember the day (when) we met?"], ["Tudo que ele disse era verdade.", "Everything (that) he said was true."], ["É o tipo de lugar onde todo mundo se conhece.", "It's the kind of place where everyone knows each other."]],
+        "c": [["The guy I work ___ is funny.", "with"], ["Everything ___ he said was true.", "(that)"], ["Do you remember the day ___ we met?", "when / (that)"], ["The company ___ products I like closed.", "whose"], ["The hotel ___ we stayed in was cheap.", "(that / which)"]],
+        "r": [["The city that I live is noisy.", "Corrija (2 formas)", "The city where I live is noisy. / The city (that) I live in is noisy."], ["All what he said is true.", "Corrija", "All (that) he said is true. / Everything he said is true."], ["She is the woman. Her son is my student.", "Una com whose", "She is the woman whose son is my student."]]
+      },
+      "dificil": {
+        "p": ["Describe a time when someone said something that changed your mind.", "What's a quality that you look for in a leader?", "Talk about a city whose culture surprised you.", "What's the reason why many Brazilians want to learn English?", "Describe a book or movie whose ending you didn't expect.", "Who is someone whose advice you always follow?"],
+        "t": [["O motivo pelo qual eu saí foi o salário.", "The reason (why) I left was the salary."], ["Ele não fez o que prometeu, o que me deixou irritado.", "He didn't do what he promised, which made me angry."], ["Meu irmão, que mora em Londres, vem nos visitar.", "My brother, who lives in London, is coming to visit us."], ["Ela tem três filhos, dois dos quais moram fora.", "She has three children, two of whom live abroad."], ["O que eu mais gosto é a comida.", "What I like most is the food."]],
+        "c": [["He was late again, ___ annoyed everyone.", "which"], ["___ I need is a vacation.", "What"], ["My sister, ___ is a nurse, works nights.", "who"], ["I have two cars, neither of ___ works.", "which"], ["The reason ___ I called is simple.", "why / (that)"]],
+        "r": [["He didn't come. This made me sad.", "Una com which", "He didn't come, which made me sad."], ["The thing that I need is time.", "Reescreva com What", "What I need is time."], ["My mother, that is 70, still works.", "Corrija", "My mother, who is 70, still works."]]
+      },
+      "fala": ["Definitions game: describe a word using who/which/where — I guess it.", "Talk about the people who influenced you.", "Describe places in your city where things happen.", "Talk about an object that is important to you and why."],
+      "escrita": ["Write 6 definitions using who, which, where, whose.", "Combine 5 pairs of sentences using relative clauses.", "Write a short paragraph about a person whose story inspires you."]
+    },
+    {
+      "id": "b1-reported-speech",
+      "nome": "Reported Speech",
+      "categoria": "Gramática",
+      "sub": ["Say vs tell", "Mudança de tempo verbal", "Perguntas e pedidos indiretos"],
+      "fique": ["'She said me' → She told me / She said (to me)", "Pergunta indireta com inversão: 'He asked where was I' → He asked where I was", "'He told that' → He said that"],
+      "facil": {
+        "p": ["What did your boss say to you last time?", "What did your mother tell you yesterday?", "Did someone ask you a question today? What did they ask?", "What did the news say this morning?", "What did your friend tell you about the weekend?", "What did the doctor tell you last time?"],
+        "t": [["Ela disse que estava cansada.", "She said (that) she was tired."], ["Ele me disse que ia chegar tarde.", "He told me (that) he was going to arrive late."], ["Eles disseram que gostam do Rio.", "They said (that) they liked Rio."], ["Ela me pediu para esperar.", "She asked me to wait."], ["Ele perguntou onde eu morava.", "He asked where I lived."]],
+        "c": [["She ___ me she was busy.", "told"], ["He ___ that he was hungry.", "said"], ["'I'm tired.' → She said she ___ tired.", "was"], ["'I like it.' → He said he ___ it.", "liked"], ["She asked me ___ close the door.", "to"]],
+        "r": [["'I am happy,' she said.", "Discurso indireto", "She said (that) she was happy."], ["He said me that he was sick.", "Corrija", "He told me that he was sick."], ["'Wait here,' he told me.", "Discurso indireto", "He told me to wait there."]]
+      },
+      "medio": {
+        "p": ["Tell me about a conversation you had this week — who said what?", "What did people tell you when you decided to learn English?", "What's the best advice anyone has given you? What exactly did they say?", "What did the last customer or colleague complain about?", "Have you ever been asked an awkward question? What was it?", "What did your teacher at school always tell you?"],
+        "t": [["Ela perguntou se eu podia ajudar.", "She asked if I could help."], ["Ele disse que já tinha visto o filme.", "He said (that) he had already seen the movie."], ["Me disseram para não me preocupar.", "They told me not to worry."], ["Ela perguntou o que eu estava fazendo.", "She asked what I was doing."], ["Ele disse que me ligaria amanhã.", "He said he would call me the next day."]],
+        "c": [["'Can you help?' → She asked if I ___ help.", "could"], ["'I will call.' → He said he ___ call.", "would"], ["'Don't worry.' → They told me ___ worry.", "not to"], ["'Where do you work?' → She asked where I ___.", "worked"], ["'I've seen it.' → He said he ___ it.", "had seen"]],
+        "r": [["She asked me where did I live.", "Corrija", "She asked me where I lived."], ["'Are you coming?' he asked.", "Discurso indireto", "He asked if (whether) I was coming."], ["He told to me not to go.", "Corrija", "He told me not to go."]]
+      },
+      "dificil": {
+        "p": ["Tell me about a misunderstanding caused by something someone said.", "Report a conversation from a meeting: who suggested what?", "What did politicians promise in the last election? Did they keep it?", "Report an interview you watched recently.", "What did someone recently admit or deny?", "What did your friends advise you to do about a recent decision?"],
+        "t": [["Ela sugeriu que fôssemos de táxi.", "She suggested taking a taxi. / She suggested (that) we take a taxi."], ["Ele negou ter pegado o dinheiro.", "He denied taking the money."], ["O chefe nos lembrou de enviar o relatório.", "The boss reminded us to send the report."], ["Ela admitiu que tinha errado.", "She admitted (that) she had made a mistake."], ["Ele me convenceu a ficar.", "He persuaded me to stay."]],
+        "c": [["She suggested ___ (go) by taxi.", "going"], ["He denied ___ (take) the money.", "taking"], ["The boss reminded us ___ (send) the report.", "to send"], ["She apologized for ___ (be) late.", "being"], ["He refused ___ (sign) the contract.", "to sign"]],
+        "r": [["'Let's go by taxi,' she said.", "Use suggest", "She suggested going by taxi."], ["'I didn't take it,' he said.", "Use deny", "He denied taking it."], ["'Don't forget to call,' she told me.", "Use remind", "She reminded me to call."]]
+      },
+      "fala": ["Report a recent conversation in detail.", "Telephone game: I tell you something, you report it.", "Report a news story you read this week.", "Summarize a meeting: who said, suggested, promised what."],
+      "escrita": ["Write 6 sentences reporting a conversation from this week.", "Rewrite a short dialogue in reported speech.", "Write a meeting summary using suggest, agree, promise, refuse."]
+    },
+    {
+      "id": "b1-modais-deducao",
+      "nome": "Modais de dedução (must / might / can't)",
+      "categoria": "Gramática",
+      "sub": ["Certeza (must)", "Possibilidade (might/may/could)", "Impossibilidade (can't)"],
+      "fique": ["'He mustn't be rich' (dedução) → He can't be rich", "'Maybe he is' → He might be (mais natural)", "'He must to be' → He must be"],
+      "facil": {
+        "p": ["Look at my face. How do I feel? I might be...?", "Where might your best friend be right now?", "Who could be calling at 3 a.m.?", "Your neighbor has 3 cars. He must be...?", "It's 40 degrees in Rio today. People must be...?", "Your friend isn't answering. Why might that be?"],
+        "t": [["Ele deve estar cansado.", "He must be tired."], ["Ela pode estar em casa.", "She might be at home."], ["Não pode ser verdade.", "It can't be true."], ["Talvez chova hoje.", "It might rain today."], ["Eles devem ser irmãos.", "They must be brothers."]],
+        "c": [["He worked 12 hours. He ___ be tired.", "must"], ["She ___ be at home; I'm not sure.", "might"], ["That ___ be Ana — she's in Paris!", "can't"], ["It ___ rain later. Take an umbrella.", "might / may"], ["You ___ be hungry. You didn't eat all day.", "must"]],
+        "r": [["Maybe she is sick.", "Use might", "She might be sick."], ["I'm sure he is rich.", "Use must", "He must be rich."], ["It's impossible that she is 50.", "Use can't", "She can't be 50."]]
+      },
+      "medio": {
+        "p": ["Look at this situation: a man is running with an umbrella and a briefcase. What might be happening?", "Your colleague is smiling a lot today. What could the reason be?", "Why might someone leave a well-paid job?", "Your favorite restaurant is always empty now. What might be the reason?", "Why can't some people sleep well?", "What might Rio be like in 2050?"],
+        "t": [["Deve ser difícil morar longe da família.", "It must be hard to live far from your family."], ["Ele pode não saber a resposta.", "He might not know the answer."], ["Você deve estar brincando!", "You must be joking!"], ["Não pode ser tão caro assim.", "It can't be that expensive."], ["Pode ser que ela esteja certa.", "She could be right."]],
+        "c": [["You ___ be joking!", "must"], ["He ___ not know the answer.", "might / may"], ["It ___ be that expensive.", "can't"], ["She ___ be right; let's check.", "could / might"], ["They ___ be working — the lights are on.", "must"]],
+        "r": [["Perhaps he doesn't know.", "Use might not", "He might not know."], ["I'm certain it's difficult.", "Use must", "It must be difficult."], ["He mustn't be at home — the car isn't there.", "Corrija", "He can't be at home — the car isn't there."]]
+      },
+      "dificil": {
+        "p": ["Clues: an empty office, the coffee is still hot, a phone is on the desk. Where might the person be? Why?", "Why do you think some people distrust science? What could explain it?", "What must it be like to be a famous person?", "Your city's traffic is getting worse. What might be causing it?", "What could be the reason so many people want to move abroad?", "Your friend says he's 'fine' but isn't talking. What might be going on?"],
+        "t": [["Ele deve estar passando por um momento difícil.", "He must be going through a hard time."], ["Ela pode estar dormindo agora.", "She might be sleeping now."], ["Não é possível que eles ainda estejam trabalhando.", "They can't still be working."], ["Deve ser legal trabalhar com o que você ama.", "It must be nice to work with what you love."], ["Pode ser que ele ainda não saiba.", "He might not know yet."]],
+        "c": [["He ___ be going through a hard time.", "must"], ["She ___ be sleeping — don't call.", "might / could"], ["They ___ still be working! It's 2 a.m.", "can't"], ["It ___ be nice to work from the beach.", "must"], ["There ___ be a problem with the server.", "might / could / must"]],
+        "r": [["It's possible that the server has a problem.", "Use might", "There might be a problem with the server."], ["I'm sure she's sleeping now.", "Use must + be + -ing", "She must be sleeping now."], ["It's impossible that they're still here.", "Use can't", "They can't still be here."]]
+      },
+      "fala": ["Picture detective: make deductions about people in photos.", "Mystery: 'A man is found in the rain at 3 a.m.' — what might be happening?", "Guess my object: ask questions and deduce (It must be... / It can't be...).", "React to news with deductions: 'That must be...'"],
+      "escrita": ["Write 6 deductions about a photo (must, might, can't).", "Write a short mystery and 3 possible explanations.", "Reply to 4 messages from friends with deductions."]
+    },
+    {
+      "id": "b1-opiniao",
+      "nome": "Dar e defender opinião",
+      "categoria": "Funcional",
+      "sub": ["Dar opinião", "Concordar e discordar", "Justificar e exemplificar"],
+      "fique": ["'I am agree' → I agree", "'In my opinion, I think' (redundante) → In my opinion,... / I think...", "'Depends of' → It depends on"],
+      "facil": {
+        "p": ["Do you think Rio is a good city for tourists? Why?", "Is it better to study in the morning or at night?", "Do you agree that money brings happiness?", "Are cats better pets than dogs? Why?", "Should children have phones?", "Is English easy or difficult? Why?"],
+        "t": [["Eu acho que você tem razão.", "I think you're right."], ["Eu concordo com você.", "I agree with you."], ["Eu não concordo.", "I don't agree. / I disagree."], ["Na minha opinião, é caro demais.", "In my opinion, it's too expensive."], ["Depende do dia.", "It depends on the day."]],
+        "c": [["I ___ (concordo) with you.", "agree"], ["In my ___, it's a good idea.", "opinion"], ["It depends ___ the price.", "on"], ["I don't ___ so. (acho que não)", "think"], ["You're ___ (certo).", "right"]],
+        "r": [["I am agree with you.", "Corrija", "I agree with you."], ["Depends of the situation.", "Corrija", "It depends on the situation."], ["In my opinion I think it's good.", "Corrija (redundância)", "In my opinion, it's good. / I think it's good."]]
+      },
+      "medio": {
+        "p": ["Is working from home better than working in an office?", "Should university be free for everyone?", "Do social media make people happier or sadder?", "Is it better to rent or to buy a home?", "Should tourists pay more in popular places?", "Are exams a good way to measure learning?"],
+        "t": [["Entendo seu ponto, mas...", "I see your point, but..."], ["Concordo até certo ponto.", "I agree to some extent."], ["Por um lado..., por outro lado...", "On the one hand..., on the other hand..."], ["Por exemplo, no meu trabalho...", "For example, at my job..."], ["Para ser sincero, não tenho certeza.", "To be honest, I'm not sure."]],
+        "c": [["I see your ___, but I disagree.", "point"], ["I agree ___ some extent.", "to"], ["On the ___ hand, it's cheaper.", "one"], ["To be ___, I don't know.", "honest"], ["That's a good point. ___, it's expensive. (porém)", "However"]],
+        "r": [["You have reason.", "Corrija", "You're right."], ["I agree in part with you.", "Mais natural", "I partly agree with you. / I agree to some extent."], ["I don't agree because no.", "Justifique", "I don't agree because... (dê um motivo e um exemplo)."]]
+      },
+      "dificil": {
+        "p": ["Should companies be allowed to monitor employees' computers?", "Is it ethical to use AI to write school assignments?", "Should the minimum wage be higher, even if prices rise?", "Is it fair that some jobs pay much more than others?", "Should Brazil invest more in public transport or roads?", "Is privacy dead in the age of smartphones?"],
+        "t": [["Não estou totalmente convencido.", "I'm not entirely convinced."], ["Isso é discutível.", "That's debatable."], ["Vou fazer o papel de advogado do diabo.", "I'll play devil's advocate."], ["O que eu quero dizer é que...", "What I mean is that..."], ["Não necessariamente.", "Not necessarily."]],
+        "c": [["I'm not ___ convinced.", "entirely"], ["That's ___ (discutível).", "debatable"], ["Let me play devil's ___.", "advocate"], ["What I ___ is that we need more time.", "mean"], ["That's ___ (não necessariamente) true.", "not necessarily"]],
+        "r": [["I don't agree. It's bad.", "Discorde com estrutura e exemplo", "I see why people think that, but I disagree because... For example,..."], ["Everybody knows that it's wrong.", "Torne a frase menos absoluta (hedging)", "Many people would argue that it's wrong."], ["You are wrong.", "Discorde com educação", "I'm not sure I agree with that."]]
+      },
+      "fala": ["Mini-debate (3 min): pick a side and defend it with 2 reasons and 1 example.", "Change perspective: argue the opposite side for 1 minute.", "React to 5 controversial statements: agree, disagree, partly agree.", "Give your opinion on a news headline of the week."],
+      "escrita": ["Write a paragraph giving your opinion with 2 reasons and 1 example.", "Write a balanced paragraph: on the one hand / on the other hand.", "Reply politely disagreeing with a colleague's email."]
+    }
+  ]
+}
