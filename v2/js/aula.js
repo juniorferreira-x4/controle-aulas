@@ -7,6 +7,7 @@ import {
 import * as TTS from "./tts.js";
 import { inserirNoTopo } from "./drive.js";
 import { modalFalta, linksDocs, contarDificuldades, modalMensagem } from "./app.js";
+import { Sessao } from "./sessao.js";
 
 // ---------- utilidades ----------
 const LS = {
@@ -30,10 +31,17 @@ function vizinha(d) { return d === "facil" ? "medio" : d === "medio" ? "dificil"
 const lista = (itens, inicio = 1, cls = "") => `<ol class="lista-num ${cls}" start="${inicio}">${itens.join("")}</ol>`;
 const li = (txt, resp, mostrar) => `<li>${esc(txt)}${mostrar && resp ? `<span class="resp">${esc(resp)}</span>` : ""}</li>`;
 
-// Canal com a "Tela do aluno" (janela separada no mesmo navegador).
-let canal = null;
-try { canal = new BroadcastChannel("ca2-tela"); } catch {}
-if (canal) canal.onmessage = ev => { if (ev.data && ev.data.tipo === "pedir" && A) enviarTela(); };
+const NIVEIS_ALTOS = ["B2", "C1", "C2"];
+function faixa(nivel) { return nivel === "A1" || nivel === "A2" || !nivel ? "basico" : nivel === "B1" ? "intermediario" : "avancado"; }
+function normalizar(x) { return (x || "").toLowerCase().replace(/[’']/g, "'").replace(/\([^)]*\)/g, "").replace(/[.,!?;:"]/g, "").replace(/\s+/g, " ").trim(); }
+function confere(resp, gab, enunciado = "") {
+  const r = normalizar((resp || "").replace(/\s*[/,]\s*/g, " "));
+  if (!r) return false;
+  const lacunas = (enunciado.match(/_{2,}/g) || []).length;
+  const opcoes = lacunas >= 2 ? [gab.split("/").map(x => x.trim()).join(" ")] : gab.split("/");
+  const exp = x => x.replace(/'s\b/g, " is").replace(/n't\b/g, " not").replace(/'m\b/g, " am").replace(/'re\b/g, " are");
+  return opcoes.map(normalizar).some(g => g && (g === r || exp(g) === exp(r)));
+}
 
 // ===================== MODO AULA =====================
 let A = null; // estado da tela de aula
@@ -48,7 +56,13 @@ export function renderAula(v, id) {
   const timer = LS.get(kTimer, null) || { etapa: 0, seg: etapas.map(() => 0), rodando: false, ultimo: 0 };
   if (timer.seg.length !== etapas.length) timer.seg = etapas.map((_, i) => timer.seg[i] || 0);
   if (timer.etapa >= etapas.length) timer.etapa = 0;
-  A = { aula, al, etapas, kTimer, timer, resp: false, mostrarTexto: false, aqIdx: hash(aula.id) % 7, maisEx: false, rate: al.nivel === "A1" ? 0.85 : 1 };
+  A = { aula, al, etapas, kTimer, timer, resp: false, mostrarTexto: false, aqIdx: hash(aula.id) % 7, maisEx: false, rate: al.nivel === "A1" ? 0.85 : 1,
+    dicas: {}, exercicio: null, respostas: {}, comentario: "" };
+  // Exercício que estava aberto (se a página recarregou) e respostas já recebidas.
+  (aula.exercicios || []).forEach(x => { if (x.resposta) A.respostas[x.id] = x.resposta; });
+  if (aula.exercicioAtivo) A.exercicio = (aula.exercicios || []).find(x => x.id === aula.exercicioAtivo) || null;
+  Sessao.ligar(S.fb, { aoResponder: receberResposta, aoPedirEstado: () => enviarTela() });
+  if (S.fb && aula.sessaoId && Sessao.aulaId !== aula.id) Sessao.iniciarRemota(aula, al.nome.split(" ")[0], aula.sessaoId).then(sid => { if (A) { A.aula.sessaoId = sid; enviarTela(); atualizarPainelAluno(); } }).catch(() => {});
   prepararPlano();
   S.store.salvarAula(aula).catch(erro);
   desenharAula(v);
@@ -130,7 +144,7 @@ function desenharAula(v = document.getElementById("view")) {
     </ol>
     <div class="cols">
       <div class="col-main">${conteudoEtapa(e.id)}${proximaEtapaCard()}</div>
-      <aside class="col-side lateral">${ladoAula()}</aside>
+      <aside class="col-side lateral"><section class="card destaque" id="painel-aluno">${painelAlunoHTML()}</section>${ladoAula()}</aside>
     </div>`;
   const cm = document.querySelector(".col-main"); if (cm && sc) cm.scrollTop = sc;
   if (e.id === "listening") atualizarPlayer();
@@ -184,12 +198,12 @@ function conteudoEtapa(id) {
         <button class="btn" data-a="aula-resp" aria-pressed="${r}">${r ? "Esconder gabarito" : "Mostrar gabarito"}</button>
         ${al.docHomeworkUrl ? `<a class="btn" href="${esc(al.docHomeworkUrl)}" target="_blank" rel="noopener">Abrir doc ${ICONES.externo}</a>` : ""}</div></section>`;
     if (hw.tipo === "conversa") {
-      return cab + `<div class="grid-2">
+      return cab + caixaTextoAluno() + `<div class="grid-2">
         <section class="card"><h2 class="rotulo">Frases com as expressões</h2>${lista(hw.vocab.map(v => li(v[0], v[1], r)))}</section>
         <section class="card"><h2 class="rotulo">Escrita</h2><div>${esc(hw.escrita)}</div><span class="mini">Peça para o aluno ler em voz alta e corrija 2 ou 3 pontos.</span>
           <h2 class="rotulo">Preparação para a conversa</h2>${lista(hw.preparar.map(p => li(p)))}</section></div>`;
     }
-    return cab + `<div class="grid-2">
+    return cab + caixaTextoAluno() + `<div class="grid-2">
       <section class="card">
         ${hw.completar?.length ? `<h2 class="rotulo">Complete</h2>${lista(hw.completar.map(c => li(c[0], c[1], r)))}` : ""}
         ${hw.reescrever?.length ? `<h2 class="rotulo">Reescreva</h2>${lista(hw.reescrever.map(c => li(`${c[0]} (${c[1]})`, c[2], r)))}` : ""}
@@ -275,7 +289,10 @@ function conteudoEtapa(id) {
           : ["Devolva as 2 ou 3 correções mais importantes da aula.", "Elogie algo específico que o aluno fez bem.", "Combine o foco da próxima aula e avise sobre o homework."]).map(p => li(p)))}
         <div><button class="btn btn-primario btn-lg" data-a="aula-pos">Ir para o pós-aula ${ICONES.prox}</button></div></section>
       <section class="card"><span class="rotulo">Suas anotações desta aula</span>
-        ${aula.notaRapida ? `<div style="white-space:pre-line">${esc(aula.notaRapida)}</div>` : `<span class="sub">Nada anotado na nota rápida.</span>`}</section></div>`;
+        ${aula.notaRapida ? `<div style="white-space:pre-line">${esc(aula.notaRapida)}</div>` : `<span class="sub">Nada anotado na nota rápida.</span>`}
+        <label class="rotulo acento" for="corr-aluno">Correções para mostrar ao aluno</label>
+        <textarea id="corr-aluno" data-i="correcoes-aluno" placeholder="Uma por linha. Ex.: I have 30 years → I am 30" style="min-height:120px">${esc((aula.correcoesAluno || []).join("\n"))}</textarea>
+        <span class="mini">Aparecem na tela do aluno enquanto você digita.</span></section></div>`;
   }
 
   // ----- Conversação -----
@@ -326,6 +343,38 @@ function ladoAula() {
 }
 
 // ---------- Tela do aluno ----------
+function caixaTextoAluno() {
+  return `<section class="card destaque"><label class="rotulo acento" for="hw-texto">Texto do aluno (cole aqui para mostrar na tela dele)</label>
+    <textarea id="hw-texto" data-i="hw-texto-aluno" placeholder="Cole aqui o homework que o aluno escreveu…" style="min-height:120px">${esc(A.aula.hwTextoAluno || "")}</textarea>
+    <span class="mini">Na tela do aluno aparece a estrutura trabalhada no topo e este texto logo abaixo.</span></section>`;
+}
+
+function perguntasAquecimento() {
+  const { al } = A; const t = S.banco.topicos[A.aula.topicoId];
+  const n = S.banco.aquecimento[al.nivel] ? al.nivel : (t && S.banco.aquecimento[t.nivel] ? t.nivel : "A2");
+  return { n, lista: S.banco.aquecimento[n] };
+}
+
+// Dicas que o professor pode liberar na etapa atual.
+function dicasDaEtapa() {
+  const { aula, al } = A;
+  const e = A.etapas[A.timer.etapa];
+  const D = S.banco.dicas || {};
+  const est = (D.estruturas || {})[aula.topicoId];
+  const F = D.frases || {}; const fx = faixa(al.nivel);
+  if (e.id === "aquecimento") {
+    const { n, lista } = perguntasAquecimento();
+    const arr = (D.aquecimento || {})[n];
+    const itens = arr ? arr[A.aqIdx % lista.length] : null;
+    return itens ? { itens } : null;
+  }
+  if (e.id === "pratica" && est) return { forma: est.forma, exemplo: est.exemplo, itens: [] };
+  if (e.id === "fala") return { forma: est ? est.forma : "", exemplo: est ? est.exemplo : "", itens: (F.fala || {})[fx] || [] };
+  if (e.id === "tema" || e.id === "discussao") return { itens: (F.discussao || {})[fx] || [] };
+  if (e.id === "debate") return { itens: (F.debate || {})[fx] || [] };
+  return null;
+}
+
 function estadoAluno() {
   if (!A) return null;
   const { aula, al } = A;
@@ -334,25 +383,23 @@ function estadoAluno() {
   const tema = S.banco.temasPorId[aula.temaId];
   const blocos = [];
   const B = (titulo, itens, extra = {}) => blocos.push({ titulo, itens, ...extra });
+  let homework = null, correcoes = null;
   if (e.id === "aquecimento") {
-    const perguntas = S.banco.aquecimento[al.nivel] || S.banco.aquecimento[t ? t.nivel : "A2"] || S.banco.aquecimento.A2;
-    B("", [perguntas[A.aqIdx % perguntas.length]], { grande: true });
+    const { lista } = perguntasAquecimento();
+    B("", [lista[A.aqIdx % lista.length]], { grande: true });
   } else if (e.id === "homework") {
     const ant = anteriores(aula).find(a => a.homework);
     const hw = ant && ant.homework;
     if (!hw) B("", ["Let's talk about your week!"], { grande: true });
-    else if (hw.tipo === "conversa") { B("Expressions", hw.vocab.map(v => v[0])); B("Writing", [hw.escrita]); B("Prepare", hw.preparar); }
-    else { B("Complete", hw.completar.map(c => c[0])); B("Rewrite", hw.reescrever.map(c => `${c[0]} (${c[1]})`)); B("Translate", hw.traducao.map(c => c[0])); B("Writing", [hw.escrita]); }
+    else if (hw.tipo === "conversa") homework = { titulo: hw.topicoNome, forma: "Expressions: " + hw.vocab.map(v => v[0]).join(" · "), exemplo: "", texto: aula.hwTextoAluno || "" };
+    else { const est = (S.banco.dicas?.estruturas || {})[hw.topicoId] || {}; homework = { titulo: hw.topicoNome, forma: est.forma || "", exemplo: est.exemplo || "", texto: aula.hwTextoAluno || "" }; }
   } else if (e.id === "pratica" && t) {
     const d = aula.nivelMaterial || "medio", dv = vizinha(d);
     B("Questions", [...t[d].p, ...t[dv].p]);
     B("Translate into English", [...t[d].t, ...t[dv].t].map(x => x[0]), { inicio: t[d].p.length + t[dv].p.length + 1 });
-    if (A.maisEx) { B("Complete", t[d].c.map(x => x[0])); B("Rewrite", t[d].r.map(x => `${x[0]} (${x[1]})`)); }
   } else if (e.id === "listening") {
     const tx = S.banco.textosPorId[aula.textoId];
-    if (tx) {
-      B(tx.titulo, [], { audio: true, link: linkOuvir(tx.id), corpo: tx.texto, rate: A.rate }); // só o áudio: sem texto e sem perguntas
-    }
+    if (tx) B(tx.titulo, [], { audio: true, corpo: tx.texto, rate: A.rate }); // só o áudio: sem texto e sem perguntas
   } else if (e.id === "fala" && t) {
     B("Let's talk", t.fala);
   } else if (e.id === "tema" && tema) {
@@ -360,20 +407,136 @@ function estadoAluno() {
     B("Questions", tema.perguntas.slice(0, 4));
   } else if (e.id === "discussao" && tema) {
     B("Questions", tema.perguntas.slice(4), { inicio: 5 });
-    if (["B2", "C1", "C2"].includes(al.nivel)) B("Going deeper", tema.aprofundar, { inicio: tema.perguntas.length + 1 });
+    if (NIVEIS_ALTOS.includes(al.nivel)) B("Going deeper", tema.aprofundar, { inicio: tema.perguntas.length + 1 });
   } else if (e.id === "debate" && tema) {
     B("Debate", tema.debate.map(d => `“${d}”`), { grande: true });
     tema.roleplay.forEach(rp => B(`Role-play: ${rp.titulo}`, [rp.situacao]));
   } else {
     B("", ["Great class! See you next time."], { grande: true });
+    correcoes = aula.correcoesAluno || [];
   }
+  const dc = dicasDaEtapa();
+  const ex = A.exercicio;
   const EN = { aquecimento: "Warm-up", homework: "Homework check", pratica: "Practice", listening: "Listening", fala: "Speaking", fechamento: "Wrap-up", tema: "Today's topic", discussao: "Discussion", debate: "Debate & role-play", devolutiva: "Feedback" };
-  return { tipo: "estado", aulaId: aula.id, aluno: al.nome.split(" ")[0], etapa: EN[e.id] || e.nome, blocos };
+  return {
+    tipo: "estado", aulaId: aula.id, aluno: al.nome.split(" ")[0], etapa: EN[e.id] || e.nome, etapaId: e.id, blocos,
+    dicas: dc ? { mostrar: !!A.dicas[A.timer.etapa], ...(A.dicas[A.timer.etapa] ? dc : { itens: [] }) } : null,
+    exercicio: ex ? {
+      id: ex.id, tipo: ex.tipo, titulo: ex.titulo, instrucao: ex.instrucao, itens: ex.itens, minutos: ex.minutos || 0, inicio: ex.inicio || 0,
+      correcao: ex.correcaoLiberada ? { gabarito: ex.gabarito || [], comparar: ex.tipo === "completar", comentario: ex.comentario || "" } : null
+    } : null,
+    homework, correcoes
+  };
 }
-function enviarTela() { if (canal && A) { try { canal.postMessage(estadoAluno()); } catch {} } }
-function linkOuvir(textoId) {
-  const base = location.href.split("#")[0].split("?")[0].replace(/index\.html$/, "");
-  return `${base}aluno.html?t=${encodeURIComponent(textoId)}&v=${A ? A.rate : 1}`;
+function enviarTela() { if (A) Sessao.publicar(estadoAluno()); }
+function linkOuvir(textoId) { return `${baseApp()}aluno.html?t=${encodeURIComponent(textoId)}&v=${A ? A.rate : 1}`; }
+function baseApp() { return location.href.split("#")[0].split("?")[0].replace(/index\.html$/, ""); }
+
+// ---------- exercícios escritos ----------
+function tiposExercicio() {
+  if (A.aula.modelo === "conversa") return [["frases", "Frases com o vocabulário"], ["escrita5", "Escrita · 5 min"], ["escrita10", "Escrita · 10 min"]];
+  return [["traducao", "Traduzir escrevendo"], ["completar", "Completar"], ["reescrever", "Reescrever"], ["escrita5", "Escrita · 5 min"], ["escrita10", "Escrita · 10 min"]];
+}
+function criarExercicio(tipo) {
+  const { aula } = A;
+  const t = S.banco.topicos[aula.topicoId];
+  const tema = S.banco.temasPorId[aula.temaId];
+  const d = aula.nivelMaterial || "medio";
+  const id = `${tipo}-${Date.now().toString(36)}`;
+  const n = (aula.exercicios || []).length;
+  if (tipo === "frases" && tema) return { id, tipo: "frases", titulo: "Write a sentence with each expression", instrucao: "Use each expression in a sentence about your own life.", itens: tema.vocab.slice(0, 6).map(v => `${v[0]}`), gabarito: tema.vocab.slice(0, 6).map(v => v[1]) };
+  if (tipo.startsWith("escrita")) {
+    const min = tipo === "escrita10" ? 10 : 5;
+    const prompt = aula.modelo === "conversa" && tema ? tema.escrita : t ? t.escrita[n % t.escrita.length] : "Write about your week.";
+    return { id, tipo: "escrita", titulo: `Writing · ${min} minutes`, instrucao: "Write as much as you can. Don't worry about mistakes — your teacher will help.", itens: [prompt], gabarito: [], minutos: min, inicio: Date.now() };
+  }
+  if (!t) return null;
+  const x = t[d];
+  if (tipo === "traducao") return { id, tipo, titulo: "Translate into English", instrucao: "Write each sentence in English.", itens: x.t.map(i => i[0]), gabarito: x.t.map(i => i[1]) };
+  if (tipo === "completar") return { id, tipo, titulo: "Complete the sentences", instrucao: "Write only the missing word(s).", itens: x.c.map(i => i[0]), gabarito: x.c.map(i => i[1]) };
+  if (tipo === "reescrever") return { id, tipo, titulo: "Rewrite the sentences", instrucao: "Rewrite each sentence as asked in brackets.", itens: x.r.map(i => `${i[0]} (${i[1]})`), gabarito: x.r.map(i => i[2]) };
+  return null;
+}
+function salvarExercicioNaAula() {
+  const atual = S.store.aula(A.aula.id); if (!atual) return;
+  const lista = (A.aula.exercicios || []).map(x => ({ ...x, resposta: A.respostas[x.id] || x.resposta || null }));
+  A.aula.exercicios = lista; A.aula.exercicioAtivo = A.exercicio ? A.exercicio.id : null;
+  S.store.salvarAula({ ...atual, exercicios: lista, exercicioAtivo: A.aula.exercicioAtivo, sessaoId: A.aula.sessaoId || atual.sessaoId || null }).catch(erro);
+}
+function receberResposta(r) {
+  if (!A) return;
+  if (r.presenca) { atualizarPainelAluno(); return; }
+  A.respostas[r.exercicioId] = { itens: r.itens, texto: r.texto, enviadoEm: r.enviadoEm || Date.now() };
+  salvarExercicioNaAula(); atualizarPainelAluno();
+  if (A.exercicio && A.exercicio.id === r.exercicioId) toast("O aluno enviou as respostas.");
+}
+
+function statusConexao() {
+  if (Sessao.sid && Sessao.aulaId === A.aula.id) {
+    const visto = Sessao.alunoVistoEm;
+    return visto && Date.now() - visto < 150000 ? `<span class="txt-ok">● Aluno conectado pelo link</span>` : `<span class="txt-alerta">● Link ativo — aguardando o aluno abrir</span>`;
+  }
+  return `<span class="txt-muted">● Sem link ao vivo (só a janela local, se aberta)</span>`;
+}
+function painelAlunoHTML() {
+  if (!A) return "";
+  const dc = dicasDaEtapa();
+  const lib = !!A.dicas[A.timer.etapa];
+  const ex = A.exercicio;
+  const resp = ex ? A.respostas[ex.id] : null;
+  const etapaId = A.etapas[A.timer.etapa].id;
+  let corpoEx = "";
+  if (ex) {
+    const linhas = ex.tipo === "escrita"
+      ? `<div class="pilha" style="gap:4px"><span class="mini">${esc(ex.itens[0])}</span>${resp ? `<div class="item" style="white-space:pre-line;font-size:13px">${esc(resp.texto || resp.itens[0] || "")}</div>` : ""}
+          ${ex.correcaoLiberada ? "" : `<label class="mini" for="ex-coment">Comentário para o aluno (vai junto com a correção)</label><textarea id="ex-coment" data-i="ex-comentario" style="min-height:60px">${esc(A.comentario)}</textarea>`}</div>`
+      : `<ol class="lista-num" style="font-size:13px;gap:8px">${ex.itens.map((it, i) => {
+          const r = resp ? (resp.itens[i] || "") : "";
+          const ok = ex.tipo === "completar" && resp ? confere(r, ex.gabarito[i] || "", it) : null;
+          return `<li>${esc(it)}<span class="resp">${resp ? `<b class="${ok === true ? "txt-ok" : ok === false ? "txt-perigo" : ""}">${esc(r || "—")}</b> · ` : ""}${esc(ex.gabarito[i] || "")}</span></li>`;
+        }).join("")}</ol>`;
+    corpoEx = `<div class="sep"></div><div class="linha"><b class="flex1" style="font-size:13px">${esc(ex.titulo)}</b><span class="mini">${resp ? `<span class="txt-ok">✓ respondido</span>` : "aguardando…"}</span></div>
+      ${linhas}
+      <div class="linha">${ex.correcaoLiberada ? `<span class="mini txt-ok">Correção liberada</span>` : `<button class="btn btn-sm" data-a="ex-liberar">Liberar correção</button>`}<button class="btn btn-sm" data-a="ex-encerrar">Encerrar exercício</button></div>`;
+  }
+  return `<div class="linha"><h2 class="rotulo acento flex1">Tela do aluno</h2><button class="btn btn-sm" data-a="aula-tela">Abrir / link</button></div>
+    <span class="mini">${statusConexao()}</span>
+    ${dc ? `<div class="linha"><span class="flex1" style="font-size:13px">Dicas desta etapa</span><button class="btn btn-sm" data-a="dicas-toggle" aria-pressed="${lib}">${lib ? "Ocultar dicas" : "Liberar dicas"}</button></div>` : ""}
+    ${!ex && etapaId !== "listening" ? `<div class="pilha" style="gap:6px"><span style="font-size:13px">Enviar exercício escrito</span><div class="linha">${tiposExercicio().map(([k, r]) => `<button class="btn btn-sm" data-a="ex-enviar" data-t="${k}">${r}</button>`).join("")}</div></div>` : ""}
+    ${corpoEx}`;
+}
+function atualizarPainelAluno() { const el = document.getElementById("painel-aluno"); if (el && A) el.innerHTML = painelAlunoHTML(); }
+
+function modalTelaAluno() {
+  const temFb = !!(S.fb && S.store.modo === "nuvem");
+  const link = Sessao.sid && Sessao.aulaId === A.aula.id ? Sessao.linkRemoto(baseApp()) : null;
+  import("./ctx.js").then(({ abrirModal, fecharModal, linkWhats }) => {
+    const desenhar = (l) => `<section class="modal" role="dialog" aria-labelledby="ta"><div class="modal-cab"><h2 id="ta">Tela do aluno</h2><span class="sub">${esc(A.al.nome)}</span></div>
+      <div class="modal-corpo">
+        <div class="card destaque"><b>Link ao vivo no aparelho do aluno</b>
+          <span class="sub">O aluno abre o link no celular ou no computador dele. A tela acompanha as etapas sozinha, o áudio toca no aparelho dele e os exercícios escritos voltam para você. O link vale por 4 horas.</span>
+          ${!temFb ? `<span class="txt-alerta mini">Disponível depois do login com o Google (modo nuvem).</span>` : l ? `<input type="text" readonly value="${esc(l)}" id="ta-link"><div class="linha"><button class="btn btn-sm" data-m="copiar">Copiar link</button>${linkWhats(A.al, "x") ? `<button class="btn btn-sm" data-m="whats">Enviar no WhatsApp</button>` : ""}</div>` : `<div><button class="btn" data-m="gerar">Gerar link da aula</button></div>`}
+        </div>
+        <div class="card"><b>Janela para compartilhar a tela</b>
+          <span class="sub">Abre uma janela no seu computador só com o conteúdo do aluno. Compartilhe só ela e ative o áudio do sistema na chamada.</span>
+          <div><button class="btn btn-sm" data-m="janela">Abrir janela</button></div></div>
+      </div><div class="modal-rod"><button class="btn" data-m="fechar">Fechar</button></div></section>`;
+    let atual = link;
+    abrirModal(desenhar(atual), { onAction: async (acao) => {
+      try {
+        if (acao === "fechar") return fecharModal();
+        if (acao === "janela") { const w = window.open(`${baseApp()}aluno.html`, "ca2-tela-aluno", "width=1100,height=760"); if (!w) toast("O navegador bloqueou a janela. Permita pop-ups para este site."); setTimeout(enviarTela, 800); return; }
+        if (acao === "gerar") {
+          const sid = await Sessao.iniciarRemota(A.aula, A.al.nome.split(" ")[0], A.aula.sessaoId);
+          A.aula.sessaoId = sid; salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno();
+          atual = Sessao.linkRemoto(baseApp());
+          document.querySelector("#modal-raiz .modal-fundo").innerHTML = desenhar(atual); return;
+        }
+        if (acao === "copiar") return copiar(atual);
+        if (acao === "whats") return window.open(linkWhats(A.al, `Oi, ${A.al.nome.split(" ")[0]}! Abra este link para acompanhar a aula de hoje: ${atual}`), "_blank", "noopener");
+      } catch (e) { erro(e); }
+    } });
+  });
 }
 
 // ---------- player ----------
@@ -423,12 +586,23 @@ Object.assign(ACOES, {
     LS.set(A.kTimer, A.timer);
     await S.store.salvarAula(A.aula); desenharAula();
   },
-  "aula-tela": () => {
-    const base = location.href.split("#")[0].split("?")[0].replace(/index\.html$/, "");
-    const w = window.open(`${base}aluno.html`, "ca2-tela-aluno", "width=1100,height=760");
-    if (!w) toast("O navegador bloqueou a janela. Permita pop-ups para este site.");
-    setTimeout(enviarTela, 800);
+  "aula-tela": () => modalTelaAluno(),
+  "dicas-toggle": () => { A.dicas[A.timer.etapa] = !A.dicas[A.timer.etapa]; enviarTela(); atualizarPainelAluno(); },
+  "ex-enviar": el => {
+    const ex = criarExercicio(el.dataset.t);
+    if (!ex) { toast("Escolha um tópico ou tema primeiro."); return; }
+    A.exercicio = ex; A.comentario = "";
+    A.aula.exercicios = [...(A.aula.exercicios || []), ex];
+    salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno();
+    if (!(Sessao.sid && Sessao.aulaId === A.aula.id)) toast("Exercício na tela do aluno. Para ele responder do aparelho dele, gere o link em “Abrir / link”.");
   },
+  "ex-liberar": () => {
+    if (!A.exercicio) return;
+    A.exercicio.correcaoLiberada = true; A.exercicio.comentario = A.comentario || "";
+    A.aula.exercicios = (A.aula.exercicios || []).map(x => x.id === A.exercicio.id ? A.exercicio : x);
+    salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno();
+  },
+  "ex-encerrar": () => { A.exercicio = null; salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno(); },
   "tx-mostrar": () => { A.mostrarTexto = !A.mostrarTexto; desenharAula(); },
   "tts-play": () => { if (!prepararTTS()) return; const e = TTS.estado(); if (e.tocando) TTS.pausar(); else TTS.tocar(); },
   "tts-parar": () => { TTS.parar(); A.ttsTexto = null; prepararTTS(); },
@@ -448,6 +622,17 @@ Object.assign(CAMPOS, {
     if (tx) A.aula.textoId = tx.id;
     await S.store.salvarAula(A.aula); desenharAula();
   },
+  "ex-comentario": el => { if (A) A.comentario = el.value; },
+  "hw-texto-aluno": (() => { let t; return el => {
+    if (!A) return; A.aula.hwTextoAluno = el.value; enviarTela();
+    clearTimeout(t); const id = A.aula.id, v = el.value;
+    t = setTimeout(() => { const atual = S.store.aula(id); if (atual) S.store.salvarAula({ ...atual, hwTextoAluno: v }).catch(erro); }, 600);
+  }; })(),
+  "correcoes-aluno": (() => { let t; return el => {
+    if (!A) return; const lista = el.value.split("\n").map(x => x.trim()).filter(Boolean); A.aula.correcoesAluno = lista; enviarTela();
+    clearTimeout(t); const id = A.aula.id;
+    t = setTimeout(() => { const atual = S.store.aula(id); if (atual) S.store.salvarAula({ ...atual, correcoesAluno: lista }).catch(erro); }, 600);
+  }; })(),
   "aula-tema": async el => { if (!A || el.value === A.aula.temaId) return; A.aula.temaId = el.value; await S.store.salvarAula(A.aula); desenharAula(); },
   "aula-texto": async el => { if (!A) return; A.aula.textoId = el.value; TTS.parar(); A.ttsTexto = null; await S.store.salvarAula(A.aula); desenharAula(); },
   // Salva só o campo da nota, sobre a versão mais recente da aula (nunca sobrescreve o pós-aula).

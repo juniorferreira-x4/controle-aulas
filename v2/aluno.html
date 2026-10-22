@@ -23,6 +23,15 @@
   .bloco.grande p { margin: 0; font-size: 34px; font-weight: 600; line-height: 1.3; }
   .bloco.texto { grid-column: 1 / -1; }
   .bloco.texto p { margin: 0; font-size: 20px; line-height: 1.75; white-space: pre-line; color: var(--texto-2); }
+  .bloco.dicas { border-style: dashed; border-color: var(--alerta-borda); background: var(--alerta-fundo); }
+  .bloco.dicas h2 { color: var(--alerta); }
+  .bloco.dicas ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 18px; }
+  .bloco.exercicio { border-color: var(--acento-borda); }
+  .ex-lista { margin: 0; padding-left: 28px; display: flex; flex-direction: column; gap: 16px; }
+  .ex-lista li { font-size: 19px; }
+  .ex-enun { display: block; margin-bottom: 6px; }
+  .ex-lista input { font-size: 18px; min-height: 48px; }
+  .ex-gab { margin-top: 6px; font-size: 16px; font-weight: 600; }
   .aguardando { margin: auto; text-align: center; color: var(--muted); }
   @media (max-width: 520px) { .tela { padding: 16px; } .blocos { grid-template-columns: minmax(0, 1fr); } .bloco.grande p { font-size: 26px; } .bloco ol { font-size: 18px; } }
 </style>
