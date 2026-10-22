@@ -24,6 +24,7 @@ export async function iniciarFirebase(config) {
     db, auth,
     collection: fsMod.collection, doc: fsMod.doc, getDocs: fsMod.getDocs, getDoc: fsMod.getDoc,
     setDoc: fsMod.setDoc, deleteDoc: fsMod.deleteDoc, writeBatch: fsMod.writeBatch,
+    onSnapshot: fsMod.onSnapshot, Timestamp: fsMod.Timestamp, updateDoc: fsMod.updateDoc,
     aoMudarUsuario(cb) { return authMod.onAuthStateChanged(auth, cb); },
     async entrar() {
       const r = await authMod.signInWithPopup(auth, provider);
@@ -45,4 +46,16 @@ export async function iniciarFirebase(config) {
 
 function guardarToken(cred) {
   if (cred && cred.accessToken) { token = cred.accessToken; tokenExpira = Date.now() + 50 * 60 * 1000; }
+}
+
+// Página do aluno: login anônimo + Firestore sem cache local.
+export async function iniciarFirebaseAluno(config) {
+  const appMod = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
+  const authMod = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
+  const fsMod = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
+  const app = appMod.initializeApp(config, "aluno");
+  const auth = authMod.getAuth(app);
+  await authMod.signInAnonymously(auth);
+  const db = fsMod.getFirestore(app);
+  return { db, doc: fsMod.doc, collection: fsMod.collection, setDoc: fsMod.setDoc, onSnapshot: fsMod.onSnapshot };
 }

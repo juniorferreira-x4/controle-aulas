@@ -1,0 +1,111 @@
+{
+  "aquecimento": {
+    "A1": [
+      ["Start with: The best thing today was…", "Use the past: I went / I ate / I saw…", "Add how you felt: It was great / fun / relaxing."],
+      ["Start with: I'm good / tired / happy today.", "Then say why: …because I…", "Useful words: busy, sleepy, excited, stressed."],
+      ["Start with: Today I ate… / For breakfast I had…", "Use 'had' for meals: I had rice and beans.", "Add: It was delicious / OK / too much."],
+      ["Start with: Today it's sunny / rainy / cloudy / hot / cold.", "Add: I like / don't like this weather because…", "Useful: It's windy. It's a little cold."],
+      ["Start with: I woke up at… (seven o'clock).", "Add: Then I… (took a shower / had breakfast).", "Useful: early, late, on time."],
+      ["Start with: After class, I'm going to…", "Examples: have dinner, watch TV, go to bed.", "Add when: at eight o'clock / tonight."],
+      ["Start with: Yesterday I…", "Past verbs: went, worked, watched, cooked, visited.", "Add with who or where: with my family / at home."],
+      ["Start with: This weekend I'm going to…", "Ideas: go to the beach, visit my parents, rest.", "Add: I'm excited / I need to rest."],
+      ["Start with: My day was good / busy / tiring.", "Then say one thing: I had a meeting / I worked a lot.", "Useful: boring, interesting, stressful."],
+      ["Start with: These days I'm listening to…", "Add the type: pop, rock, samba, podcasts.", "Add: I like it because…"]
+    ],
+    "A2": [
+      ["Start with: The best thing this week was when I…", "Use the simple past: went, met, finished, got.", "Add a feeling: I was really happy / relieved."],
+      ["Start with: Last weekend I…", "Use time words: On Saturday… On Sunday… Then…", "Add: It was relaxing / a lot of fun."],
+      ["Start with: Tonight I'm going to…", "Or a plan: I'm meeting / I'm having dinner with…", "Add: I'm looking forward to it."],
+      ["Start with: Something new in my life is…", "Use: I've just started… / I recently bought…", "Explain: It's important because…"],
+      ["Start with: The last thing that made me laugh was…", "Describe: My friend told me… / I saw a video…", "Add: It was so funny because…"],
+      ["Start with: At the moment I'm reading / watching…", "Describe it: It's about… The main character is…", "Give your opinion: I really like it / It's OK."],
+      ["Start with: I slept well / badly last night.", "Explain: because it was hot / I went to bed late.", "Useful: I woke up a few times. I feel rested."],
+      ["Start with: For lunch I had…", "Add where: at home / at a restaurant near work.", "Add opinion: It was delicious / too heavy."],
+      ["Start with: I'm looking forward to…", "Remember: looking forward to + -ing / noun.", "Explain when and why."],
+      ["Start with: This week at work…", "Use: We had… / My boss said… / I finished…", "Add: It was good news / a bit stressful."]
+    ],
+    "B1": [
+      ["Start with: Since our last class, the best thing was…", "Use present perfect for recent news: I've just… / I've finally…", "Add details: who, where, how you felt."],
+      ["Start with: Lately I've been thinking about…", "Explain the situation and why it matters.", "Useful: I'm not sure if… / I'm trying to decide…"],
+      ["Start with: Recently I learned that…", "Say where: I read it / I watched a video / someone told me.", "Add: It surprised me because…"],
+      ["Start with: Something that annoyed me was…", "Describe what happened, then how you reacted.", "Useful: It drives me crazy when… / I couldn't believe…"],
+      ["Start with: If I had a free day, I would…", "Use 'would' for each idea: I would sleep in, I would…", "Add why: …because I haven't had time to…"],
+      ["Start with: I recently had an interesting conversation with…", "Report it: She told me that… / He asked me if…", "Add: What I found interesting was…"],
+      ["Start with: To relax this weekend, I…", "Give two activities and how they helped.", "Useful: I needed a break / It helped me disconnect."],
+      ["Start with: I need to decide whether to… or…", "Give pros and cons: On the one hand… on the other hand…", "Finish: I'm leaning towards…"],
+      ["Start with: A piece of news that caught my attention was…", "Summarize it in two sentences.", "Give your opinion: I think… because…"],
+      ["Start with: So far, my week has been…", "Use present perfect: I've had… / I've been working on…", "Add what's still coming: and tomorrow I'm going to…"]
+    ],
+    "B2": [
+      ["Start with: Since we last spoke, the highlight has been…", "Add context and why it mattered to you.", "Useful: What made it special was…"],
+      ["Start with: I used to think… but now I believe…", "Explain what changed your mind.", "Useful: It made me realize that… / I came to the conclusion that…"],
+      ["Start with: A small win this week was…", "Explain why it was meaningful despite being small.", "Useful: It may sound silly, but… / It gave me a boost."],
+      ["Start with: If I could skip one task, it would be…", "Use the second conditional: If I didn't have to…, I would…", "Explain what you'd do with that time instead."],
+      ["Start with: The most useful thing I came across was…", "Summarize the main idea and why it's useful.", "Useful: The key takeaway is… / I'm planning to apply it to…"],
+      ["Start with: What's been challenging lately is…", "Describe the cause and how you're dealing with it.", "Useful: I've been struggling with… / I'm trying to…"],
+      ["Start with: This week would be great if…", "Use conditionals and wishes: If I managed to… / I wish…", "Be specific: one personal and one professional thing."],
+      ["Start with: A conversation that stuck with me was…", "Use reported speech: She pointed out that… / He suggested…", "Explain why it stayed in your head."],
+      ["Start with: A trend I've noticed is…", "Give an example and a possible cause.", "Useful: It seems that… / This might be due to…"],
+      ["Start with: This month I'm proud of…", "Explain the effort behind it.", "Useful: It took me… / I managed to… despite…"]
+    ]
+  },
+  "estruturas": {
+    "a1-to-be": {"forma": "I am · you/we/they are · he/she/it is — negativa: am not / isn't / aren't — pergunta: Are you…? Is she…?", "exemplo": "I'm 30. She isn't at home. Are you tired?"},
+    "a1-simple-present": {"forma": "I/you/we/they + verbo · he/she/it + verbo-s — negativa: don't / doesn't + verbo", "exemplo": "I work at home. She works in a bank. He doesn't drink coffee."},
+    "a1-sp-perguntas": {"forma": "Do/Does + sujeito + verbo? · Wh- + do/does + sujeito + verbo? — Yes, I do / No, she doesn't", "exemplo": "Do you like tea? Where does she live? — Yes, I do."},
+    "a1-there-is": {"forma": "There is + singular · There are + plural — Is there…? Are there…? — There isn't / aren't any…", "exemplo": "There is a bank near here. Are there any parks?"},
+    "a1-possessivos": {"forma": "I→my→me→mine · he→his→him · she→her→her · we→our · they→their — nome + 's", "exemplo": "Her name is Ana. My father's car is old. This book is mine."},
+    "a1-preposicoes": {"forma": "AT + horas, at night, at home · ON + dias e datas · IN + meses, anos, cidades, países, in the morning", "exemplo": "On Monday at 7 p.m. in Rio."},
+    "a1-can": {"forma": "sujeito + can / can't + verbo (sem to) — Can + sujeito + verbo?", "exemplo": "I can swim. She can't drive. Can you help me?"},
+    "a1-frequencia": {"forma": "always · usually · often · sometimes · rarely · never — antes do verbo principal, depois do to be", "exemplo": "I always drink coffee. She is never late."},
+    "a1-rotina": {"forma": "wake up · get up · take a shower · have breakfast/lunch/dinner · go to work by bus · do the dishes · go to bed", "exemplo": "I wake up at 6, have breakfast and go to work by bus."},
+    "a1-was-were": {"forma": "I/he/she/it was · you/we/they were — wasn't / weren't — Was she…? Were you…? — I was born in…", "exemplo": "I was at home yesterday. Were you tired?"},
+    "a2-present-continuous": {"forma": "am / is / are + verbo-ing (agora, temporário, planos combinados)", "exemplo": "I'm studying now. She's living with her parents for now."},
+    "a2-sp-vs-pc": {"forma": "Hábito → simple present (I work every day) · Agora → present continuous (I'm working now) — verbos estativos (like, know, want) não vão para -ing", "exemplo": "I usually drive, but today I'm taking the bus."},
+    "a2-simple-past": {"forma": "Regulares: verbo-ed · Irregulares: went, ate, saw… — negativa/pergunta: didn't / Did + verbo na base", "exemplo": "I went to Bahia. Did you go? I didn't go."},
+    "a2-past-continuous": {"forma": "was / were + verbo-ing (cena em andamento) + simple past (interrupção) — when / while", "exemplo": "I was cooking when the phone rang."},
+    "a2-futuro": {"forma": "going to + verbo (plano, evidência) · will + verbo (decisão na hora, promessa, previsão)", "exemplo": "I'm going to travel in July. — The phone! I'll get it."},
+    "a2-comparativos": {"forma": "curto: -er / the -est · longo: more / the most · good→better→best · bad→worse→worst · as … as", "exemplo": "Rio is hotter than Curitiba. It's the best restaurant in town."},
+    "a2-modais": {"forma": "should + verbo (conselho) · must / have to (obrigação) · mustn't (proibido) · don't have to (não precisa)", "exemplo": "You should rest. I have to work. You don't have to pay."},
+    "a2-descricao": {"forma": "adjetivo ANTES do substantivo · What is she like? (personalidade) · What does she look like? (aparência) · She is 30 (não 'has')", "exemplo": "She's a tall, friendly woman with short hair."},
+    "a2-contaveis": {"forma": "how many / many + contáveis · how much / much + incontáveis · some (afirmativa) · any (negativa e pergunta) · a lot of (os dois)", "exemplo": "How much water? How many people? I don't have any time."},
+    "a2-present-perfect-intro": {"forma": "have / has + particípio (experiência, sem tempo definido) — ever, never, already, yet, just", "exemplo": "I've been to Chile. Have you ever eaten sushi? I haven't finished yet."},
+    "b1-pp-vs-past": {"forma": "Present perfect: sem tempo definido / até agora (since, for, ever) · Simple past: tempo definido (yesterday, in 2019, when…)", "exemplo": "I've worked here since 2018. I started in March 2018."},
+    "b1-pp-continuous": {"forma": "have / has been + verbo-ing + for (duração) / since (início)", "exemplo": "I've been studying English for three years."},
+    "b1-past-perfect": {"forma": "had + particípio = ação anterior a outra no passado (by the time, already, before)", "exemplo": "When I arrived, the movie had already started."},
+    "b1-condicionais-0-1": {"forma": "Zero: if + presente, presente · First: if + presente, will + verbo · unless = if not · when/as soon as + presente", "exemplo": "If it rains, I'll stay home. I won't go unless you go."},
+    "b1-used-to": {"forma": "used to + verbo (hábito passado) · be used to + -ing (estar acostumado) · get used to + -ing (acostumar-se)", "exemplo": "I used to smoke. I'm used to waking up early."},
+    "b1-gerund-infinitive": {"forma": "enjoy / avoid / finish / mind + -ing · want / decide / hope / plan + to · preposição + -ing", "exemplo": "I enjoy reading. I decided to move. Thanks for coming."},
+    "b1-relative-clauses": {"forma": "who (pessoas) · which (coisas) · that (os dois) · where (lugares) · whose (posse) — sem repetir o objeto", "exemplo": "The man who called is my boss. The city where I was born."},
+    "b1-reported-speech": {"forma": "say (that) / tell someone (that) — volte um tempo: is→was, will→would, did→had done — perguntas sem inversão", "exemplo": "She said she was tired. He asked where I lived."},
+    "b1-modais-deducao": {"forma": "must (certeza) · might / may / could (possibilidade) · can't (impossível) + verbo", "exemplo": "He must be tired. She might be at home. That can't be true."},
+    "b1-opiniao": {"forma": "I think / In my opinion… · I agree / I don't agree (nunca 'I am agree') · It depends on… · I see your point, but…", "exemplo": "I see your point, but I think it depends on the price."},
+    "b2-second-conditional": {"forma": "If + passado, would + verbo (hipótese no presente) · If I were you…", "exemplo": "If I had more time, I would travel more."},
+    "b2-third-mixed": {"forma": "Third: If + had + particípio, would have + particípio · Mixed: If + had + particípio, would + verbo (agora)", "exemplo": "If I had known, I would have come. If I had slept, I wouldn't be tired now."},
+    "b2-passive": {"forma": "be (no tempo certo) + particípio — is made / was built / has been sent / will be done — It is said that… / He is believed to…", "exemplo": "The bridge was built in 1974. The report will be sent tomorrow."},
+    "b2-causative": {"forma": "have / get + objeto + particípio (alguém faz para você) · have someone do · get someone to do", "exemplo": "I had my hair cut. I got my boss to give me a day off."},
+    "b2-modais-passado": {"forma": "must have / might have / can't have + particípio (dedução) · should have (crítica/arrependimento) · could have (possibilidade não realizada)", "exemplo": "It must have rained. You should have called me."},
+    "b2-wish": {"forma": "wish + passado (presente irreal) · wish + had + particípio (arrependimento) · wish + would (irritação)", "exemplo": "I wish I had more time. I wish I hadn't said that."},
+    "b2-contraste": {"forma": "although / even though + frase · despite / in spite of + substantivo ou -ing · However, / Nevertheless, (início de frase) · whereas (comparação)", "exemplo": "Although it was late, we stayed. Despite the rain, we went out."},
+    "b2-narrative": {"forma": "Past continuous (cenário) + simple past (eventos) + past perfect (o que veio antes) + sequenciadores (suddenly, eventually, in the end)", "exemplo": "It was raining and I was walking home when I realized I had lost my keys."},
+    "b2-futuro-avancado": {"forma": "will be + -ing (em andamento num momento futuro) · will have + particípio (concluído até um momento) — by, by the time + presente", "exemplo": "This time tomorrow I'll be flying. By Friday I'll have finished."},
+    "b2-debate": {"forma": "First of all… · Moreover… · For instance… · On the other hand… · I see your point, but… · To sum up…", "exemplo": "First of all, it's cheaper. On the other hand, it's riskier. To sum up, I'm in favor."}
+  },
+  "frases": {
+    "fala": {
+      "basico": ["First, … Then, … After that, …", "I think… because…", "For example, …", "I like… / I don't like… because…"],
+      "intermediario": ["In my experience, …", "The main reason is that…", "For instance, …", "What I mean is…", "On the one hand… on the other hand…"],
+      "avancado": ["As far as I'm concerned, …", "It's worth mentioning that…", "Having said that, …", "What strikes me most is…", "That's partly because…"]
+    },
+    "discussao": {
+      "basico": ["I think… / I don't think…", "I agree. / I don't agree.", "Maybe… / It depends.", "For example, in my city…"],
+      "intermediario": ["I see your point, but…", "I partly agree.", "It depends on…", "From my point of view, …", "That's true, however…"],
+      "avancado": ["I'd argue that…", "That's debatable, because…", "There's no denying that…, but…", "It's not as simple as that.", "Let me put it another way: …"]
+    },
+    "debate": {
+      "basico": ["I am for / against this idea.", "My first reason is…", "Another reason is…", "So, I think…"],
+      "intermediario": ["First of all, …", "Moreover, …", "I see what you mean, but…", "On the other hand, …", "To sum up, …"],
+      "avancado": ["Critics would argue that…, but…", "The evidence suggests that…", "Even if that were true, …", "Weighing up the pros and cons, …", "All things considered, …"]
+    }
+  }
+}

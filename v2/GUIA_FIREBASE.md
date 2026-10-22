@@ -22,18 +22,37 @@ O plano gratuito (Spark) do Firebase é mais que suficiente para um professor: 1
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid}/{document=**} {
-      allow read, write: if request.auth != null
-        && request.auth.uid == uid
+    function professor() {
+      return request.auth != null
         && request.auth.token.email == 'juniorferreira.x4@gmail.com'
         && request.auth.token.email_verified == true;
+    }
+    // Dados do professor (alunos, aulas, ajustes)
+    match /users/{uid}/{document=**} {
+      allow read, write: if professor() && request.auth.uid == uid;
+    }
+    // Sessão ao vivo da aula (link do aluno). Só quem tem o link lê; só o professor cria e altera.
+    match /sessoes/{sid} {
+      allow get: if request.auth != null;
+      allow list, create, update, delete: if professor();
+      // Respostas do aluno: só enquanto o link não expirou, só estes campos e com tamanho limitado.
+      match /respostas/{rid} {
+        allow get: if request.auth != null;
+        allow list, delete: if professor();
+        allow create, update: if request.auth != null
+          && get(/databases/$(database)/documents/sessoes/$(sid)).data.expiraEm > request.time
+          && request.resource.data.keys().hasOnly(['itens', 'texto', 'enviadoEm', 'visto'])
+          && request.resource.data.get('texto', '').size() < 6000
+          && request.resource.data.get('itens', []).size() <= 20;
+      }
     }
   }
 }
 ```
 
-6. Abra **Configurações (engrenagem) → Geral → Seus apps** e clique em **`</>`** (Web). Registre com o apelido `web`, sem Hosting, e copie o bloco `firebaseConfig`.
-7. Cole o bloco em `v2/config.js`, no lugar de `null`:
+6. Em **Authentication → Método de login**, ative também **Anônimo**. É o que permite ao aluno abrir o link da aula sem criar conta.
+7. Abra **Configurações (engrenagem) → Geral → Seus apps** e clique em **`</>`** (Web). Registre com o apelido `web`, sem Hosting, e copie o bloco `firebaseConfig`.
+8. Cole o bloco em `v2/config.js`, no lugar de `null`:
 
 ```js
 export const FIREBASE_CONFIG = {
@@ -70,3 +89,10 @@ Se, no primeiro login, o Google mostrar o aviso “o Google não verificou este 
 - Se o aluno tem um documento de homework criado pelo app, ao clicar em **Salvar e enviar homework** o homework entra **no topo** desse documento, com a data da aula.
 - O gabarito **não** vai para o documento. Ele fica no app e aparece na etapa “Homework” da aula seguinte.
 - Documentos colados à mão (links de documentos que já existiam) não podem ser escritos pelo app, por causa da permissão `drive.file`. Para esses, use **Copiar homework**.
+
+## Link ao vivo da aula (tela do aluno)
+
+- Na aula, clique em **Tela do aluno → Gerar link da aula** e mande o link para o aluno. Ele não precisa de conta.
+- A tela dele acompanha as etapas sozinha. O áudio do listening toca no aparelho dele, e os exercícios escritos que você enviar voltam para a sua tela na hora.
+- O link vale por 4 horas. O aluno só vê o conteúdo da aula e as próprias respostas, nunca os seus dados.
+- Exige o login **Anônimo** ativado (passo 6) e as regras acima publicadas.
