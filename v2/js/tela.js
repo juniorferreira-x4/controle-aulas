@@ -65,32 +65,34 @@ function desenharEstado(d) {
   estadoAtual = d;
   const foco = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.campo : null;
   const sel = foco && document.activeElement.selectionStart;
-  let html = `<header class="tela-cab"><span class="marca-sup">Gutierrez Ferreira · English class</span><span class="tela-etapa">${esc(d.etapa)}</span><span class="flex1"></span><span class="sub">${esc(d.aluno || "")}</span></header><div class="blocos">`;
+  let html = `<header class="tela-cab"><span class="marca-sup">Gutierrez Ferreira · English class</span><span class="tela-etapa">${esc(d.etapa)}</span><span class="flex1"></span><span class="sub">${esc(d.aluno || "")}</span></header>`;
   let temPlayer = false;
 
-  if (d.homework) {
-    const h = d.homework;
-    html += `<section class="bloco"><h2>Structure we practiced</h2><div style="font-size:24px;font-weight:700">${esc(h.titulo)}</div>
-      ${h.forma ? `<p style="margin:0;font-size:19px;line-height:1.5">${esc(h.forma)}</p>` : ""}${h.exemplo ? `<p class="txt-acento" style="margin:0;font-size:19px">e.g. ${esc(h.exemplo)}</p>` : ""}</section>
-      <section class="bloco"><h2>Your homework</h2>${h.texto ? `<p style="margin:0;font-size:20px;line-height:1.7;white-space:pre-line">${esc(h.texto)}</p>` : `<p class="sub" style="margin:0">Your teacher will paste your homework here.</p>`}</section>`;
+  // Um exercício por vez: enquanto houver um aberto, ele ocupa a tela sozinho.
+  if (d.exercicio) {
+    html += `<div class="palco"><div class="principal">${blocoExercicio(d.exercicio, d.modo)}</div></div>`;
+  } else {
+    let principal = "", lado = "";
+    if (d.homework) {
+      const h = d.homework;
+      principal += `<div class="hw"><section class="bloco"><h2>Structure we practiced</h2><div class="hw-titulo">${esc(h.titulo)}</div>
+        ${h.forma ? `<p style="margin:0;font-size:15px;line-height:1.5">${esc(h.forma)}</p>` : ""}${h.exemplo ? `<p class="txt-acento" style="margin:0;font-size:15px">e.g. ${esc(h.exemplo)}</p>` : ""}</section>
+        <section class="bloco"><h2>Your homework</h2>${h.texto ? `<p style="margin:0;font-size:16px;line-height:1.7;white-space:pre-line">${esc(h.texto)}</p>` : `<p class="sub" style="margin:0">Your teacher will paste your homework here.</p>`}</section></div>`;
+    }
+    d.blocos.forEach(b => {
+      if (b.grande) principal += `<section class="bloco grande">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${b.itens.map(i => `<p>${esc(i)}</p>`).join("")}</section>`;
+      else if (b.texto) principal += `<section class="bloco texto"><p>${esc(b.itens[0])}</p></section>`;
+      else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; principal += `<section class="bloco grande" style="text-align:left"><h2>Listening</h2><div style="font-size:20px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>`; }
+      else principal += `<section class="bloco">${b.titulo2 ? `<div style="font-size:18px;font-weight:700">${esc(b.titulo)}</div><h2>${esc(b.titulo2)}</h2>` : b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${ol(b.itens, b.inicio || 1)}</section>`;
+    });
+    if (d.dicas) {
+      lado += `<section class="bloco dicas"><h2>Algumas dicas abaixo</h2>
+        ${d.dicas.mostrar ? `${d.dicas.forma ? `<p><b>${esc(d.dicas.forma)}</b></p>` : ""}${d.dicas.exemplo ? `<p class="txt-acento">e.g. ${esc(d.dicas.exemplo)}</p>` : ""}${d.dicas.itens && d.dicas.itens.length ? `<ul>${d.dicas.itens.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : ""}`
+          : `<p class="sub">Se precisar de ajuda, peça para o professor liberar algumas dicas.</p>`}</section>`;
+    }
+    if (d.correcoes && d.correcoes.length) lado += `<section class="bloco"><h2>Today's corrections</h2>${ol(d.correcoes)}</section>`;
+    html += `<div class="palco${lado ? " com-lado" : ""}"><div class="principal">${principal}</div>${lado ? `<aside class="lado">${lado}</aside>` : ""}</div>`;
   }
-
-  if (d.exercicio) html += blocoExercicio(d.exercicio, d.modo);
-
-  d.blocos.forEach(b => {
-    if (b.grande) html += `<section class="bloco grande">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${b.itens.map(i => `<p>${esc(i)}</p>`).join("")}</section>`;
-    else if (b.texto) html += `<section class="bloco texto"><p>${esc(b.itens[0])}</p></section>`;
-    else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; html += `<section class="bloco grande" style="text-align:left"><h2>Listening</h2><div style="font-size:26px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>`; }
-    else html += `<section class="bloco">${b.titulo2 ? `<div style="font-size:24px;font-weight:700">${esc(b.titulo)}</div><h2>${esc(b.titulo2)}</h2>` : b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${ol(b.itens, b.inicio || 1)}</section>`;
-  });
-
-  if (d.dicas) {
-    html += `<section class="bloco dicas"><h2>Algumas dicas abaixo</h2>
-      ${d.dicas.mostrar ? `${d.dicas.forma ? `<p style="margin:0;font-size:18px"><b>${esc(d.dicas.forma)}</b></p>` : ""}${d.dicas.exemplo ? `<p class="txt-acento" style="margin:0;font-size:18px">e.g. ${esc(d.dicas.exemplo)}</p>` : ""}${d.dicas.itens && d.dicas.itens.length ? `<ul>${d.dicas.itens.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : ""}`
-        : `<p class="sub" style="margin:0;font-size:17px">Se precisar de ajuda, peça para o professor liberar algumas dicas.</p>`}</section>`;
-  }
-  if (d.correcoes && d.correcoes.length) html += `<section class="bloco" style="grid-column:1/-1"><h2>Today's corrections</h2>${ol(d.correcoes)}</section>`;
-  html += `</div>`;
   raiz.innerHTML = html;
 
   if (temPlayer) ligarPlayer(); else { TTS.parar(); textoAtual = null; }
@@ -104,10 +106,10 @@ function blocoExercicio(ex, modo) {
   const escrita = ex.tipo === "escrita";
   let campos;
   if (escrita) {
-    campos = `<p style="margin:0;font-size:20px;font-weight:600">${esc(ex.itens[0])}</p>
-      <label for="ex-0" class="mini">Your text</label>
-      <textarea id="ex-0" data-campo="ex-0" data-i="0" style="min-height:220px;font-size:18px" ${corr ? "readonly" : ""}>${esc(r[0])}</textarea>
-      ${corr && ex.correcao.comentario ? `<div class="item">${esc(ex.correcao.comentario)}</div>` : ""}`;
+    campos = `<div class="ex-escrita"><div class="pilha" style="gap:8px"><p class="ex-tema">${esc(ex.itens[0])}</p>
+        ${corr && ex.correcao.comentario ? `<div class="item"><b>Teacher's comment</b><br>${esc(ex.correcao.comentario)}</div>` : ""}</div>
+      <div class="pilha" style="gap:4px"><label for="ex-0" class="mini">Your text</label>
+      <textarea id="ex-0" data-campo="ex-0" data-i="0" ${corr ? "readonly" : ""}>${esc(r[0])}</textarea></div></div>`;
   } else {
     campos = `<ol class="ex-lista">${ex.itens.map((it, i) => {
       let marca = "";
@@ -121,11 +123,10 @@ function blocoExercicio(ex, modo) {
     }).join("")}</ol>`;
   }
   const podeEnviar = modo !== "espelho-sem-envio" && !corr;
-  return `<section class="bloco exercicio" style="grid-column:1/-1">
-    <div class="linha"><h2 class="flex1">${esc(ex.titulo)}</h2>${escrita && ex.minutos ? `<span class="mono" id="ex-relogio" style="font-size:22px;font-weight:600"></span>` : ""}</div>
-    <p style="margin:0" class="sub">${esc(ex.instrucao)}</p>
+  return `<section class="bloco exercicio">
+    <div class="ex-cab"><h2>${esc(ex.titulo)}</h2><span class="sub flex1">${esc(ex.instrucao)}</span>${escrita && ex.minutos ? `<span class="mono" id="ex-relogio"></span>` : ""}</div>
     ${campos}
-    ${corr ? `<p class="mini" style="margin:0">Correction released by your teacher.</p>` : podeEnviar ? `<div class="linha"><button class="btn btn-primario btn-lg" id="ex-enviar">${enviados[ex.id] ? "Send again" : "Send to my teacher"}</button>${enviados[ex.id] ? `<span class="txt-ok">✓ Sent. You can still edit and send again.</span>` : ""}</div>` : ""}
+    ${corr ? `<p class="mini" style="margin:0">Correction released by your teacher.</p>` : podeEnviar ? `<div class="linha"><button class="btn btn-primario" id="ex-enviar">${enviados[ex.id] ? "Send again" : "Send to my teacher"}</button>${enviados[ex.id] ? `<span class="txt-ok">✓ Sent. You can still edit and send again.</span>` : ""}</div>` : ""}
   </section>`;
 }
 
