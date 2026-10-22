@@ -1,5 +1,5 @@
 // Tela do aluno. Três modos:
-//  ?s=ID  → link ao vivo no aparelho do aluno (Firestore, sem conta): acompanha a aula e envia respostas;
+//  ?s=ID  → link fixo do aluno (Firestore, sem conta): acompanha a aula e envia o que ele escreve, enquanto escreve;
 //  ?t=ID  → listening avulso (só o áudio de um texto);
 //  (nada) → janela no computador do professor, para compartilhar a tela (BroadcastChannel).
 import * as TTS from "./tts.js";
@@ -26,6 +26,7 @@ function player(corpo) {
       <button class="btn btn-sm" id="p-restart">Start again</button></div>`;
 }
 function atualizarPlayer(e = TTS.estado()) {
+  avisarListening(e);
   const b = document.getElementById("p-btn"), pr = document.getElementById("p-prog"), inf = document.getElementById("p-info");
   if (!b) return;
   b.innerHTML = e.tocando ? PAUSA : PLAY; b.setAttribute("aria-label", e.tocando ? "Pause" : "Play");
@@ -56,32 +57,72 @@ function confere(resposta, gabarito, enunciado = "") {
   return opcoes.map(normalizar).some(g => g && (g === r || exp(g) === exp(r)));
 }
 
+
 // ---------- tela da aula (modos espelho e ao vivo) ----------
+// O que o aluno escreve fica guardado neste navegador (sobrevive a recarregar a página)
+// e vai para o professor enquanto ele digita.
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
 const rascunho = {};   // exercicioId -> [valores]
 const enviados = {};   // exercicioId -> true
 let estadoAtual = null, transporte = null, relogio = null;
+let hwLocal = null, hwUltimoEnviado = null, hwAulaId = null;
+const timersRascunho = {};
+
+function carregarRascunho(ex) {
+  if (rascunho[ex.id]) return rascunho[ex.id];
+  const salvo = LS.get(`ca2a_ex_${ex.id}`, null);
+  rascunho[ex.id] = salvo && Array.isArray(salvo.itens) ? ex.itens.map((_, i) => salvo.itens[i] || "") : ex.itens.map(() => "");
+  if (salvo && salvo.enviado) enviados[ex.id] = true;
+  return rascunho[ex.id];
+}
+function guardarRascunho(ex) { LS.set(`ca2a_ex_${ex.id}`, { itens: rascunho[ex.id], enviado: !!enviados[ex.id] }); }
+// Manda o rascunho ~0,8 s depois que o aluno para de digitar.
+function rascunhoAoVivo(id, dados) {
+  clearTimeout(timersRascunho[id]);
+  timersRascunho[id] = setTimeout(() => { if (transporte) transporte.enviar({ exercicioId: id, ...dados, rascunho: true }).catch(() => {}); }, 800);
+}
+
+function telaEspera(d, msg) {
+  raiz.innerHTML = `<div class="aguardando"><p style="font-size:22px;font-weight:600;margin:0 0 8px">${msg || `Hi${d && d.aluno ? ", " + esc(d.aluno) : ""}! Your class will start soon.`}</p><p class="mini">Keep this page open. It will start by itself.</p></div>`;
+  TTS.parar(); textoAtual = null; clearInterval(relogio);
+}
 
 function desenharEstado(d) {
   estadoAtual = d;
+  if (d.fase === "espera") return telaEspera(d);
   const foco = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.campo : null;
   const sel = foco && document.activeElement.selectionStart;
-  let html = `<header class="tela-cab"><span class="marca-sup">Gutierrez Ferreira · English class</span><span class="tela-etapa">${esc(d.etapa)}</span><span class="flex1"></span><span class="sub">${esc(d.aluno || "")}</span></header>`;
+  let html = `<header class="tela-cab"><span class="marca-sup">Gutierrez Ferreira · English class</span><span class="tela-etapa">${esc(d.fase === "fim" ? "See you next class!" : d.etapa)}</span><span class="flex1"></span><span class="sub">${esc(d.aluno || "")}</span></header>`;
   let temPlayer = false;
 
-  // Um exercício por vez: enquanto houver um aberto, ele ocupa a tela sozinho.
-  if (d.exercicio) {
+  if (d.fase === "fim") {
+    const principal = `<section class="bloco grande"><p>Great class, ${esc(d.aluno || "")}!</p>${d.proxima ? `<p class="sub" style="font-size:16px;font-weight:500;margin-top:10px">Next class: ${esc(d.proxima)}</p>` : ""}</section>
+      ${d.homeworkTexto ? `<section class="bloco texto"><h2>Your homework</h2><p>${esc(d.homeworkTexto)}</p></section>` : ""}`;
+    const lado = d.correcoes && d.correcoes.length ? `<section class="bloco"><h2>Today's corrections</h2>${ol(d.correcoes)}</section>` : "";
+    html += `<div class="palco${lado ? " com-lado" : ""}"><div class="principal">${principal}</div>${lado ? `<aside class="lado">${lado}</aside>` : ""}</div>`;
+  } else if (d.exercicio) {
+    // Um exercício por vez: enquanto houver um aberto, ele ocupa a tela sozinho.
     html += `<div class="palco"><div class="principal">${blocoExercicio(d.exercicio, d.modo)}</div></div>`;
   } else {
     let principal = "", lado = "";
     if (d.homework) {
       const h = d.homework;
+      if (hwAulaId !== d.aulaId) { hwAulaId = d.aulaId; hwLocal = null; hwUltimoEnviado = null; }
+      // O texto do professor só substitui o do aluno se for diferente do que o aluno mandou.
+      const tt = h.texto || "";
+      if (hwLocal === null || (tt !== hwUltimoEnviado && tt !== hwLocal)) { hwLocal = tt; hwUltimoEnviado = tt; }
       principal += `<div class="hw"><section class="bloco"><h2>Structure we practiced</h2><div class="hw-titulo">${esc(h.titulo)}</div>
         ${h.forma ? `<p style="margin:0;font-size:15px;line-height:1.5">${esc(h.forma)}</p>` : ""}${h.exemplo ? `<p class="txt-acento" style="margin:0;font-size:15px">e.g. ${esc(h.exemplo)}</p>` : ""}</section>
-        <section class="bloco"><h2>Your homework</h2>${h.texto ? `<p style="margin:0;font-size:16px;line-height:1.7;white-space:pre-line">${esc(h.texto)}</p>` : `<p class="sub" style="margin:0">Your teacher will paste your homework here.</p>`}</section></div>`;
+        <section class="bloco"><h2>Your homework</h2>
+          <label for="hw-aluno" class="mini">Paste or type your homework here. Your teacher sees it as you type.</label>
+          <textarea id="hw-aluno" data-campo="hw-aluno" style="min-height:220px;font-size:15px;line-height:1.6">${esc(hwLocal || "")}</textarea></section></div>`;
     }
     d.blocos.forEach(b => {
       if (b.grande) principal += `<section class="bloco grande">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${b.itens.map(i => `<p>${esc(i)}</p>`).join("")}</section>`;
-      else if (b.texto) principal += `<section class="bloco texto"><p>${esc(b.itens[0])}</p></section>`;
+      else if (b.texto) principal += `<section class="bloco texto">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}<p>${esc(b.itens[0])}</p></section>`;
       else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; principal += `<section class="bloco grande" style="text-align:left"><h2>Listening</h2><div style="font-size:20px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>`; }
       else principal += `<section class="bloco">${b.titulo2 ? `<div style="font-size:18px;font-weight:700">${esc(b.titulo)}</div><h2>${esc(b.titulo2)}</h2>` : b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${ol(b.itens, b.inicio || 1)}</section>`;
     });
@@ -97,11 +138,26 @@ function desenharEstado(d) {
 
   if (temPlayer) ligarPlayer(); else { TTS.parar(); textoAtual = null; }
   ligarExercicio();
+  ligarHomework();
   if (foco) { const f = document.querySelector(`[data-campo="${foco}"]`); if (f) { f.focus(); try { f.setSelectionRange(sel, sel); } catch {} } }
 }
 
+function ligarHomework() {
+  const t = document.getElementById("hw-aluno");
+  if (!t) return;
+  t.addEventListener("input", () => {
+    hwLocal = t.value;
+    clearTimeout(timersRascunho.hw);
+    timersRascunho.hw = setTimeout(() => {
+      if (!transporte) return;
+      hwUltimoEnviado = hwLocal;
+      transporte.enviar({ exercicioId: "homework", itens: [], texto: hwLocal, rascunho: true }).catch(() => {});
+    }, 800);
+  });
+}
+
 function blocoExercicio(ex, modo) {
-  const r = rascunho[ex.id] || (rascunho[ex.id] = ex.itens.map(() => ""));
+  const r = carregarRascunho(ex);
   const corr = ex.correcao;
   const escrita = ex.tipo === "escrita";
   let campos;
@@ -115,7 +171,8 @@ function blocoExercicio(ex, modo) {
       let marca = "";
       if (corr) {
         const g = corr.gabarito[i] || "";
-        const ok = corr.comparar ? confere(r[i], g, it) : null;
+        const m = corr.marcas ? corr.marcas[i] : undefined;
+        const ok = m === true || m === false ? m : corr.comparar ? confere(r[i], g, it) : null;
         marca = `<div class="ex-gab ${ok === true ? "txt-ok" : ok === false ? "txt-perigo" : "txt-acento"}">${ok === true ? "✓ " : ok === false ? "✗ " : ""}${esc(g)}</div>`;
       }
       return `<li><label for="ex-${i}" class="ex-enun">${esc(it)}</label>
@@ -126,22 +183,25 @@ function blocoExercicio(ex, modo) {
   return `<section class="bloco exercicio">
     <div class="ex-cab"><h2>${esc(ex.titulo)}</h2><span class="sub flex1">${esc(ex.instrucao)}</span>${escrita && ex.minutos ? `<span class="mono" id="ex-relogio"></span>` : ""}</div>
     ${campos}
-    ${corr ? `<p class="mini" style="margin:0">Correction released by your teacher.</p>` : podeEnviar ? `<div class="linha"><button class="btn btn-primario" id="ex-enviar">${enviados[ex.id] ? "Send again" : "Send to my teacher"}</button>${enviados[ex.id] ? `<span class="txt-ok">✓ Sent. You can still edit and send again.</span>` : ""}</div>` : ""}
+    ${corr ? `<p class="mini" style="margin:0">Correction released by your teacher.</p>` : podeEnviar ? `<div class="linha"><button class="btn btn-primario" id="ex-enviar">${enviados[ex.id] ? "Send again" : "I'm done — send to my teacher"}</button>${enviados[ex.id] ? `<span class="txt-ok">✓ Sent. You can still edit and send again.</span>` : `<span class="mini">Your teacher can see what you write.</span>`}</div>` : ""}
   </section>`;
 }
 
 function ligarExercicio() {
   const ex = estadoAtual && estadoAtual.exercicio;
   clearInterval(relogio);
-  if (!ex) return;
-  document.querySelectorAll("[data-campo^='ex-']").forEach(el => el.addEventListener("input", () => { rascunho[ex.id][Number(el.dataset.i)] = el.value; }));
+  if (!ex || estadoAtual.fase === "fim") return;
+  const dados = () => { const itens = rascunho[ex.id].slice(); return { itens, texto: ex.tipo === "escrita" ? itens[0] : "" }; };
+  document.querySelectorAll("[data-campo^='ex-']").forEach(el => el.addEventListener("input", () => {
+    rascunho[ex.id][Number(el.dataset.i)] = el.value; guardarRascunho(ex);
+    if (!ex.correcao) rascunhoAoVivo(ex.id, dados());
+  }));
   const b = document.getElementById("ex-enviar");
   if (b) b.addEventListener("click", async () => {
-    b.disabled = true;
+    b.disabled = true; clearTimeout(timersRascunho[ex.id]);
     try {
-      const itens = rascunho[ex.id].slice();
-      await transporte.enviar({ exercicioId: ex.id, itens, texto: ex.tipo === "escrita" ? itens[0] : "" });
-      enviados[ex.id] = true; desenharEstado(estadoAtual);
+      await transporte.enviar({ exercicioId: ex.id, ...dados(), rascunho: false });
+      enviados[ex.id] = true; guardarRascunho(ex); desenharEstado(estadoAtual);
     } catch (e) { b.disabled = false; alert("Could not send. Check your connection and try again."); }
   });
   if (ex.tipo === "escrita" && ex.minutos && ex.inicio) {
@@ -155,6 +215,18 @@ function ligarExercicio() {
   }
 }
 
+// Avisa o professor em que frase do listening o aluno está (no máximo a cada 0,4 s).
+let ultimoListening = "", timerListening = null;
+function avisarListening(e) {
+  if (!transporte || !transporte.sinal) return;
+  const l = { idx: e.idx, total: e.total, tocando: e.tocando };
+  const j = JSON.stringify(l);
+  if (j === ultimoListening) return;
+  ultimoListening = j;
+  clearTimeout(timerListening);
+  timerListening = setTimeout(() => transporte.sinal({ listening: l }), 400);
+}
+
 // ---------- modo espelho (janela local) ----------
 function modoEspelho() {
   document.title = "Aula — Tela do aluno";
@@ -162,13 +234,17 @@ function modoEspelho() {
   try { canal = new BroadcastChannel("ca2-tela"); } catch {
     raiz.innerHTML = `<div class="aguardando">Este navegador não permite a tela espelhada. Use o Chrome ou o Edge.</div>`; return;
   }
-  transporte = { enviar: async r => canal.postMessage({ tipo: "resposta", ...r, enviadoEm: Date.now() }) };
+  transporte = {
+    enviar: async r => canal.postMessage({ tipo: "resposta", ...r, enviadoEm: Date.now() }),
+    sinal: extra => canal.postMessage({ tipo: "presenca", ...extra })
+  };
   raiz.innerHTML = `<div class="aguardando"><p style="font-size:20px">Esperando a aula…</p><p class="mini">Deixe esta janela aberta e compartilhe só ela na chamada. Ela acompanha a etapa da aula automaticamente.</p></div>`;
   canal.onmessage = ev => { const d = ev.data; if (d && d.tipo === "estado") desenharEstado(d); };
   canal.postMessage({ tipo: "pedir" });
+  transporte.sinal({}); setInterval(() => transporte.sinal({}), 20000);
 }
 
-// ---------- modo ao vivo (aparelho do aluno) ----------
+// ---------- modo ao vivo (aparelho do aluno, link fixo) ----------
 async function modoAoVivo(sid) {
   document.title = "English class — live";
   raiz.innerHTML = `<div class="aguardando"><p style="font-size:20px">Connecting to your class…</p></div>`;
@@ -181,17 +257,25 @@ async function modoAoVivo(sid) {
     raiz.innerHTML = `<div class="aguardando">Could not connect (${esc(e.code || e.message)}). Check your internet and reload the page.</div>`; return;
   }
   const { doc, setDoc, onSnapshot, db } = fb;
-  transporte = { enviar: r => setDoc(doc(db, "sessoes", sid, "respostas", r.exercicioId), { itens: r.itens, texto: r.texto || "", enviadoEm: Date.now() }) };
-  const presenca = () => setDoc(doc(db, "sessoes", sid, "respostas", "presenca"), { visto: Date.now() }).catch(() => {});
-  presenca(); setInterval(presenca, 60000);
+  let ativa = false, listening = null;
+  const presenca = () => { if (ativa) setDoc(doc(db, "sessoes", sid, "respostas", "presenca"), { visto: Date.now(), ...(listening ? { listening } : {}) }).catch(() => {}); };
+  transporte = {
+    enviar: r => setDoc(doc(db, "sessoes", sid, "respostas", r.exercicioId), { itens: r.itens || [], texto: r.texto || "", enviadoEm: Date.now(), rascunho: !!r.rascunho }),
+    sinal: extra => { if (extra.listening) listening = extra.listening; presenca(); }
+  };
+  setInterval(presenca, 20000);
   onSnapshot(doc(db, "sessoes", sid), snap => {
-    if (!snap.exists()) { raiz.innerHTML = `<div class="aguardando">This class link has expired. Ask your teacher for a new one.</div>`; return; }
+    const antes = ativa;
+    if (!snap.exists()) { ativa = false; return telaEspera(null, "Your class hasn't started yet."); }
     const d = snap.data();
-    if (d.expiraEm && d.expiraEm.toMillis() < Date.now()) { raiz.innerHTML = `<div class="aguardando">This class link has expired. Ask your teacher for a new one.</div>`; return; }
-    if (!d.estado) { raiz.innerHTML = `<div class="aguardando"><p style="font-size:20px">Hi${d.aluno ? ", " + esc(d.aluno) : ""}! Your class will start soon.</p><p class="mini">Keep this page open.</p></div>`; return; }
+    ativa = !(d.expiraEm && d.expiraEm.toMillis() < Date.now());
+    if (!ativa) return telaEspera(null, `Hi${d.aluno ? ", " + esc(d.aluno) : ""}! Your next class hasn't started yet.`);
+    if (!antes) presenca();
+    if (!d.estado) return telaEspera({ aluno: d.aluno });
     desenharEstado({ ...d.estado, modo: "aovivo" });
   }, () => { raiz.innerHTML = `<div class="aguardando">Could not open this class. Ask your teacher for a new link.</div>`; });
 }
+
 
 // ---------- modo listening avulso ----------
 async function modoOuvir(id, r) {

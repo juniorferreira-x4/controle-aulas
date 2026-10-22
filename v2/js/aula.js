@@ -7,7 +7,7 @@ import {
 import * as TTS from "./tts.js";
 import { inserirNoTopo } from "./drive.js";
 import { modalFalta, linksDocs, contarDificuldades, modalMensagem } from "./app.js";
-import { Sessao } from "./sessao.js";
+import { Sessao, novoSid, linkDoAluno, baseApp } from "./sessao.js";
 
 // ---------- utilidades ----------
 const LS = {
@@ -53,20 +53,22 @@ export function renderAula(v, id) {
   if (!aula.modelo) aula.modelo = modeloDaAula(al, S.store.aulas, aula.id);
   const etapas = etapasDoModelo(aula.modelo);
   const kTimer = `ca2_timer_${aula.id}`;
-  const timer = LS.get(kTimer, null) || { etapa: 0, seg: etapas.map(() => 0), rodando: false, ultimo: 0 };
+  const timer = LS.get(kTimer, null) || { etapa: 0, seg: etapas.map(() => 0), rodando: false, ultimo: 0, iniciada: false, encerrada: false, prIdx: 0 };
+  if (timer.iniciada === undefined) timer.iniciada = timer.rodando || timer.seg.some(x => x >= 1);
   if (timer.seg.length !== etapas.length) timer.seg = etapas.map((_, i) => timer.seg[i] || 0);
   if (timer.etapa >= etapas.length) timer.etapa = 0;
   A = { aula, al, etapas, kTimer, timer, resp: false, mostrarTexto: false, aqIdx: hash(aula.id) % 7, maisEx: false, rate: al.nivel === "A1" ? 0.85 : 1,
-    dicas: {}, exercicio: null, respostas: {}, comentario: "" };
+    dicas: {}, exercicio: null, respostas: {}, comentario: "", vendo: null };
   // Exercício que estava aberto (se a página recarregou) e respostas já recebidas.
   (aula.exercicios || []).forEach(x => { if (x.resposta) A.respostas[x.id] = x.resposta; });
   if (aula.exercicioAtivo) A.exercicio = (aula.exercicios || []).find(x => x.id === aula.exercicioAtivo) || null;
   Sessao.ligar(S.fb, { aoResponder: receberResposta, aoPedirEstado: () => enviarTela() });
-  if (S.fb && aula.sessaoId && Sessao.aulaId !== aula.id) Sessao.iniciarRemota(aula, al.nome.split(" ")[0], aula.sessaoId).then(sid => { if (A) { A.aula.sessaoId = sid; enviarTela(); atualizarPainelAluno(); } }).catch(() => {});
   prepararPlano();
   S.store.salvarAula(aula).catch(erro);
   desenharAula(v);
-  const tick = setInterval(() => atualizarRelogio(), 1000);
+  // Aula já registrada no pós-aula: não liga o link (só se o professor reabrir).
+  if (aula.status !== "dada") ativarLink().catch(falhaLink);
+  const tick = setInterval(() => { atualizarRelogio(); atualizarStatus(); }, 1000);
   TELA.limpar = () => {
     clearInterval(tick); salvarTimer(); TTS.parar();
     const atual = S.store.aula(A.aula.id);
@@ -94,6 +96,29 @@ function prepararPlano() {
   }
 }
 
+function falhaLink(e) {
+  if (!A) return;
+  A.erroLink = e.message || String(e); atualizarStatus();
+  toast("Não consegui ligar o link do aluno. Confira se as regras do Firestore do guia foram publicadas.");
+}
+function temNuvem() { return !!(S.fb && S.store.modo === "nuvem"); }
+// Salva só estes campos sobre a versão mais recente da aula.
+function salvarCampos(campos) {
+  if (!A) return; const atual = S.store.aula(A.aula.id); if (!atual) return;
+  S.store.salvarAula({ ...atual, ...campos }).catch(erro);
+}
+// Liga o link fixo do aluno a esta aula. Cria o link na primeira vez.
+async function ativarLink() {
+  if (!A || !temNuvem() || A.timer.encerrada) return;
+  const aulaId = A.aula.id;
+  let al = S.store.aluno(A.al.id) || A.al;
+  if (!al.sessaoFixa) { al = { ...al, sessaoFixa: novoSid() }; await S.store.salvarAluno(al); }
+  if (!A || A.aula.id !== aulaId) return;
+  A.al = { ...A.al, sessaoFixa: al.sessaoFixa };
+  await Sessao.ativar(A.aula, al.nome.split(" ")[0], al.sessaoFixa);
+  if (A && A.aula.id === aulaId) { A.erroLink = null; Sessao.ultimo = ""; enviarTela(); atualizarPainelAluno(); }
+}
+
 function salvarTimer() {
   if (!A) return;
   const t = A.timer;
@@ -117,7 +142,8 @@ function atualizarRelogio() {
 
 function desenharAula(v = document.getElementById("view")) {
   const { aula, al, etapas, timer } = A;
-  const e = etapas[timer.etapa];
+  const e = etapas[A.vendo ?? timer.etapa];
+  const ultima = timer.etapa === etapas.length - 1;
   const meta = etapas.reduce((s, x) => s + Number(x.min), 0) * 60;
   const total = timer.seg.reduce((s, x) => s + x, 0);
   const quando = `${DIAS_CURTO[diaSemana(aula.data)]} ${fmtData(aula.data)} · ${esc(aula.hora || "")}`;
@@ -130,25 +156,37 @@ function desenharAula(v = document.getElementById("view")) {
       <span class="flex1"></span>
       <div class="cron"><span class="mini">Aula</span><span class="grande" id="cr-total">${mmss(total)}</span><span class="peq">/ ${mmss(meta)}</span></div>
       <div class="linha">
-        <button class="btn" data-a="aula-tela" title="Abre uma janela só com o conteúdo para o aluno, para compartilhar a tela">Tela do aluno ${ICONES.externo}</button>
-        <button class="btn btn-perigo" data-a="aula-faltou">Aluno faltou</button>
-        <button class="btn" data-a="aula-play">${timer.rodando ? `${ICONES.pausa} Pausar` : `${ICONES.play} ${total > 0 ? "Continuar" : "Iniciar"}`}</button>
-        <button class="btn" data-a="aula-prox">${timer.etapa === etapas.length - 1 ? "Ir para o pós-aula" : "Próxima etapa"} ${ICONES.prox}</button>
+        <button class="btn" data-a="aula-tela" title="Link fixo do aluno e janela para compartilhar a tela">Tela do aluno ${ICONES.externo}</button>
+        ${!timer.iniciada ? `<button class="btn btn-perigo" data-a="aula-faltou">Aluno faltou</button>
+          <button class="btn btn-primario" data-a="aula-iniciar">${ICONES.play} Iniciar aula</button>`
+        : timer.encerrada ? `<button class="btn" data-a="aula-reabrir">Reabrir aula</button><button class="btn btn-primario" data-a="aula-pos">Ir para o pós-aula ${ICONES.prox}</button>`
+        : `<button class="btn" data-a="aula-play">${timer.rodando ? `${ICONES.pausa} Pausar` : `${ICONES.play} Continuar`}</button>
+          ${ultima ? "" : `<button class="btn" data-a="aula-prox">Próxima etapa ${ICONES.prox}</button>`}
+          <button class="btn ${ultima ? "btn-primario" : ""}" data-a="aula-encerrar">Encerrar aula</button>`}
       </div>
     </div>
     <ol class="etapas" style="--netapas:${etapas.length}">
-      ${etapas.map((et, i) => `<li><button class="etapa ${i === timer.etapa ? "atual" : ""} ${i < timer.etapa ? "feita" : ""} ${timer.seg[i] > et.min * 60 ? "estourou" : ""}" id="et-card-${i}" data-a="aula-etapa" data-e="${i}">
+      ${etapas.map((et, i) => `<li><button class="etapa ${i === timer.etapa ? "atual" : ""} ${i === A.vendo ? "vendo" : ""} ${i < timer.etapa ? "feita" : ""} ${timer.seg[i] > et.min * 60 ? "estourou" : ""}" id="et-card-${i}" data-a="aula-etapa" data-e="${i}">
         <span class="e1"><b>${i + 1} · ${esc(et.nome)}</b></span>
         <span class="e2"><span class="mono" id="et-t-${i}">${mmss(timer.seg[i])}</span><span class="mono txt-muted">/ ${mmss(et.min * 60)}</span></span>
         <span class="barra-p"><i id="et-bar-${i}" style="width:${Math.min(100, timer.seg[i] / (et.min * 60) * 100)}%"></i></span></button></li>`).join("")}
     </ol>
     <div class="cols">
-      <div class="col-main">${conteudoEtapa(e.id)}${proximaEtapaCard()}</div>
+      <div class="col-main">${A.vendo !== null ? avisoPrevia() : ""}${!timer.iniciada ? avisoInicio() : ""}${conteudoEtapa(e.id)}${A.vendo === null ? proximaEtapaCard() : ""}</div>
       <aside class="col-side lateral"><section class="card destaque" id="painel-aluno">${painelAlunoHTML()}</section>${ladoAula()}</aside>
     </div>`;
   const cm = document.querySelector(".col-main"); if (cm && sc) cm.scrollTop = sc;
   if (e.id === "listening") atualizarPlayer();
   enviarTela();
+}
+
+function avisoPrevia() {
+  const v = A.etapas[A.vendo], c = A.etapas[A.timer.etapa];
+  return `<section class="card aviso-previa"><div class="linha"><span class="flex1">Você está vendo <b>${esc(v.nome)}</b>. A tela do aluno continua em <b>${esc(c.nome)}</b>.</span>
+    <button class="btn btn-sm btn-primario" data-a="previa-ir">Ir para esta etapa</button><button class="btn btn-sm" data-a="previa-voltar">Voltar para ${esc(c.nome)}</button></div></section>`;
+}
+function avisoInicio() {
+  return `<section class="card aviso-previa"><span>Aula ainda não iniciada. A tela do aluno mostra “Your class will start soon”. Quando ele entrar, clique em <b>Iniciar aula</b>: o relógio começa e a tela dele abre no ${esc(A.etapas[A.timer.etapa].nome.toLowerCase())}.</span></section>`;
 }
 
 function proximaEtapaCard() {
@@ -217,7 +255,11 @@ function conteudoEtapa(id) {
 
   if (id === "pratica") {
     if (!t) return `<section class="card">Selecione um tópico.</section>`;
-    const d = aula.nivelMaterial || "medio", x = t[d], dv = vizinha(d), y = t[dv];
+    const d = aula.nivelMaterial || "medio", x = t[d], dv = vizinha(d);
+    const itens = itensPratica(), cur = Math.min(A.timer.prIdx || 0, itens.length - 1);
+    const grupo = (tipo, extra) => itens.map((it, n) => ({ it, n })).filter(o => o.it.tipo === tipo && o.it.extra === extra)
+      .map(({ it, n }) => `<li class="clicavel ${n === cur ? "item-atual" : ""}" data-a="pr-ir" data-n="${n}">${esc(it.txt)}${it.resp && r ? `<span class="resp">${esc(it.resp)}</span>` : ""}</li>`);
+    const atual = itens[cur];
     return `<section class="card">
       <div class="linha">
         <div class="pilha flex1" style="gap:4px;min-width:240px"><span class="rotulo acento">Prática</span>
@@ -226,15 +268,18 @@ function conteudoEtapa(id) {
         <div class="seg" role="group" aria-label="Dificuldade">${DIFS.map(k => `<button data-a="aula-dif" data-d="${k}" aria-pressed="${k === d}">${DIF_LABEL[k]}</button>`).join("")}</div>
         <button class="btn" data-a="aula-resp" aria-pressed="${r}">${r ? "Esconder respostas" : "Mostrar respostas"}</button>
       </div>
-      <span class="sub">Faça as perguntas em ordem. Corrija na hora, curto, focando no erro de gramática.</span></section>
+      <div class="linha nav-item"><button class="btn btn-sm" data-a="pr-ant" ${cur <= 0 ? "disabled" : ""}>${ICONES.voltar} Anterior</button>
+        <span class="flex1">Na tela do aluno: <b>${cur + 1} de ${itens.length}</b> · ${atual ? (atual.tipo === "p" ? "pergunta" : "tradução oral") : ""}</span>
+        <button class="btn btn-sm btn-primario" data-a="pr-prox" ${cur >= itens.length - 1 ? "disabled" : ""}>Próxima ${ICONES.prox}</button></div>
+      <span class="sub">O aluno vê um item por vez. Clique em qualquer pergunta ou frase para mostrá-la. Corrija na hora, curto, focando no erro de gramática.</span></section>
     <div class="grid-2">
-      <section class="card"><h2 class="rotulo">Perguntas para fazer · ${DIF_LABEL[d]}</h2>${lista(x.p.map(p => li(p)))}
-        <h2 class="rotulo txt-muted">Se sobrar tempo · ${DIF_LABEL[dv]}</h2>${lista(y.p.map(p => li(p)), x.p.length + 1, "lista-extra")}</section>
-      <section class="card"><h2 class="rotulo">Tradução oral PT → EN · ${DIF_LABEL[d]}</h2>${lista(x.t.map(p => li(p[0], p[1], r)))}
-        <h2 class="rotulo txt-muted">Se sobrar tempo · ${DIF_LABEL[dv]}</h2>${lista(y.t.map(p => li(p[0], p[1], r)), x.t.length + 1, "lista-extra")}</section>
+      <section class="card"><h2 class="rotulo">Perguntas para fazer · ${DIF_LABEL[d]}</h2>${lista(grupo("p", false))}
+        <h2 class="rotulo txt-muted">Se sobrar tempo · ${DIF_LABEL[dv]}</h2>${lista(grupo("p", true), x.p.length + 1, "lista-extra")}</section>
+      <section class="card"><h2 class="rotulo">Tradução oral PT → EN · ${DIF_LABEL[d]}</h2>${lista(grupo("t", false))}
+        <h2 class="rotulo txt-muted">Se sobrar tempo · ${DIF_LABEL[dv]}</h2>${lista(grupo("t", true), x.t.length + 1, "lista-extra")}</section>
     </div>
     <div><button class="btn btn-sm" data-a="aula-mais">${A.maisEx ? "Esconder exercícios extras" : "Mais exercícios (completar e reescrever)"}</button>
-      ${A.maisEx ? `<span class="mini" style="margin-left:8px">Estes costumam ir para o homework. Se usar aqui, sorteie outro no pós-aula.</span>` : ""}</div>
+      ${A.maisEx ? `<span class="mini" style="margin-left:8px">Estes costumam ir para o homework. Se usar aqui, sorteie outro no fechamento.</span>` : ""}</div>
     ${A.maisEx ? `<div class="grid-2">
       <section class="card"><h2 class="rotulo">Complete</h2>${lista(x.c.map(p => li(p[0], p[1], r)))}</section>
       <section class="card"><h2 class="rotulo">Reescreva</h2>${lista(x.r.map(p => li(`${p[0]} (${p[1]})`, p[2], r)))}</section></div>` : ""}`;
@@ -282,17 +327,18 @@ function conteudoEtapa(id) {
 
   if (id === "fechamento" || id === "devolutiva") {
     const conv = id === "devolutiva";
+    const hw = garantirHwPrevia();
     return `<div class="grid-2">
       <section class="card destaque"><span class="rotulo acento">${conv ? "Devolutiva" : "Fechamento"}</span>
         ${lista((conv
-          ? ["Leia 3 a 5 erros que você anotou e peça para o aluno reformular cada frase.", "Reforce 2 expressões novas que ele usou bem.", "Elogie algo específico da conversa.", "Combine o tema da próxima aula e avise sobre o homework."]
-          : ["Devolva as 2 ou 3 correções mais importantes da aula.", "Elogie algo específico que o aluno fez bem.", "Combine o foco da próxima aula e avise sobre o homework."]).map(p => li(p)))}
-        <div><button class="btn btn-primario btn-lg" data-a="aula-pos">Ir para o pós-aula ${ICONES.prox}</button></div></section>
-      <section class="card"><span class="rotulo">Suas anotações desta aula</span>
-        ${aula.notaRapida ? `<div style="white-space:pre-line">${esc(aula.notaRapida)}</div>` : `<span class="sub">Nada anotado na nota rápida.</span>`}
-        <label class="rotulo acento" for="corr-aluno">Correções para mostrar ao aluno</label>
-        <textarea id="corr-aluno" data-i="correcoes-aluno" placeholder="Uma por linha. Ex.: I have 30 years → I am 30" style="min-height:120px">${esc((aula.correcoesAluno || []).join("\n"))}</textarea>
-        <span class="mini">Aparecem na tela do aluno enquanto você digita.</span></section></div>`;
+          ? ["Leia 3 a 5 erros que você anotou e peça para o aluno reformular cada frase.", "Reforce 2 expressões novas que ele usou bem.", "Elogie algo específico da conversa.", "Combine o tema da próxima aula e mostre o homework."]
+          : ["Devolva as 2 ou 3 correções mais importantes da aula.", "Elogie algo específico que o aluno fez bem.", "Combine o foco da próxima aula e mostre o homework."]).map(p => li(p)))}
+        <span class="mini">As correções ficam no quadro “Correções para o aluno”, na coluna da direita.</span>
+        ${aula.notaRapida ? `<span class="rotulo">Suas anotações desta aula</span><div style="white-space:pre-line">${esc(aula.notaRapida)}</div>` : ""}
+        <div><button class="btn btn-primario btn-lg" data-a="aula-encerrar">Encerrar aula ${ICONES.prox}</button></div></section>
+      <section class="card"><div class="linha"><span class="rotulo flex1">Homework desta aula · na tela do aluno</span><button class="btn btn-sm" data-a="hw-sortear">Sortear outro</button></div>
+        ${hw ? `<div class="item hw-previa">${esc(homeworkComoTexto(hw, al, aula.data))}</div>` : `<span class="sub">Escolha ${conv ? "um tema" : "um tópico"} para gerar o homework.</span>`}
+        <span class="mini">O aluno vê este homework agora e na tela final. No pós-aula você ainda pode trocar antes de enviar para o Drive.</span></section></div>`;
   }
 
   // ----- Conversação -----
@@ -330,6 +376,9 @@ function ladoAula() {
   const ant = anteriores(aula);
   const dif = contarDificuldades(ant.slice(0, 4));
   return `
+    <section class="card destaque"><label class="rotulo acento" for="corr-aluno">Correções para o aluno</label>
+      <textarea id="corr-aluno" data-i="correcoes-aluno" placeholder="Uma por linha. Ex.: I have 30 years → I am 30" style="min-height:90px">${esc((aula.correcoesAluno || []).join("\n"))}</textarea>
+      <span class="mini">Aparecem na tela do aluno em qualquer etapa, enquanto você digita.</span></section>
     <section class="card"><h2 class="rotulo alerta">Fique de ouvido</h2>
       ${t ? t.fique.map(f => `<div class="fique">${esc(f)}</div>`).join("") : ""}
       ${dif.length ? dif.slice(0, 3).map(([d, n]) => `<div class="fique" style="display:flex;justify-content:space-between;gap:8px"><span>${esc(d)}</span><span class="txt-muted">${n} das últimas ${Math.min(4, ant.length)}</span></div>`).join("") : ""}
@@ -375,15 +424,63 @@ function dicasDaEtapa() {
   return null;
 }
 
+function itensPratica() {
+  const t = S.banco.topicos[A.aula.topicoId]; if (!t) return [];
+  const d = A.aula.nivelMaterial || "medio", dv = vizinha(d);
+  return [
+    ...t[d].p.map(x => ({ tipo: "p", txt: x, extra: false })), ...t[dv].p.map(x => ({ tipo: "p", txt: x, extra: true })),
+    ...t[d].t.map(x => ({ tipo: "t", txt: x[0], resp: x[1], extra: false })), ...t[dv].t.map(x => ({ tipo: "t", txt: x[0], resp: x[1], extra: true }))
+  ];
+}
+function gerarHwPrevia(difHw) {
+  const { aula, al } = A;
+  if (aula.modelo === "conversa") return aula.temaId ? gerarHomeworkConversa(S.banco, aula.temaId, al.nivel) : null;
+  return aula.topicoId ? gerarHomework(S.banco, aula.topicoId, difHw || aula.nivelMaterial || "medio", "adequado", aula.textoId) : null;
+}
+function garantirHwPrevia() {
+  const hw = A.aula.homeworkPrevia;
+  const assunto = A.aula.modelo === "conversa" ? A.aula.temaId : A.aula.topicoId;
+  if (hw && (hw.topicoId === assunto || hw.temaId === assunto)) return hw;
+  const novo = gerarHwPrevia();
+  if (!novo) return null;
+  A.aula.homeworkPrevia = novo; salvarCampos({ homeworkPrevia: novo });
+  return novo;
+}
+function proximaAula(al, aula) {
+  const hoje = hojeISO();
+  return aulasNoPeriodo(S.store.alunos, S.store.aulas, hoje, addDays(hoje, 21))
+    .find(a => a.alunoId === al.id && a.status === "agendada" && a.key !== aula.id && a.id !== aula.id && (a.data + (a.hora || "")) > (aula.data + (aula.hora || "")) && !jaPassou(a)) || null;
+}
+function dataEmIngles(p) {
+  const d = new Date(p.data + "T12:00:00");
+  return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + (p.hora ? ` · ${p.hora}` : "");
+}
+// Tela final do aluno (também usada pelo pós-aula, quando o homework muda).
+export function estadoFim(aula, al, hw) {
+  const p = proximaAula(al, aula);
+  return { tipo: "estado", fase: "fim", aulaId: aula.id, aluno: al.nome.split(" ")[0], correcoes: aula.correcoesAluno || [],
+    homeworkTexto: hw ? homeworkComoTexto(hw, al, aula.data) : "", proxima: p ? dataEmIngles(p) : "" };
+}
+function marcaItem(ex, i) {
+  const m = ex.marcas ? ex.marcas[i] : null;
+  if (m === true || m === false) return m;
+  const resp = A.respostas[ex.id];
+  if (ex.tipo === "completar" && resp && (resp.itens[i] || "").trim()) return confere(resp.itens[i], ex.gabarito[i] || "", ex.itens[i]);
+  return null;
+}
+
 function estadoAluno() {
   if (!A) return null;
   const { aula, al } = A;
+  if (A.timer.encerrada) return estadoFim(aula, al, aula.homeworkPrevia);
+  if (!A.timer.iniciada) return { tipo: "estado", fase: "espera", aulaId: aula.id, aluno: al.nome.split(" ")[0] };
   const e = A.etapas[A.timer.etapa];
   const t = S.banco.topicos[aula.topicoId];
   const tema = S.banco.temasPorId[aula.temaId];
   const blocos = [];
   const B = (titulo, itens, extra = {}) => blocos.push({ titulo, itens, ...extra });
-  let homework = null, correcoes = null;
+  let homework = null;
+  const correcoes = aula.correcoesAluno || [];
   if (e.id === "aquecimento") {
     const { lista } = perguntasAquecimento();
     B("", [lista[A.aqIdx % lista.length]], { grande: true });
@@ -394,9 +491,12 @@ function estadoAluno() {
     else if (hw.tipo === "conversa") homework = { titulo: hw.topicoNome, forma: "Expressions: " + hw.vocab.map(v => v[0]).join(" · "), exemplo: "", texto: aula.hwTextoAluno || "" };
     else { const est = (S.banco.dicas?.estruturas || {})[hw.topicoId] || {}; homework = { titulo: hw.topicoNome, forma: est.forma || "", exemplo: est.exemplo || "", texto: aula.hwTextoAluno || "" }; }
   } else if (e.id === "pratica" && t) {
-    const d = aula.nivelMaterial || "medio", dv = vizinha(d);
-    B("Questions", [...t[d].p, ...t[dv].p]);
-    B("Translate into English", [...t[d].t, ...t[dv].t].map(x => x[0]), { inicio: t[d].p.length + t[dv].p.length + 1 });
+    // Um item por vez: o professor avança.
+    const itens = itensPratica(), n = Math.min(A.timer.prIdx || 0, itens.length - 1), it = itens[n];
+    if (it) {
+      const doTipo = itens.filter(x => x.tipo === it.tipo).length, pos = itens.slice(0, n + 1).filter(x => x.tipo === it.tipo).length;
+      B(it.tipo === "p" ? `Question ${pos} of ${doTipo}` : `Say it in English · ${pos} of ${doTipo}`, [it.txt], { grande: true });
+    }
   } else if (e.id === "listening") {
     const tx = S.banco.textosPorId[aula.textoId];
     if (tx) B(tx.titulo, [], { audio: true, corpo: tx.texto, rate: A.rate }); // só o áudio: sem texto e sem perguntas
@@ -413,7 +513,8 @@ function estadoAluno() {
     tema.roleplay.forEach(rp => B(`Role-play: ${rp.titulo}`, [rp.situacao]));
   } else {
     B("", ["Great class! See you next time."], { grande: true });
-    correcoes = aula.correcoesAluno || [];
+    const hw = garantirHwPrevia();
+    if (hw) B("Your homework", [homeworkComoTexto(hw, al, aula.data)], { texto: true });
   }
   const dc = dicasDaEtapa();
   const ex = A.exercicio;
@@ -423,14 +524,13 @@ function estadoAluno() {
     dicas: dc ? { mostrar: !!A.dicas[A.timer.etapa], ...(A.dicas[A.timer.etapa] ? dc : { itens: [] }) } : null,
     exercicio: ex ? {
       id: ex.id, tipo: ex.tipo, titulo: ex.titulo, instrucao: ex.instrucao, itens: ex.itens, minutos: ex.minutos || 0, inicio: ex.inicio || 0,
-      correcao: ex.correcaoLiberada ? { gabarito: ex.gabarito || [], comparar: ex.tipo === "completar", comentario: ex.comentario || "" } : null
+      correcao: ex.correcaoLiberada ? { gabarito: ex.gabarito || [], comparar: ex.tipo === "completar", marcas: ex.itens.map((_, i) => marcaItem(ex, i)), comentario: ex.comentario || "" } : null
     } : null,
     homework, correcoes
   };
 }
 function enviarTela() { if (A) Sessao.publicar(estadoAluno()); }
 function linkOuvir(textoId) { return `${baseApp()}aluno.html?t=${encodeURIComponent(textoId)}&v=${A ? A.rate : 1}`; }
-function baseApp() { return location.href.split("#")[0].split("?")[0].replace(/index\.html$/, ""); }
 
 // ---------- exercícios escritos ----------
 function tiposExercicio() {
@@ -459,81 +559,123 @@ function criarExercicio(tipo) {
 }
 function salvarExercicioNaAula() {
   const atual = S.store.aula(A.aula.id); if (!atual) return;
-  const lista = (A.aula.exercicios || []).map(x => ({ ...x, resposta: A.respostas[x.id] || x.resposta || null }));
+  clearTimeout(A.timerSalvarEx);
+  const lista = (A.aula.exercicios || []).map(x => ({ ...x, ...(A.exercicio && A.exercicio.id === x.id ? A.exercicio : {}), resposta: A.respostas[x.id] || x.resposta || null }));
   A.aula.exercicios = lista; A.aula.exercicioAtivo = A.exercicio ? A.exercicio.id : null;
-  S.store.salvarAula({ ...atual, exercicios: lista, exercicioAtivo: A.aula.exercicioAtivo, sessaoId: A.aula.sessaoId || atual.sessaoId || null }).catch(erro);
+  S.store.salvarAula({ ...atual, exercicios: lista, exercicioAtivo: A.aula.exercicioAtivo }).catch(erro);
 }
+// Rascunhos chegam a cada pausa na digitação: salva no máximo a cada 4 segundos.
+function salvarExercicioDepois() { clearTimeout(A.timerSalvarEx); const id = A.aula.id; A.timerSalvarEx = setTimeout(() => { if (A && A.aula.id === id) salvarExercicioNaAula(); }, 4000); }
 function receberResposta(r) {
   if (!A) return;
-  if (r.presenca) { atualizarPainelAluno(); return; }
-  A.respostas[r.exercicioId] = { itens: r.itens, texto: r.texto, enviadoEm: r.enviadoEm || Date.now() };
-  salvarExercicioNaAula(); atualizarPainelAluno();
-  if (A.exercicio && A.exercicio.id === r.exercicioId) toast("O aluno enviou as respostas.");
+  if (r.presenca) { atualizarStatus(); return; }
+  if (r.exercicioId === "homework") {
+    A.aula.hwTextoAluno = r.texto;
+    const t = document.getElementById("hw-texto"); if (t && document.activeElement !== t) t.value = r.texto;
+    clearTimeout(A.timerHw); A.timerHw = setTimeout(() => salvarCampos({ hwTextoAluno: r.texto }), 1500);
+    enviarTela(); return;
+  }
+  A.respostas[r.exercicioId] = { itens: r.itens, texto: r.texto, enviadoEm: r.enviadoEm || Date.now(), rascunho: !!r.rascunho };
+  const atual = A.exercicio && A.exercicio.id === r.exercicioId;
+  if (atual) atualizarRespostas();
+  if (r.rascunho) salvarExercicioDepois();
+  else { salvarExercicioNaAula(); if (atual) toast("O aluno terminou e enviou."); }
 }
 
 function statusConexao() {
-  if (Sessao.sid && Sessao.aulaId === A.aula.id) {
+  let txt;
+  if (Sessao.ativa(A.aula.id)) {
     const visto = Sessao.alunoVistoEm;
-    return visto && Date.now() - visto < 150000 ? `<span class="txt-ok">● Aluno conectado pelo link</span>` : `<span class="txt-alerta">● Link ativo — aguardando o aluno abrir</span>`;
+    txt = visto && Date.now() - visto < 50000 ? `<span class="txt-ok">● Aluno conectado pelo link</span>` : `<span class="txt-alerta">● Link ativo — esperando o aluno abrir</span>`;
+  } else if (Sessao.janelaVistaEm && Date.now() - Sessao.janelaVistaEm < 50000) txt = `<span class="txt-ok">● Janela do aluno aberta neste computador</span>`;
+  else if (A.erroLink) txt = `<span class="txt-perigo">● O link do aluno não ligou (${esc(A.erroLink)}). Confira as regras do Firestore.</span>`;
+  else if (temNuvem() && !A.timer.encerrada && A.aula.status !== "dada") txt = `<span class="txt-muted">● Ligando o link do aluno…</span>`;
+  else txt = `<span class="txt-muted">● Sem link ao vivo (só a janela local, se aberta)</span>`;
+  const l = Sessao.listening;
+  if (A.etapas[A.timer.etapa].id === "listening" && l && l.total) {
+    txt += `<br><span class="txt-acento">🎧 ${l.idx >= l.total ? "Ouviu até o fim" : `${l.tocando ? "Ouvindo" : "Pausado na"} frase ${l.idx + 1} de ${l.total}`}</span>`;
   }
-  return `<span class="txt-muted">● Sem link ao vivo (só a janela local, se aberta)</span>`;
+  return txt;
+}
+function atualizarStatus() { const el = document.getElementById("status-aluno"); if (!el || !A) return; const h = statusConexao(); if (el.innerHTML !== h) el.innerHTML = h; }
+
+function statusResposta(ex) {
+  const resp = A.respostas[ex.id];
+  if (!resp) return "aguardando…";
+  return resp.rascunho ? `<span class="txt-alerta">✎ escrevendo…</span>` : `<span class="txt-ok">✓ terminou e enviou</span>`;
+}
+function respostasHTML() {
+  const ex = A.exercicio; if (!ex) return "";
+  const resp = A.respostas[ex.id];
+  if (ex.tipo === "escrita") {
+    const texto = resp ? (resp.texto || resp.itens[0] || "") : "";
+    const palavras = texto.trim() ? texto.trim().split(/\s+/).length : 0;
+    return `<span class="mini">${esc(ex.itens[0])}</span>
+      ${texto ? `<div class="item resp-ao-vivo">${esc(texto)}</div><span class="mini">${palavras} palavra${palavras === 1 ? "" : "s"}</span>` : `<span class="sub">O aluno ainda não escreveu.</span>`}`;
+  }
+  return `<ol class="lista-num" style="font-size:13px;gap:8px">${ex.itens.map((it, i) => {
+    const r = resp ? (resp.itens[i] || "") : "";
+    const m = r.trim() ? marcaItem(ex, i) : null;
+    return `<li>${esc(it)}
+      <span class="resp">${r.trim() ? `<b class="${m === true ? "txt-ok" : m === false ? "txt-perigo" : ""}">${esc(r)}</b> · ` : ""}${esc(ex.gabarito[i] || "")}</span>
+      ${r.trim() ? `<span class="linha marcas"><button class="btn-marca ${m === true ? "on" : ""}" data-a="ex-marca" data-n="${i}" data-v="1" aria-label="Certo">✓</button><button class="btn-marca ${m === false ? "on" : ""}" data-a="ex-marca" data-n="${i}" data-v="0" aria-label="Errado">✗</button>${m === false ? `<button class="btn-link" data-a="ex-corr" data-n="${i}">→ correções</button>` : ""}</span>` : ""}</li>`;
+  }).join("")}</ol>`;
+}
+function atualizarRespostas() {
+  const el = document.getElementById("painel-ex-resp"); if (el) el.innerHTML = respostasHTML();
+  const s = document.getElementById("ex-status"); if (s && A.exercicio) s.innerHTML = statusResposta(A.exercicio);
 }
 function painelAlunoHTML() {
   if (!A) return "";
   const dc = dicasDaEtapa();
   const lib = !!A.dicas[A.timer.etapa];
   const ex = A.exercicio;
-  const resp = ex ? A.respostas[ex.id] : null;
-  const etapaId = A.etapas[A.timer.etapa].id;
+  const etapa = A.etapas[A.timer.etapa];
+  const naTela = A.timer.encerrada ? "tela final" : !A.timer.iniciada ? "esperando a aula começar" : ex ? `exercício · ${ex.titulo}` : etapa.nome;
   let corpoEx = "";
   if (ex) {
-    const linhas = ex.tipo === "escrita"
-      ? `<div class="pilha" style="gap:4px"><span class="mini">${esc(ex.itens[0])}</span>${resp ? `<div class="item" style="white-space:pre-line;font-size:13px">${esc(resp.texto || resp.itens[0] || "")}</div>` : ""}
-          ${ex.correcaoLiberada ? "" : `<label class="mini" for="ex-coment">Comentário para o aluno (vai junto com a correção)</label><textarea id="ex-coment" data-i="ex-comentario" style="min-height:60px">${esc(A.comentario)}</textarea>`}</div>`
-      : `<ol class="lista-num" style="font-size:13px;gap:8px">${ex.itens.map((it, i) => {
-          const r = resp ? (resp.itens[i] || "") : "";
-          const ok = ex.tipo === "completar" && resp ? confere(r, ex.gabarito[i] || "", it) : null;
-          return `<li>${esc(it)}<span class="resp">${resp ? `<b class="${ok === true ? "txt-ok" : ok === false ? "txt-perigo" : ""}">${esc(r || "—")}</b> · ` : ""}${esc(ex.gabarito[i] || "")}</span></li>`;
-        }).join("")}</ol>`;
-    corpoEx = `<div class="sep"></div><div class="linha"><b class="flex1" style="font-size:13px">${esc(ex.titulo)}</b><span class="mini">${resp ? `<span class="txt-ok">✓ respondido</span>` : "aguardando…"}</span></div>
-      ${linhas}
+    corpoEx = `<div class="sep"></div><div class="linha"><b class="flex1" style="font-size:13px">${esc(ex.titulo)}</b><span class="mini" id="ex-status">${statusResposta(ex)}</span></div>
+      <div id="painel-ex-resp" class="pilha" style="gap:6px">${respostasHTML()}</div>
+      ${ex.tipo === "escrita" && !ex.correcaoLiberada ? `<label class="mini" for="ex-coment">Comentário para o aluno (vai junto com a correção)</label><textarea id="ex-coment" data-i="ex-comentario" style="min-height:60px">${esc(A.comentario)}</textarea>` : ""}
+      ${ex.tipo !== "escrita" && !ex.correcaoLiberada ? `<span class="mini">Marque ✓ ou ✗ antes de liberar: é o que o aluno vê na correção.</span>` : ""}
       <div class="linha">${ex.correcaoLiberada ? `<span class="mini txt-ok">Correção liberada</span>` : `<button class="btn btn-sm" data-a="ex-liberar">Liberar correção</button>`}<button class="btn btn-sm" data-a="ex-encerrar">Encerrar exercício</button></div>`;
   }
-  return `<div class="linha"><h2 class="rotulo acento flex1">Tela do aluno</h2><button class="btn btn-sm" data-a="aula-tela">Abrir / link</button></div>
-    <span class="mini">${statusConexao()}</span>
-    ${dc ? `<div class="linha"><span class="flex1" style="font-size:13px">Dicas desta etapa</span><button class="btn btn-sm" data-a="dicas-toggle" aria-pressed="${lib}">${lib ? "Ocultar dicas" : "Liberar dicas"}</button></div>` : ""}
-    ${!ex && etapaId !== "listening" ? `<div class="pilha" style="gap:6px"><span style="font-size:13px">Enviar exercício escrito</span><div class="linha">${tiposExercicio().map(([k, r]) => `<button class="btn btn-sm" data-a="ex-enviar" data-t="${k}">${r}</button>`).join("")}</div></div>` : ""}
+  const podeEx = !ex && etapa.id !== "listening" && A.timer.iniciada && !A.timer.encerrada;
+  return `<div class="linha"><h2 class="rotulo acento flex1">Tela do aluno</h2><button class="btn btn-sm" data-a="aula-tela">Link / janela</button></div>
+    <span class="mini" id="status-aluno">${statusConexao()}</span>
+    <span class="mini">Na tela dele: <b>${esc(naTela)}</b></span>
+    ${dc && A.timer.iniciada && !A.timer.encerrada ? `<div class="linha"><span class="flex1" style="font-size:13px">Dicas desta etapa</span><button class="btn btn-sm" data-a="dicas-toggle" aria-pressed="${lib}">${lib ? "Ocultar dicas" : "Liberar dicas"}</button></div>` : ""}
+    ${podeEx ? `<div class="pilha" style="gap:6px"><span style="font-size:13px">Enviar exercício escrito</span><div class="linha">${tiposExercicio().map(([k, r]) => `<button class="btn btn-sm" data-a="ex-enviar" data-t="${k}">${r}</button>`).join("")}</div></div>` : ""}
     ${corpoEx}`;
 }
 function atualizarPainelAluno() { const el = document.getElementById("painel-aluno"); if (el && A) el.innerHTML = painelAlunoHTML(); }
 
 function modalTelaAluno() {
-  const temFb = !!(S.fb && S.store.modo === "nuvem");
-  const link = Sessao.sid && Sessao.aulaId === A.aula.id ? Sessao.linkRemoto(baseApp()) : null;
+  const nuvem = temNuvem();
   import("./ctx.js").then(({ abrirModal, fecharModal, linkWhats }) => {
-    const desenhar = (l) => `<section class="modal" role="dialog" aria-labelledby="ta"><div class="modal-cab"><h2 id="ta">Tela do aluno</h2><span class="sub">${esc(A.al.nome)}</span></div>
+    const desenhar = () => {
+      const link = nuvem && A.al.sessaoFixa ? linkDoAluno(A.al.sessaoFixa) : null;
+      return `<section class="modal" role="dialog" aria-labelledby="ta"><div class="modal-cab"><h2 id="ta">Tela do aluno</h2><span class="sub">${esc(A.al.nome)}</span></div>
       <div class="modal-corpo">
-        <div class="card destaque"><b>Link ao vivo no aparelho do aluno</b>
-          <span class="sub">O aluno abre o link no celular ou no computador dele. A tela acompanha as etapas sozinha, o áudio toca no aparelho dele e os exercícios escritos voltam para você. O link vale por 4 horas.</span>
-          ${!temFb ? `<span class="txt-alerta mini">Disponível depois do login com o Google (modo nuvem).</span>` : l ? `<input type="text" readonly value="${esc(l)}" id="ta-link"><div class="linha"><button class="btn btn-sm" data-m="copiar">Copiar link</button>${linkWhats(A.al, "x") ? `<button class="btn btn-sm" data-m="whats">Enviar no WhatsApp</button>` : ""}</div>` : `<div><button class="btn" data-m="gerar">Gerar link da aula</button></div>`}
+        <div class="card destaque"><b>Link fixo do aluno</b>
+          <span class="sub">É sempre o mesmo link para este aluno: mande uma vez e peça para ele salvar nos favoritos. Quando você entra na aula, a tela dele abre sozinha; o áudio do listening toca no computador dele, e você vê o que ele escreve enquanto escreve.</span>
+          ${!nuvem ? `<span class="txt-alerta mini">Disponível depois do login com o Google (modo nuvem).</span>`
+            : link ? `<input type="text" readonly value="${esc(link)}" id="ta-link"><div class="linha"><button class="btn btn-sm" data-m="copiar">Copiar link</button>${linkWhats(A.al, "x") ? `<button class="btn btn-sm" data-m="whats">Enviar no WhatsApp</button>` : ""}</div>`
+            : `<div><button class="btn" data-m="gerar">Criar o link deste aluno</button></div>`}
         </div>
         <div class="card"><b>Janela para compartilhar a tela</b>
           <span class="sub">Abre uma janela no seu computador só com o conteúdo do aluno. Compartilhe só ela e ative o áudio do sistema na chamada.</span>
           <div><button class="btn btn-sm" data-m="janela">Abrir janela</button></div></div>
       </div><div class="modal-rod"><button class="btn" data-m="fechar">Fechar</button></div></section>`;
-    let atual = link;
-    abrirModal(desenhar(atual), { onAction: async (acao) => {
+    };
+    abrirModal(desenhar(), { onAction: async (acao) => {
       try {
         if (acao === "fechar") return fecharModal();
-        if (acao === "janela") { const w = window.open(`${baseApp()}aluno.html`, "ca2-tela-aluno", "width=1100,height=760"); if (!w) toast("O navegador bloqueou a janela. Permita pop-ups para este site."); setTimeout(enviarTela, 800); return; }
-        if (acao === "gerar") {
-          const sid = await Sessao.iniciarRemota(A.aula, A.al.nome.split(" ")[0], A.aula.sessaoId);
-          A.aula.sessaoId = sid; salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno();
-          atual = Sessao.linkRemoto(baseApp());
-          document.querySelector("#modal-raiz .modal-fundo").innerHTML = desenhar(atual); return;
-        }
-        if (acao === "copiar") return copiar(atual);
-        if (acao === "whats") return window.open(linkWhats(A.al, `Oi, ${A.al.nome.split(" ")[0]}! Abra este link para acompanhar a aula de hoje: ${atual}`), "_blank", "noopener");
+        if (acao === "janela") { const w = window.open(`${baseApp()}aluno.html`, "ca2-tela-aluno", "width=1280,height=800"); if (!w) toast("O navegador bloqueou a janela. Permita pop-ups para este site."); setTimeout(enviarTela, 800); return; }
+        if (acao === "gerar") { await ativarLink(); document.querySelector("#modal-raiz .modal-fundo").innerHTML = desenhar(); return; }
+        const link = linkDoAluno(A.al.sessaoFixa);
+        if (acao === "copiar") return copiar(link);
+        if (acao === "whats") return window.open(linkWhats(A.al, `Oi, ${A.al.nome.split(" ")[0]}! Este é o seu link fixo das aulas. Salve nos favoritos e abra no computador no horário da aula: ${link}`), "_blank", "noopener");
       } catch (e) { erro(e); }
     } });
   });
@@ -555,8 +697,12 @@ function prepararTTS() {
   return true;
 }
 
+function irItemPratica(n) {
+  const total = itensPratica().length; if (!total) return;
+  A.timer.prIdx = Math.max(0, Math.min(total - 1, n)); LS.set(A.kTimer, A.timer); desenharAula();
+}
 function trocarEtapa(i) {
-  salvarTimer(); A.timer.etapa = i; A.resp = false; TTS.parar(); A.ttsTexto = null;
+  salvarTimer(); A.timer.etapa = i; A.vendo = null; A.resp = false; TTS.parar(); A.ttsTexto = null;
   LS.set(A.kTimer, A.timer); desenharAula(); const cm = document.querySelector(".col-main"); if (cm) cm.scrollTop = 0;
 }
 
@@ -566,14 +712,63 @@ Object.assign(ACOES, {
     if (t.rodando) { salvarTimer(); t.rodando = false; } else { t.rodando = true; t.ultimo = Date.now(); }
     LS.set(A.kTimer, t); desenharAula();
   },
-  "aula-prox": () => { if (A.timer.etapa >= A.etapas.length - 1) return ACOES["aula-pos"](); trocarEtapa(A.timer.etapa + 1); },
-  "aula-etapa": el => trocarEtapa(Number(el.dataset.e)),
+  "aula-prox": () => { if (A.timer.etapa >= A.etapas.length - 1) return ACOES["aula-encerrar"](); trocarEtapa(A.timer.etapa + 1); },
+  // Com a aula em andamento, clicar numa etapa só mostra uma prévia: a tela do aluno não muda.
+  "aula-etapa": el => {
+    const i = Number(el.dataset.e);
+    if (!A.timer.iniciada || A.timer.encerrada) return trocarEtapa(i);
+    A.vendo = i === A.timer.etapa ? null : i; TTS.parar(); A.ttsTexto = null; desenharAula();
+    const cm = document.querySelector(".col-main"); if (cm) cm.scrollTop = 0;
+  },
+  "previa-ir": () => { if (A.vendo !== null) trocarEtapa(A.vendo); },
+  "previa-voltar": () => { A.vendo = null; desenharAula(); },
+  "aula-iniciar": () => {
+    const t = A.timer; t.iniciada = true; t.encerrada = false; t.rodando = true; t.ultimo = Date.now();
+    LS.set(A.kTimer, t); desenharAula();
+    if (temNuvem() && !Sessao.ativa(A.aula.id)) ativarLink().catch(falhaLink);
+  },
+  "aula-encerrar": async () => {
+    salvarTimer(); const t = A.timer; t.rodando = false; t.encerrada = true; LS.set(A.kTimer, t);
+    A.exercicio = null; salvarExercicioNaAula();
+    const hw = garantirHwPrevia();
+    const fim = estadoFim(A.aula, A.al, hw);
+    await Sessao.encerrar(fim);
+    navegar(`#/pos/${A.aula.id}`);
+  },
+  "aula-reabrir": () => { A.timer.encerrada = false; LS.set(A.kTimer, A.timer); desenharAula(); ativarLink().catch(falhaLink); },
+  "pr-ir": el => irItemPratica(Number(el.dataset.n)),
+  "pr-prox": () => irItemPratica((A.timer.prIdx || 0) + 1),
+  "pr-ant": () => irItemPratica((A.timer.prIdx || 0) - 1),
+  "hw-sortear": () => {
+    const atual = A.aula.homeworkPrevia;
+    A.aula.homeworkPrevia = gerarHwPrevia(atual && atual.dif); salvarCampos({ homeworkPrevia: A.aula.homeworkPrevia }); desenharAula();
+  },
+  "ex-marca": el => {
+    const ex = A.exercicio; if (!ex) return;
+    const i = Number(el.dataset.n), v = el.dataset.v === "1";
+    ex.marcas = ex.marcas || ex.itens.map(() => null);
+    ex.marcas[i] = marcaItem(ex, i) === v && ex.marcas[i] === v ? null : v;
+    salvarExercicioNaAula(); atualizarRespostas();
+    if (ex.correcaoLiberada) enviarTela();
+  },
+  "ex-corr": el => {
+    const ex = A.exercicio; if (!ex) return;
+    const i = Number(el.dataset.n), resp = A.respostas[ex.id];
+    const g = ex.gabarito[i] || "", partes = g.split("/").map(x => x.trim());
+    const certo = (ex.itens[i].match(/_{2,}/g) || []).length >= 2 ? partes.join(" ") : partes[0];
+    const linha = `${(resp && resp.itens[i] || "").trim()} → ${certo}`;
+    const lista = A.aula.correcoesAluno || [];
+    if (lista.includes(linha)) return toast("Essa correção já está na lista.");
+    A.aula.correcoesAluno = [...lista, linha];
+    const ta = document.getElementById("corr-aluno"); if (ta) ta.value = A.aula.correcoesAluno.join("\n");
+    salvarCampos({ correcoesAluno: A.aula.correcoesAluno }); enviarTela(); toast("Adicionada às correções do aluno.");
+  },
   "aula-pos": () => { salvarTimer(); A.timer.rodando = false; LS.set(A.kTimer, A.timer); navegar(`#/pos/${A.aula.id}`); },
   "aula-faltou": () => modalFalta(A.aula.id),
   "aula-resp": () => { A.resp = !A.resp; desenharAula(); },
   "aula-mais": () => { A.maisEx = !A.maisEx; desenharAula(); },
   "aq-outra": () => { A.aqIdx++; desenharAula(); },
-  "aula-dif": async el => { A.aula.nivelMaterial = el.dataset.d; A.aula.motivoPlano = ""; await S.store.salvarAula(A.aula); desenharAula(); },
+  "aula-dif": async el => { A.aula.nivelMaterial = el.dataset.d; A.aula.motivoPlano = ""; A.timer.prIdx = 0; LS.set(A.kTimer, A.timer); await S.store.salvarAula(A.aula); desenharAula(); },
   "aula-modelo": async el => {
     const m = el.dataset.m;
     if (m === A.aula.modelo) return;
@@ -594,12 +789,12 @@ Object.assign(ACOES, {
     A.exercicio = ex; A.comentario = "";
     A.aula.exercicios = [...(A.aula.exercicios || []), ex];
     salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno();
-    if (!(Sessao.sid && Sessao.aulaId === A.aula.id)) toast("Exercício na tela do aluno. Para ele responder do aparelho dele, gere o link em “Abrir / link”.");
+    if (!Sessao.ativa(A.aula.id) && !temNuvem()) toast("Exercício na janela do aluno. O link fixo do aluno funciona depois do login com o Google.");
   },
   "ex-liberar": () => {
     if (!A.exercicio) return;
     A.exercicio.correcaoLiberada = true; A.exercicio.comentario = A.comentario || "";
-    A.aula.exercicios = (A.aula.exercicios || []).map(x => x.id === A.exercicio.id ? A.exercicio : x);
+    A.exercicio.marcas = A.exercicio.itens.map((_, i) => marcaItem(A.exercicio, i));
     salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno();
   },
   "ex-encerrar": () => { A.exercicio = null; salvarExercicioNaAula(); enviarTela(); atualizarPainelAluno(); },
@@ -615,7 +810,7 @@ Object.assign(ACOES, {
 Object.assign(CAMPOS, {
   "aula-topico": async el => {
     if (!A || el.value === A.aula.topicoId) return;
-    A.aula.topicoId = el.value; A.aula.motivoPlano = "";
+    A.aula.topicoId = el.value; A.aula.motivoPlano = ""; A.timer.prIdx = 0; LS.set(A.kTimer, A.timer);
     const t = S.banco.topicos[el.value];
     const usados = new Set(S.store.aulas.filter(a => a.alunoId === A.al.id && a.id !== A.aula.id && a.textoId).map(a => a.textoId));
     const tx = sugerirTexto(S.banco, t.nivel, t.id, A.aula.nivelMaterial, usados);
@@ -662,7 +857,7 @@ export function renderPos(v, id) {
     hwFeito: aula.homeworkFeito || (temHwAnterior ? "" : "sem"),
     obs: aula.observacao || aula.notaRapida || "",
     topicoId, temaId, dif: dif || "medio",
-    hw: aula.homework || null,
+    hw: aula.homework || aula.homeworkPrevia || null,
     enviarDrive: !!(S.fb && al.docHomeworkId)
   };
   if (!P.hw) regenerar();
@@ -811,6 +1006,8 @@ Object.assign(ACOES, {
           P.aula = aula; return;
         }
       } else toast("Aula registrada.");
+      // Se a tela final do aluno ainda está aberta, atualiza o homework mostrado nela.
+      if (Sessao.sid && Sessao.aulaId === aula.id) Sessao.encerrar(estadoFim(aula, al, P.hw)).catch(() => {});
       navegar("#/semana");
     } catch (e) { el.disabled = false; erro(e); }
   }

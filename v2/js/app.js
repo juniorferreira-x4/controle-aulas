@@ -12,6 +12,7 @@ import {
   PRECOS, MODALIDADE_LABEL, precoTabela, valorMensalEquivalente, fimDoPacote, brl, MODELO_ALUNO, MODELOS, modeloDaAula, sugerirTema, DIA_VENCIMENTO
 } from "./regras.js";
 import { renderAula, renderPos } from "./aula.js";
+import { novoSid, linkDoAluno } from "./sessao.js";
 import * as TTS from "./tts.js";
 import { criarDocHomework } from "./drive.js";
 
@@ -734,6 +735,12 @@ function telaCadastro(v, id) {
             ${al.docHomeworkUrl ? `<a class="btn" href="${esc(al.docHomeworkUrl)}" target="_blank" rel="noopener">Abrir ${ICONES.externo}</a>` : `<button class="btn" data-a="criar-doc-hw">Criar no Drive</button>`}</div>
             <span class="mini">${S.fb ? "Cria “Homework — nome do aluno” no seu Drive, compartilha com o e-mail do aluno e passa a receber o homework de cada aula." : "Criar e preencher automaticamente funciona depois que o Firebase estiver configurado. Até lá, cole aqui o link de um documento seu."}</span></div>
         </section>
+        ${novo ? "" : `<section class="card"><h2 class="card-titulo">Link fixo da aula ao vivo</h2>
+          ${!(S.fb && S.store.modo === "nuvem") ? `<span class="sub">Disponível depois do login com o Google.</span>`
+            : al.sessaoFixa ? `<input type="text" readonly value="${esc(linkDoAluno(al.sessaoFixa))}" aria-label="Link fixo do aluno">
+              <div class="linha"><button class="btn btn-sm" data-a="link-copiar">Copiar link</button>${al.whatsapp ? `<button class="btn btn-sm" data-a="link-whats">Enviar no WhatsApp</button>` : ""}</div>`
+            : `<div><button class="btn btn-sm" data-a="link-criar">Criar link</button></div>`}
+          <span class="mini">Sempre o mesmo link para este aluno. Ele abre no computador no horário da aula, e a tela começa sozinha quando você entra na aula.</span></section>`}
         <section class="card"><label class="card-titulo" for="c-obs">Observações</label>
           <textarea id="c-obs" data-c="observacoes">${esc(al.observacoes || "")}</textarea></section>
         ${novo ? "" : `<div><button class="btn btn-perigo" data-a="excluir-aluno">Excluir aluno e histórico</button></div>`}
@@ -821,6 +828,7 @@ Object.assign(ACOES, {
     a.horarios = (a.horarios || []).filter(h => h.hora);
     const novo = !a.id;
     const orig = novo ? null : S.store.aluno(a.id);
+    if (orig && orig.sessaoFixa && !a.sessaoFixa) a.sessaoFixa = orig.sessaoFixa;
     if (orig && orig.situacao !== a.situacao) {
       const iniEditado = (a.inicioAgenda || "") !== (orig.inicioAgenda || "");
       const nova = a.situacao; a.situacao = orig.situacao;
@@ -837,6 +845,13 @@ Object.assign(ACOES, {
     if (!confirm(`Excluir ${a.nome} e todo o histórico de aulas? Isso não pode ser desfeito.\n\nSe a ideia é só parar as aulas, mude a situação para Inativo.`)) return;
     await S.store.apagarAluno(a.id); toast("Aluno excluído."); navegar("#/alunos");
   },
+  "link-criar": async () => {
+    const a = S.store.aluno(S.cadastro.id); if (!a) return;
+    const sid = novoSid(); await S.store.salvarAluno({ ...a, sessaoFixa: sid });
+    S.cadastro.sessaoFixa = sid; render();
+  },
+  "link-copiar": () => copiar(linkDoAluno(S.cadastro.sessaoFixa)),
+  "link-whats": () => window.open(linkWhats(S.cadastro, `Oi, ${S.cadastro.nome.split(" ")[0]}! Este é o seu link fixo das aulas. Salve nos favoritos e abra no computador no horário da aula: ${linkDoAluno(S.cadastro.sessaoFixa)}`), "_blank", "noopener"),
   "criar-doc-hw": async el => {
     const a = S.cadastro;
     if (!S.fb) { toast("Configure o Firebase para criar documentos automaticamente."); return; }

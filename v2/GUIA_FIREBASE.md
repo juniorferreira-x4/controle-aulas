@@ -39,7 +39,7 @@ service cloud.firestore {
       match /respostas/{rid} {
         allow list, get, delete: if professor();
         allow create, update: if get(/databases/$(database)/documents/sessoes/$(sid)).data.expiraEm > request.time
-          && request.resource.data.keys().hasOnly(['itens', 'texto', 'enviadoEm', 'visto'])
+          && request.resource.data.keys().hasOnly(['itens', 'texto', 'enviadoEm', 'visto', 'rascunho', 'listening'])
           && request.resource.data.get('texto', '').size() < 6000
           && request.resource.data.get('itens', []).size() <= 20;
       }
@@ -88,9 +88,11 @@ Se, no primeiro login, o Google mostrar o aviso “o Google não verificou este 
 - O gabarito **não** vai para o documento. Ele fica no app e aparece na etapa “Homework” da aula seguinte.
 - Documentos colados à mão (links de documentos que já existiam) não podem ser escritos pelo app, por causa da permissão `drive.file`. Para esses, use **Copiar homework**.
 
-## Link ao vivo da aula (tela do aluno)
+## Link fixo do aluno (tela do aluno ao vivo)
 
-- Na aula, clique em **Tela do aluno → Gerar link da aula** e mande o link para o aluno. Ele não precisa de conta.
-- A tela dele acompanha as etapas sozinha. O áudio do listening toca no aparelho dele, e os exercícios escritos que você enviar voltam para a sua tela na hora.
-- O link vale por 4 horas. O aluno só vê o conteúdo da aula e as próprias respostas, nunca os seus dados.
+- Cada aluno tem **um link fixo**. Ele aparece no cadastro do aluno e em **Tela do aluno → Link / janela**. Mande uma vez e peça para o aluno salvar nos favoritos.
+- Quando você entra na aula, o link é ligado àquela aula: o aluno vê “Your class will start soon”. Ao clicar em **Iniciar aula**, a tela dele abre na primeira etapa.
+- Você vê o que o aluno escreve enquanto ele escreve, e em que frase do listening ele está.
+- Ao clicar em **Encerrar aula**, o aluno vê a tela final (correções, homework e data da próxima aula) por 30 minutos. Fora do horário de aula, o link mostra só uma tela de espera.
+- O aluno só vê o conteúdo da aula e só grava as próprias respostas, nunca os seus dados.
 - Exige as regras acima publicadas. O login **Anônimo** não é necessário.

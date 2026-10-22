@@ -227,3 +227,17 @@ td a.nome-link { color: var(--texto); font-weight: 600; text-decoration: none; }
   .etapas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .modal-cab, .modal-corpo, .modal-rod { padding-left: 16px; padding-right: 16px; }
 }
+
+/* Aula: prévia de etapa, item atual da prática, marcas de correção */
+.etapa.vendo { border-style: dashed; border-color: var(--acento); color: var(--texto); }
+.aviso-previa { border-color: var(--alerta-borda); background: var(--alerta-fundo); font-size: 13px; }
+.clicavel { cursor: pointer; border-radius: 6px; padding: 2px 6px; margin-left: -6px; }
+.clicavel:hover { background: var(--painel-2); }
+.item-atual { background: var(--acento-fundo); box-shadow: inset 0 0 0 1px var(--acento-borda); }
+.nav-item { padding: 8px 10px; border-radius: 10px; background: var(--painel-2); font-size: 13px; }
+.marcas { gap: 6px; margin-top: 4px; }
+.btn-marca { min-width: 28px; min-height: 24px; border-radius: 6px; border: 1px solid var(--borda); background: var(--painel-2); color: var(--muted); cursor: pointer; font-size: 12px; }
+.btn-marca[data-v="1"].on { background: var(--ok); border-color: var(--ok); color: #fff; }
+.btn-marca[data-v="0"].on { background: var(--perigo); border-color: var(--perigo); color: #fff; }
+.resp-ao-vivo { white-space: pre-line; font-size: 13px; max-height: 260px; overflow: auto; }
+.hw-previa { white-space: pre-line; font-size: 12px; max-height: 320px; overflow: auto; }
