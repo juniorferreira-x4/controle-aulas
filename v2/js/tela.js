@@ -123,7 +123,7 @@ function desenharEstado(d) {
     d.blocos.forEach(b => {
       if (b.grande) principal += `<section class="bloco grande">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${b.itens.map(i => `<p>${esc(i)}</p>`).join("")}</section>`;
       else if (b.texto) principal += `<section class="bloco texto">${b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}<p>${esc(b.itens[0])}</p></section>`;
-      else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; principal += `<section class="bloco grande" style="text-align:left"><h2>Listening</h2><div style="font-size:20px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>`; }
+      else if (b.audio) { temPlayer = true; if (b.rate) rate = b.rate; principal += `<section class="bloco grande" style="text-align:left"><h2>Listening</h2><div style="font-size:20px;font-weight:700">${esc(b.titulo)}</div>${player(b.corpo)}</section>${b.textoAluno ? `<section class="bloco texto"><h2>The text</h2><p>${esc(b.textoAluno)}</p></section>` : ""}`; }
       else principal += `<section class="bloco">${b.titulo2 ? `<div style="font-size:18px;font-weight:700">${esc(b.titulo)}</div><h2>${esc(b.titulo2)}</h2>` : b.titulo ? `<h2>${esc(b.titulo)}</h2>` : ""}${ol(b.itens, b.inicio || 1)}</section>`;
     });
     if (d.dicas) {
