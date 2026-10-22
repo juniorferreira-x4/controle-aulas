@@ -607,7 +607,7 @@ function telaAlunos(v) {
     const hwTxt = ultHw ? { sim: "em dia", parcial: "parcial", nao: "não fez" }[ultHw.homeworkFeito] : "—";
     return `<tr>
       <td><a class="nome-link" href="#/aluno/${esc(al.id)}">${esc(al.nome)}</a></td>
-      <td>${tagSituacao(al.situacao)}</td><td>${tagNivel(al.nivel)}</td><td>${esc(al.plano ? al.plano + "/sem" : "—")}</td>
+      <td><label for="sit-${esc(al.id)}" hidden>Situação de ${esc(al.nome)}</label><select id="sit-${esc(al.id)}" class="sel-sit st-${esc(al.situacao)}" data-i="sit-rapida" data-id="${esc(al.id)}">${["ativo", "trancado", "inativo", "experimental"].map(k => `<option value="${k}" ${al.situacao === k ? "selected" : ""}>${{ ativo: "Ativo", trancado: "Trancado", inativo: "Inativo", experimental: "Experimental" }[k]}</option>`).join("")}</select></td><td>${tagNivel(al.nivel)}</td><td>${esc(al.plano ? al.plano + "/sem" : "—")}</td>
       <td class="mono" style="font-size:12px">${esc(horariosTexto(al))}</td>
       <td>${ultima ? fmtData(ultima.data) : "—"}</td>
       <td class="${g.disponivel ? "txt-ok" : "txt-alerta"}">${al.situacao === "ativo" ? (g.disponivel ? "disponível" : g.perdida ? "perdida" : "usada") : "—"}</td>
@@ -651,7 +651,30 @@ function blocoReengajar() {
 }
 
 Object.assign(ACOES, { "alunos-filtro": el => { S.filtroAlunos = el.dataset.f; render(); } });
+
+// Troca de situação. Ao (re)ativar, a agenda recomeça hoje: assim o período parado
+// não vira uma pilha de aulas "sem registro".
+const ATIVAS = ["ativo", "experimental"];
+export function aplicarSituacao(al, nova, situacaoAnterior) {
+  if (ATIVAS.includes(nova) && !ATIVAS.includes(situacaoAnterior)) al.inicioAgenda = hojeISO();
+  if (nova !== situacaoAnterior) al.situacaoDesde = hojeISO();
+  al.situacao = nova;
+  return al;
+}
+const ROTULO_SIT = { ativo: "Ativo", trancado: "Trancado", inativo: "Inativo", experimental: "Aula experimental" };
+
 Object.assign(CAMPOS, {
+  "sit-rapida": async (el, ev) => {
+    if (ev.type !== "change") return;
+    const atual = S.store.aluno(el.dataset.id);
+    if (!atual || atual.situacao === el.value) return;
+    const futuras = S.store.aulas.filter(a => a.alunoId === atual.id && a.status === "agendada" && a.data >= hojeISO());
+    if (!ATIVAS.includes(el.value) && futuras.length &&
+        !confirm(`${atual.nome} tem ${futuras.length} aula(s) avulsa(s) ou reposição(ões) já marcada(s). Elas continuam na agenda até você apagar. Continuar?`)) { el.value = atual.situacao; return; }
+    await S.store.salvarAluno(aplicarSituacao({ ...atual }, el.value, atual.situacao));
+    toast(`${atual.nome.split(" ")[0]} agora está como ${ROTULO_SIT[el.value]}.`);
+    render();
+  },
   "busca-aluno": el => {
     S.buscaAluno = el.value; const pos = el.selectionStart; render();
     const n = document.getElementById("busca-aluno"); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch {} }
@@ -765,6 +788,14 @@ Object.assign(ACOES, {
     if (!a.nivel) a.nivel = null;
     a.horarios = (a.horarios || []).filter(h => h.hora);
     const novo = !a.id;
+    const orig = novo ? null : S.store.aluno(a.id);
+    if (orig && orig.situacao !== a.situacao) {
+      const iniEditado = (a.inicioAgenda || "") !== (orig.inicioAgenda || "");
+      const nova = a.situacao; a.situacao = orig.situacao;
+      const ini = a.inicioAgenda;
+      aplicarSituacao(a, nova, orig.situacao);
+      if (iniEditado) a.inicioAgenda = ini;
+    }
     await S.store.salvarAluno(a);
     toast(novo ? "Aluno cadastrado." : "Alterações salvas.");
     navegar(`#/aluno/${a.id}`);
