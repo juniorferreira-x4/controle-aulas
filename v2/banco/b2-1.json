@@ -1,0 +1,141 @@
+{
+  "nivel": "B2",
+  "aquecimento": ["What's the best thing that happened since we last spoke?", "What's something you changed your mind about recently?", "What's a small win you had this week?", "If you could skip one task this week, which would it be?", "What's the most useful thing you read or heard lately?", "What's been challenging at work these days?", "What would make this week a great week?", "Tell me about a conversation that stayed in your head.", "What's a trend you've noticed lately?", "What are you proud of this month?"],
+  "topicos": [
+    {
+      "id": "b2-second-conditional",
+      "nome": "Second Conditional",
+      "categoria": "Gramática",
+      "sub": ["Situações hipotéticas", "If I were you", "1st vs 2nd conditional"],
+      "fique": ["'If I would have time' → If I had time", "'If I was you' (aceitável informal) → If I were you", "'I will' na hipótese → I would"],
+      "facil": {
+        "p": ["What would you do if you won the lottery?", "If you could live anywhere, where would you live?", "If you had more free time, what would you do?", "What would you buy if you had $1,000 now?", "If you were the president, what would you change?", "If you could speak another language, which would it be?"],
+        "t": [["Se eu tivesse dinheiro, viajaria o mundo.", "If I had money, I would travel the world."], ["Se eu fosse você, aceitaria.", "If I were you, I would accept it."], ["O que você faria?", "What would you do?"], ["Se ela morasse perto, viria mais.", "If she lived nearby, she would come more often."], ["Eu não faria isso.", "I wouldn't do that."]],
+        "c": [["If I ___ (have) time, I would study more.", "had"], ["If I ___ (be) you, I'd call her.", "were"], ["What ___ you do if you lost your job?", "would"], ["If it ___ (not / be) so expensive, I'd buy it.", "weren't"], ["She ___ (help) you if she could.", "would help"]],
+        "r": [["If I would have money, I would buy a house.", "Corrija", "If I had money, I would buy a house."], ["If I am you, I will go.", "Corrija (hipótese)", "If I were you, I would go."], ["I don't have a car, so I can't drive to work.", "Reescreva com If", "If I had a car, I could drive to work."]]
+      },
+      "medio": {
+        "p": ["If you could change one thing about your job, what would it be?", "What would happen if everyone worked from home?", "If you didn't have to work, would you still work? Why?", "If you lost your job tomorrow, what would you do first?", "Would you move abroad if you got a great offer?", "What would you do differently if you were 20 again?"],
+        "t": [["Se eu fosse mais organizado, não perderia prazos.", "If I were more organized, I wouldn't miss deadlines."], ["Eu poderia te ajudar se você me avisasse antes.", "I could help you if you told me earlier."], ["Se não fosse pela minha família, eu já teria me mudado. (preview)", "If it weren't for my family, I would move."], ["Se chover amanhã, a gente fica em casa. (real)", "If it rains tomorrow, we'll stay at home."], ["Se chovesse sempre, eu ficaria deprimido. (hipotético)", "If it rained all the time, I would get depressed."]],
+        "c": [["I ___ (could) help if you told me.", "could"], ["If it ___ (not / be) for my kids, I'd move.", "weren't"], ["If I ___ (know) the answer, I'd tell you. (mas não sei)", "knew"], ["If I see him, I ___ (tell) him. (real)", "will tell"], ["Would you mind if I ___ (open) the window?", "opened"]],
+        "r": [["If I know the answer, I would tell you. (não sei)", "Corrija", "If I knew the answer, I would tell you."], ["I'm not rich, so I don't travel a lot.", "Reescreva com If", "If I were rich, I would travel a lot."], ["Do you mind if I would sit here?", "Corrija", "Would you mind if I sat here? / Do you mind if I sit here?"]]
+      },
+      "dificil": {
+        "p": ["If you could redesign the education system, what would you prioritize?", "What would society look like if no one needed to work?", "If you were in charge of your company for a day, what would you change?", "Would the world be better if social media didn't exist?", "If you had to give up one technology, which would it be and why?", "If money weren't a factor, what career would you choose?"],
+        "t": [["Supondo que você recebesse uma proposta, você aceitaria?", "Supposing you got an offer, would you accept it?"], ["Se não fosse pelo trânsito, o Rio seria perfeito.", "If it weren't for the traffic, Rio would be perfect."], ["E se a gente fosse de trem?", "What if we went by train?"], ["Eu preferiria que você não contasse a ninguém.", "I'd rather you didn't tell anyone."], ["Já está na hora de a gente mudar isso.", "It's (high) time we changed this."]],
+        "c": [["___ you got an offer, would you take it?", "Supposing / Suppose"], ["What ___ we went by train?", "if"], ["I'd rather you ___ (not / tell) anyone.", "didn't tell"], ["It's high time we ___ (change) this.", "changed"], ["Were I in your position, I ___ (think) twice. (formal)", "would think"]],
+        "r": [["If I were in your position, I'd think twice.", "Inversão formal", "Were I in your position, I'd think twice."], ["It's time that we change this.", "Corrija", "It's (high) time we changed this."], ["I prefer that you don't tell anyone.", "Use I'd rather", "I'd rather you didn't tell anyone."]]
+      },
+      "fala": ["Hypothetical chain: 'If I won the lottery...' → each consequence becomes a new if.", "Dilemmas: would you take the job / tell the truth / move abroad?", "Give advice with 'If I were you...'", "What would Brazil be like if...?"],
+      "escrita": ["Write 6 second-conditional sentences about your dream life.", "Write advice to a friend with 'If I were you'.", "Write a paragraph: 'If I could change one thing in my city...'"]
+    },
+    {
+      "id": "b2-third-mixed",
+      "nome": "Third & Mixed Conditionals",
+      "categoria": "Gramática",
+      "sub": ["Passado irreal (3rd)", "Mistos (passado → presente)", "Arrependimentos"],
+      "fique": ["'If I would have known' → If I had known", "'I would had' → I would have", "Pronúncia: would've (wʊdəv)"],
+      "facil": {
+        "p": ["If you hadn't studied English, what would you have studied?", "What would you have done if it had rained last weekend?", "If you had been born in another country, where would you have liked to be born?", "If you had woken up earlier today, what would you have done?", "Would you have chosen the same job if you had known more?", "If you hadn't met your best friend, how would your life be different?"],
+        "t": [["Se eu tivesse sabido, teria vindo.", "If I had known, I would have come."], ["Se ela tivesse estudado, teria passado.", "If she had studied, she would have passed."], ["Eu não teria feito isso.", "I wouldn't have done that."], ["Se você tivesse me ligado, eu teria ajudado.", "If you had called me, I would have helped."], ["O que você teria feito?", "What would you have done?"]],
+        "c": [["If I ___ (know), I would have told you.", "had known"], ["She would have ___ (come) if you had invited her.", "come"], ["If we ___ (not / miss) the bus, we wouldn't have been late.", "hadn't missed"], ["What would you ___ (do)?", "have done"], ["If it ___ (rain), we would have stayed home.", "had rained"]],
+        "r": [["If I would have known, I would have come.", "Corrija", "If I had known, I would have come."], ["I didn't study, so I failed.", "Reescreva com 3rd conditional", "If I had studied, I wouldn't have failed."], ["She would had helped.", "Corrija", "She would have helped."]]
+      },
+      "medio": {
+        "p": ["What's one decision you made that changed everything? What if you hadn't made it?", "If you had taken a different path at 18, where would you be now?", "What would you have done differently in your last job?", "If you had known about the pandemic in advance, what would you have done?", "Is there a moment you wish had gone differently?", "If you had been born 50 years earlier, how would your life be now?"],
+        "t": [["Se eu tivesse aceitado aquele emprego, estaria morando em SP agora.", "If I had accepted that job, I would be living in São Paulo now."], ["Se ela não fosse tão teimosa, teria pedido ajuda.", "If she weren't so stubborn, she would have asked for help."], ["Se eu tivesse dormido mais, não estaria tão cansado.", "If I had slept more, I wouldn't be so tired."], ["Eu teria te ajudado se soubesse falar alemão.", "I would have helped you if I spoke German."], ["Se não fosse por você, eu teria desistido.", "If it hadn't been for you, I would have given up."]],
+        "c": [["If I had accepted the offer, I ___ (live) in Lisbon now.", "would be living"], ["If she ___ (not / be) so shy, she would have spoken up.", "weren't"], ["If it ___ (not / be) for you, I'd have given up.", "hadn't been"], ["If I'd slept more, I ___ (not / be) so tired now.", "wouldn't be"], ["He might ___ (win) if he had trained harder.", "have won"]],
+        "r": [["I didn't sleep well, so I'm tired now.", "Misto (passado → presente)", "If I had slept well, I wouldn't be tired now."], ["I'm not good at math, so I didn't become an engineer.", "Misto (presente → passado)", "If I were good at math, I would have become an engineer."], ["Without your help, I would have given up.", "Use 'if it hadn't been for'", "If it hadn't been for your help, I would have given up."]]
+      },
+      "dificil": {
+        "p": ["How would history be different if a major event had never happened?", "If you could undo one decision, which would it be and how would your life be now?", "What would have happened to your career if the internet hadn't existed?", "Is regret useful? Talk about a 'what if' in your life.", "If your parents had made different choices, who would you be today?", "What opportunity would you have taken if you had been braver?"],
+        "t": [["Se eu soubesse o que sei hoje, teria investido.", "Had I known what I know now, I would have invested."], ["Se não fosse aquele atraso, teríamos pegado o voo.", "But for that delay, we would have caught the flight."], ["Ele poderia ter morrido se não estivesse de cinto.", "He could have died if he hadn't been wearing a seatbelt."], ["Se eu fosse você, teria reclamado.", "If I were you, I would have complained."], ["Talvez tivesse dado certo se tivéssemos tentado.", "It might have worked if we had tried."]],
+        "c": [["___ I known, I would have invested. (inversão)", "Had"], ["___ for the delay, we would have arrived. (formal)", "But"], ["He could have died if he ___ (not / wear) a seatbelt.", "hadn't been wearing"], ["It might ___ (work) if we had tried.", "have worked"], ["If I were you, I ___ (complain) yesterday.", "would have complained"]],
+        "r": [["If I had known, I would have invested.", "Inversão formal", "Had I known, I would have invested."], ["Without the delay we would have arrived.", "Use 'But for'", "But for the delay, we would have arrived."], ["If he wasn't wearing a seatbelt, he could die.", "Corrija (passado)", "If he hadn't been wearing a seatbelt, he could have died."]]
+      },
+      "fala": ["Tell me about a turning point in your life and the 'what if'.", "Alternative history: what if Brazil had...?", "Regrets and lessons: 3 things you would have done differently.", "Chain story of consequences in the past."],
+      "escrita": ["Write about a decision that changed your life (3rd + mixed conditionals).", "Write 5 regrets with 'If I had...'", "Write a short alternative-history paragraph."]
+    },
+    {
+      "id": "b2-passive",
+      "nome": "Passive Voice",
+      "categoria": "Gramática",
+      "sub": ["Todos os tempos", "Quando usar", "It is said that / is believed to"],
+      "fique": ["'The house was build' → was built", "Esquecer o be: 'The report sent yesterday' → was sent", "'It was told me' → I was told"],
+      "facil": {
+        "p": ["Where was your phone made?", "When was your house built?", "Is English spoken in your company?", "Were you born in a hospital?", "What is your city known for?", "How often is your street cleaned?"],
+        "t": [["O carro foi feito no Japão.", "The car was made in Japan."], ["Inglês é falado no mundo todo.", "English is spoken all over the world."], ["A casa foi construída em 1950.", "The house was built in 1950."], ["O relatório será enviado amanhã.", "The report will be sent tomorrow."], ["Fui convidado para a festa.", "I was invited to the party."]],
+        "c": [["This bridge ___ (build) in 1974.", "was built"], ["Coffee ___ (grow) in Brazil.", "is grown"], ["The email ___ (send) tomorrow.", "will be sent"], ["The thief ___ (catch) yesterday.", "was caught"], ["Portuguese ___ (speak) in Angola.", "is spoken"]],
+        "r": [["Someone stole my bike.", "Passiva", "My bike was stolen."], ["They will announce the results tomorrow.", "Passiva", "The results will be announced tomorrow."], ["The house was build in 1990.", "Corrija", "The house was built in 1990."]]
+      },
+      "medio": {
+        "p": ["Have you ever been stopped by the police or asked for documents abroad?", "What is being built in your city right now?", "What should be done about traffic in Rio?", "How are decisions made in your company?", "Have you ever been given bad advice?", "What has been invented in the last 20 years that changed your life?"],
+        "t": [["A ponte está sendo reformada.", "The bridge is being renovated."], ["Fui informado de que a reunião foi cancelada.", "I was told that the meeting had been cancelled."], ["Isso deveria ter sido feito antes.", "This should have been done earlier."], ["Muitos empregos foram criados.", "Many jobs have been created."], ["Me pediram para esperar.", "I was asked to wait."]],
+        "c": [["The road ___ (repair) at the moment.", "is being repaired"], ["Many jobs ___ (create) since 2020.", "have been created"], ["I ___ (ask) to wait outside.", "was asked"], ["This should ___ (do) earlier.", "have been done"], ["The meeting ___ (cancel) — nobody told me.", "had been cancelled"]],
+        "r": [["They told me to wait.", "Passiva com I", "I was told to wait."], ["They are repairing the road.", "Passiva", "The road is being repaired."], ["Someone should have done this before.", "Passiva", "This should have been done before."]]
+      },
+      "dificil": {
+        "p": ["What is your city said to be famous for? Is it true?", "Should some jobs only be done by humans, not machines?", "What problems in your country are rarely talked about?", "How might your job be affected by AI?", "What's something that's commonly believed but isn't true?", "When is it better to use the passive in professional emails?"],
+        "t": [["Dizem que o prédio é mal-assombrado.", "The building is said to be haunted."], ["Acredita-se que ele fugiu do país.", "He is believed to have left the country."], ["Espera-se que os preços subam.", "Prices are expected to rise."], ["Erros foram cometidos.", "Mistakes were made."], ["O projeto está para ser aprovado.", "The project is about to be approved."]],
+        "c": [["The building ___ (say) to be haunted.", "is said"], ["He is believed ___ (leave) the country.", "to have left"], ["Prices are expected ___ (rise).", "to rise"], ["It ___ (report) that the CEO resigned.", "is reported / has been reported"], ["The suspect ___ (think) to be in Rio.", "is thought"]],
+        "r": [["People say that he is a genius.", "Passiva impessoal (2 formas)", "It is said that he is a genius. / He is said to be a genius."], ["People believe the company lost money.", "Passiva com 'is believed to have'", "The company is believed to have lost money."], ["We made mistakes. (sem culpar ninguém)", "Passiva", "Mistakes were made."]]
+      },
+      "fala": ["Explain how something is made (coffee, a product from your job).", "Describe changes in your city: what has been built, demolished, renovated?", "Present news using passive: 'It is reported that...'", "Explain a process at your work step by step."],
+      "escrita": ["Describe a process from your job using 6 passive sentences.", "Write a short news report using 'is said to / is believed to'.", "Rewrite 5 active sentences from an email into passive and say which sounds better."]
+    },
+    {
+      "id": "b2-causative",
+      "nome": "Causative (have / get something done)",
+      "categoria": "Gramática",
+      "sub": ["Have something done", "Get something done", "Have/get someone do/to do"],
+      "fique": ["'I cut my hair' (fui ao cabeleireiro) → I had my hair cut", "'I had my car fix' → I had my car fixed", "'I got him do' → I got him to do"],
+      "facil": {
+        "p": ["Where do you get your hair cut?", "Have you ever had your phone repaired?", "Do you clean your house or have it cleaned?", "When did you last have your eyes checked?", "Do you wash your car or have it washed?", "Have you ever had your photo taken by a professional?"],
+        "t": [["Cortei o cabelo ontem. (no salão)", "I had my hair cut yesterday."], ["Preciso mandar consertar o carro.", "I need to have my car fixed."], ["Ela mandou pintar a casa.", "She had her house painted."], ["Onde você revela suas fotos?", "Where do you get your photos printed?"], ["Vou mandar limpar o sofá.", "I'm going to have the sofa cleaned."]],
+        "c": [["I ___ my hair cut last week.", "had / got"], ["She's having her nails ___ (do).", "done"], ["We need to get the roof ___ (repair).", "repaired"], ["I'll have the documents ___ (send) to you.", "sent"], ["He got his phone ___ (fix).", "fixed"]],
+        "r": [["I cut my hair at the salon.", "Use causative", "I had my hair cut at the salon."], ["A mechanic is fixing my car.", "Use causative", "I'm having my car fixed."], ["I had my car fix.", "Corrija", "I had my car fixed."]]
+      },
+      "medio": {
+        "p": ["What things do you prefer to do yourself instead of having them done?", "Have you ever had something stolen?", "What services do you pay to have done every month?", "How do you get people to do things at work?", "Did you ever get someone to change their mind?", "Have you ever had a bad experience having something repaired?"],
+        "t": [["Tive minha carteira roubada no ônibus.", "I had my wallet stolen on the bus."], ["Consegui convencer meu chefe a me dar folga.", "I got my boss to give me a day off."], ["Vou pedir para o assistente enviar o contrato.", "I'll have my assistant send the contract."], ["Precisamos dar um jeito de terminar isso hoje.", "We need to get this done today."], ["Ela fez o filho arrumar o quarto.", "She had her son tidy his room. / She got her son to tidy his room."]],
+        "c": [["I had my wallet ___ (steal).", "stolen"], ["I got my boss ___ (give) me a day off.", "to give"], ["I'll have my assistant ___ (send) it.", "send"], ["We need to get this ___ (do) today.", "done"], ["She made him ___ (apologize).", "apologize"]],
+        "r": [["Someone stole my bag on the beach.", "Causative (experiência negativa)", "I had my bag stolen on the beach."], ["I convinced him to help.", "Use get someone to", "I got him to help."], ["I'll ask my secretary to call you.", "Use have someone do", "I'll have my secretary call you."]]
+      },
+      "dificil": {
+        "p": ["How do good managers get people to work harder without pressure?", "What tasks should companies have done by AI?", "Have you ever had a contract or document reviewed by a lawyer? Why?", "What would you have done to your house if money weren't a problem?", "How can parents get kids to read more?", "Is it lazy to have everything delivered? Discuss."],
+        "t": [["Você deveria mandar revisar o contrato por um advogado.", "You should have the contract reviewed by a lawyer."], ["Ele está construindo a casa. (mandando construir)", "He's having his house built."], ["Vamos mandar traduzir o site antes do lançamento.", "We'll get the website translated before the launch."], ["Ela conseguiu que a empresa reembolsasse tudo.", "She got the company to refund everything."], ["Não deixe que te façam de bobo.", "Don't let them make a fool of you."]],
+        "c": [["You should have the contract ___ (review) by a lawyer.", "reviewed"], ["She got the company ___ (refund) everything.", "to refund"], ["We had the website ___ (translate) last month.", "translated"], ["I'll get it ___ (deliver) by Friday.", "delivered"], ["He's having a pool ___ (build).", "built"]],
+        "r": [["A lawyer should review the contract.", "Causative com you", "You should have the contract reviewed by a lawyer."], ["The company refunded everything because she insisted.", "Use get + to", "She got the company to refund everything."], ["I'm building a house. (um empreiteiro está construindo)", "Corrija", "I'm having a house built."]]
+      },
+      "fala": ["Talk about services you use: what do you have done and what do you do yourself?", "Role-play: call a repair service and explain what you need done.", "Talk about a time you had something stolen or broken.", "Manager role-play: how will you get your team to...?"],
+      "escrita": ["Write 6 sentences about services you pay for (have/get something done).", "Write an email asking a company to have something fixed.", "Write about a time you got someone to change their mind."]
+    },
+    {
+      "id": "b2-modais-passado",
+      "nome": "Modais no passado (must have / might have / should have)",
+      "categoria": "Gramática",
+      "sub": ["Dedução sobre o passado", "Crítica e arrependimento", "Could have / needn't have"],
+      "fique": ["'He must have go' → He must have gone", "'Must had' → must have", "'You should had called' → You should have called", "Pronúncia: should've, must've"],
+      "facil": {
+        "p": ["Your friend didn't answer yesterday. Why might he have been busy?", "Someone left the office door open. Who could have done it?", "What should you have done differently last weekend?", "The streets are wet this morning. What must have happened?", "Your colleague looks tired. What might he have done last night?", "What could you have studied instead of your course?"],
+        "t": [["Deve ter chovido.", "It must have rained."], ["Ela pode ter esquecido.", "She might have forgotten."], ["Você deveria ter me ligado.", "You should have called me."], ["Ele não pode ter feito isso.", "He can't have done that."], ["Eu poderia ter ido, mas não quis.", "I could have gone, but I didn't want to."]],
+        "c": [["The ground is wet. It must ___ (rain).", "have rained"], ["She ___ have forgotten — she's always busy.", "might / may"], ["You ___ have told me!", "should"], ["He ___ have done it — he was with me.", "can't / couldn't"], ["I could ___ (go), but I didn't.", "have gone"]],
+        "r": [["I'm sure it rained.", "Use must have", "It must have rained."], ["It was a mistake not to call me.", "Use should have", "You should have called me."], ["He must have went home.", "Corrija", "He must have gone home."]]
+      },
+      "medio": {
+        "p": ["Tell me about a time you should have said no.", "A famous company failed. What might they have done wrong?", "What could you have done better in your last presentation?", "Why might your last flight or bus have been delayed?", "Who do you think must have had the most influence on you?", "What shouldn't you have bought this year?"],
+        "t": [["Não precisava ter trazido presente!", "You needn't have brought a present! / You didn't need to bring a present."], ["Ele deve ter perdido o ônibus.", "He must have missed the bus."], ["Eu não deveria ter comido tanto.", "I shouldn't have eaten so much."], ["Você poderia ter se machucado!", "You could have hurt yourself!"], ["Ela pode não ter recebido o e-mail.", "She might not have received the email."]],
+        "c": [["You ___ have brought a gift! (não precisava)", "needn't"], ["I ___ have eaten so much. (arrependimento)", "shouldn't"], ["You could ___ (hurt) yourself!", "have hurt"], ["She might not ___ (receive) it.", "have received"], ["They must ___ (be) very happy.", "have been"]],
+        "r": [["Maybe she didn't get the email.", "Use might not have", "She might not have received the email."], ["It wasn't necessary to bring food, but you did.", "Use needn't have", "You needn't have brought food."], ["I regret eating so much.", "Use shouldn't have", "I shouldn't have eaten so much."]]
+      },
+      "dificil": {
+        "p": ["Analyze a big historical decision: what should leaders have done?", "Think of a crisis at your work. What could have prevented it?", "Why might ancient civilizations have built huge monuments?", "Tell me about a situation where you must have misunderstood someone.", "What might your life have been like if you'd grown up in another country?", "A colleague quit without warning. What could have led to that?"],
+        "t": [["Eles devem ter planejado isso há meses.", "They must have been planning this for months."], ["Não pode ter sido fácil para ela.", "It can't have been easy for her."], ["Ele teria conseguido se tivesse se esforçado mais. (could)", "He could have made it if he had tried harder."], ["Era para você ter chegado às oito!", "You were supposed to arrive at eight! / You should have arrived at eight!"], ["Pode ser que eles tenham se perdido.", "They may have got(ten) lost."]],
+        "c": [["They must have ___ (plan) this for months.", "been planning"], ["It ___ have been easy for her.", "can't"], ["They may have ___ (get) lost.", "got / gotten"], ["You were ___ to arrive at eight.", "supposed"], ["He could have ___ (make) it if he'd tried.", "made"]],
+        "r": [["I'm sure they planned it for a long time. (contínuo)", "Use must have been + -ing", "They must have been planning it for a long time."], ["It's impossible that it was easy.", "Use can't have", "It can't have been easy."], ["The plan was for you to arrive at 8.", "Use supposed to", "You were supposed to arrive at 8."]]
+      },
+      "fala": ["Mystery cases: deduce what happened (must/might/can't have).", "Regrets: 3 things you should/shouldn't have done.", "Analyze a failed project: what could have been done better?", "React to stories: 'You must have been...!'"],
+      "escrita": ["Write 6 deductions about a mysterious situation.", "Write a 'lessons learned' paragraph about a past project.", "Write a reply to a friend's bad news using past modals."]
+    }
+  ]
+}

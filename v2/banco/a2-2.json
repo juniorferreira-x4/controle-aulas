@@ -1,0 +1,140 @@
+{
+  "nivel": "A2",
+  "topicos": [
+    {
+      "id": "a2-comparativos",
+      "nome": "Comparatives & Superlatives",
+      "categoria": "Gramática",
+      "sub": ["-er / more", "-est / the most", "Irregulares e as...as"],
+      "fique": ["'More big' → bigger", "'More better' → better", "'Biggest of the world' → biggest in the world", "'Than' vs 'then'"],
+      "facil": {
+        "p": ["Is Rio bigger than São Paulo?", "Who is older, you or your brother?", "Is coffee better than tea?", "What is the biggest room in your house?", "Who is the tallest person in your family?", "Is your city hotter than Curitiba?"],
+        "t": [["Meu irmão é mais alto que eu.", "My brother is taller than me."], ["Esse é o melhor restaurante da cidade.", "This is the best restaurant in the city."], ["O inglês é mais fácil que o alemão.", "English is easier than German."], ["Hoje está mais frio que ontem.", "Today is colder than yesterday."], ["Ela é a pessoa mais engraçada que eu conheço.", "She is the funniest person I know."]],
+        "c": [["A car is ___ (fast) than a bike.", "faster"], ["This book is ___ (interesting) than the movie.", "more interesting"], ["She is the ___ (good) student.", "best"], ["Today is ___ (bad) than yesterday.", "worse"], ["It's the ___ (expensive) hotel here.", "most expensive"]],
+        "r": [["My car is more big than yours.", "Corrija", "My car is bigger than yours."], ["She is the more intelligent.", "Corrija", "She is the most intelligent."], ["This is more good.", "Corrija", "This is better."]]
+      },
+      "medio": {
+        "p": ["Compare your city and another city you know.", "What is the most beautiful place you've visited?", "Is life easier now than 20 years ago? Why?", "Who is the most patient person you know?", "What is the worst job in the world, in your opinion?", "Is it better to live in a house or an apartment?"],
+        "t": [["Essa casa não é tão grande quanto a outra.", "This house isn't as big as the other one."], ["Quanto mais eu estudo, mais eu aprendo.", "The more I study, the more I learn."], ["O trânsito está cada vez pior.", "The traffic is getting worse and worse."], ["Ele é muito mais velho do que parece.", "He is much older than he looks."], ["Qual é o lugar mais bonito do Brasil?", "What is the most beautiful place in Brazil?"]],
+        "c": [["My English is getting ___ and ___ (good).", "better / better"], ["She isn't ___ tall ___ her sister.", "as / as"], ["This is ___ (far) I have ever walked.", "the farthest"], ["He's ___ (much) richer than me.", "much"], ["Rio is one of the ___ (beautiful) cities in the world.", "most beautiful"]],
+        "r": [["My house is smaller than your house. (as...as)", "Reescreva com not as...as", "My house isn't as big as yours."], ["The best place of Brazil.", "Corrija", "The best place in Brazil."], ["It's more cheaper.", "Corrija", "It's cheaper."]]
+      },
+      "dificil": {
+        "p": ["Is it better to have a well-paid job or an interesting job?", "What was the hardest year of your life? Why?", "Compare living in Brazil and living abroad.", "Which is more important: talent or effort?", "What's the most useful thing you've ever learned?", "Is it getting easier or harder to buy a house? Why?"],
+        "t": [["Quanto mais cedo, melhor.", "The sooner, the better."], ["Esse foi de longe o pior filme que eu já vi.", "That was by far the worst movie I've ever seen."], ["Ela é bem menos tímida do que antes.", "She is much less shy than before."], ["Não é tão caro quanto eu imaginava.", "It's not as expensive as I thought."], ["É o dobro do preço.", "It's twice as expensive."]],
+        "c": [["The ___ (soon), the better.", "sooner"], ["It's ___ (far) the best option.", "by far"], ["He's ___ (less) patient than his wife.", "less"], ["The new phone is twice ___ expensive ___ the old one.", "as / as"], ["It was the ___ (bad) day of my life.", "worst"]],
+        "r": [["The traffic gets worse every year.", "Use getting + comparativo duplo", "The traffic is getting worse and worse."], ["If you study more, you learn more.", "Use 'the more..., the more...'", "The more you study, the more you learn."], ["This phone costs double the price of that one.", "Use twice as...as", "This phone is twice as expensive as that one."]]
+      },
+      "fala": ["Compare three cities, jobs or restaurants you know.", "Debate: city life vs country life.", "Talk about the best and worst things in your year.", "Compare yourself now and 10 years ago."],
+      "escrita": ["Write 6 comparisons between two places you know.", "Write about the best, worst and most interesting things in your city.", "Write 3 sentences with as...as."]
+    },
+    {
+      "id": "a2-modais",
+      "nome": "Modal verbs: should / must / have to",
+      "categoria": "Gramática",
+      "sub": ["Conselho (should)", "Obrigação (must / have to)", "Proibição vs não precisar"],
+      "fique": ["'You should to go' → You should go", "'Mustn't' (proibido) vs 'don't have to' (não precisa)", "'She have to' → She has to"],
+      "facil": {
+        "p": ["Should I drink more water?", "Do you have to work on Saturdays?", "What should I visit in your city?", "Do you have to wear a uniform?", "Should children use phones?", "What time do you have to wake up?"],
+        "t": [["Você deveria descansar.", "You should rest."], ["Eu tenho que trabalhar amanhã.", "I have to work tomorrow."], ["Você não pode fumar aqui.", "You mustn't smoke here."], ["Ela não precisa vir.", "She doesn't have to come."], ["Devo levar um casaco?", "Should I take a jacket?"]],
+        "c": [["You ___ (deveria) sleep more.", "should"], ["I ___ (tenho que) go now.", "have to"], ["She ___ (tem que) study.", "has to"], ["You ___ (não deveria) eat so much sugar.", "shouldn't"], ["We ___ (não precisamos) pay.", "don't have to"]],
+        "r": [["You should to go to the doctor.", "Corrija", "You should go to the doctor."], ["He have to work.", "Corrija", "He has to work."], ["It's a good idea to study.", "Use should", "You should study."]]
+      },
+      "medio": {
+        "p": ["What should people do to learn English faster?", "What do you have to do at work that you don't like?", "What rules do you have to follow at your job?", "What should a tourist never do in Rio?", "What didn't you have to do as a child that children have to do now?", "What should the government do about traffic?"],
+        "t": [["Você não precisa se preocupar.", "You don't have to worry."], ["Você não pode usar o celular durante a prova.", "You mustn't use your phone during the exam."], ["Eu tive que esperar duas horas.", "I had to wait two hours."], ["O que eu deveria fazer?", "What should I do?"], ["Precisamos sair às sete?", "Do we have to leave at seven?"]],
+        "c": [["Yesterday I ___ (tive que) work late.", "had to"], ["You ___ (proibido) park here.", "mustn't"], ["It's free. You ___ (não precisa) pay.", "don't have to"], ["___ I call her? (conselho)", "Should"], ["Did you ___ (precisou) wait long?", "have to"]],
+        "r": [["You mustn't come if you don't want. (não é proibido)", "Corrija", "You don't have to come if you don't want to."], ["I must work yesterday.", "Corrija", "I had to work yesterday."], ["It's my advice: don't buy that car.", "Use shouldn't", "You shouldn't buy that car."]]
+      },
+      "dificil": {
+        "p": ["What should schools teach that they don't teach now?", "What do you think everyone must do at least once in their life?", "What rules should companies have about working from home?", "What did you have to give up to get where you are?", "Should social media be banned for children? Why?", "What's something you feel you should do but never do?"],
+        "t": [["Você deveria ter me contado. (passado)", "You should have told me."], ["Eu não tinha que ir, mas fui mesmo assim.", "I didn't have to go, but I went anyway."], ["Você precisa ver esse filme! (recomendação forte)", "You must see this movie!"], ["Não precisava ter trazido nada.", "You didn't have to bring anything."], ["Será que eu deveria aceitar a proposta?", "Should I accept the offer?"]],
+        "c": [["You ___ (deveria ter) told me earlier.", "should have"], ["You ___ (precisa) try this restaurant! It's amazing.", "must"], ["We ___ (vamos ter que) work on Saturday.", "will have to"], ["She ___ (não precisou) pay for the ticket.", "didn't have to"], ["Employees ___ (proibido) share passwords.", "mustn't / must not"]],
+        "r": [["It was a mistake not to tell me.", "Use should have", "You should have told me."], ["It's not necessary to bring food.", "Use don't have to", "You don't have to bring food."], ["It's prohibited to use phones.", "Use mustn't", "You mustn't use phones."]]
+      },
+      "fala": ["Give advice to a friend who wants to lose weight / find a job / learn English.", "Explain the rules of your workplace or a sport.", "Talk about obligations you had as a teenager.", "Debate: should work weeks be 4 days?"],
+      "escrita": ["Write 5 pieces of advice for a tourist in Rio.", "Write 5 rules for your house or office (must/mustn't/have to).", "Write 3 things you should have done differently."]
+    },
+    {
+      "id": "a2-descricao",
+      "nome": "Descrição de pessoas e lugares",
+      "categoria": "Funcional",
+      "sub": ["Aparência", "Personalidade", "Lugares", "Ordem dos adjetivos"],
+      "fique": ["Adjetivo depois do substantivo: 'a house big' → a big house", "'She has 30 years' → She is 30", "Adjetivo no plural: 'beautifuls places' → beautiful places", "What is she like? (personalidade) vs What does she look like? (aparência)"],
+      "facil": {
+        "p": ["Does your mother have long or short hair?", "Is your city quiet or noisy?", "Are you more like your mother or your father?", "Is your street beautiful?", "What color are your eyes?", "Is your best friend tall or short?"],
+        "t": [["Ela tem cabelo curto e olhos castanhos.", "She has short hair and brown eyes."], ["Minha cidade é grande e barulhenta.", "My city is big and noisy."], ["Ele é alto e magro.", "He is tall and thin."], ["É uma casa pequena e bonita.", "It's a small, beautiful house."], ["Meu pai é muito engraçado.", "My father is very funny."]],
+        "c": [["She has ___ (longo) ___ (preto) hair.", "long / black"], ["It's a ___ (antiga) city.", "old"], ["My brother is very ___ (tímido).", "shy"], ["They live in a ___ (grande) apartment.", "big"], ["He has ___ (azuis) eyes.", "blue"]],
+        "r": [["I live in a house big.", "Corrija", "I live in a big house."], ["She has 30 years.", "Corrija", "She is 30."], ["They are beautifuls.", "Corrija", "They are beautiful."]]
+      },
+      "medio": {
+        "p": ["What is your best friend like?", "What does your boss look like?", "Describe your neighborhood. What do you like about it?", "Describe the most beautiful place you've visited.", "Who in your family has the strongest personality?", "What is your favorite room like?"],
+        "t": [["Como ela é? (personalidade)", "What is she like?"], ["Como ele é fisicamente?", "What does he look like?"], ["Ele parece ser simpático.", "He seems (to be) friendly."], ["Meu bairro é tranquilo, mas não tem muito para fazer.", "My neighborhood is quiet, but there isn't much to do."], ["Ela tem uns quarenta e poucos anos.", "She's in her early forties."]],
+        "c": [["What ___ your new boss like? He's very organized.", "is"], ["What does she ___ like? She's tall with curly hair.", "look"], ["He ___ (parece) tired today.", "looks"], ["It's a ___ (lindo, pequeno, antigo) town.", "beautiful little old"], ["She's ___ (uns trinta e poucos).", "in her early thirties"]],
+        "r": [["How is your mother? (personalidade)", "Corrija", "What is your mother like?"], ["She is with 25 years.", "Corrija", "She is 25."], ["An Italian old beautiful car.", "Ordene os adjetivos", "A beautiful old Italian car."]]
+      },
+      "dificil": {
+        "p": ["Describe someone who had a big influence on you.", "Describe your city to someone who has never been to Brazil.", "What personality traits do you admire? Which ones annoy you?", "Describe a place you'd love to live in and why.", "How would your friends describe you?", "Describe a typical Brazilian, avoiding stereotypes."],
+        "t": [["Ele é o tipo de pessoa que ajuda todo mundo.", "He's the kind of person who helps everyone."], ["Apesar de ser tímida, ela fala muito bem em público.", "Although she's shy, she speaks very well in public."], ["É um bairro animado, cheio de bares e restaurantes.", "It's a lively neighborhood, full of bars and restaurants."], ["Ele tem um senso de humor meio estranho.", "He has a slightly weird sense of humor."], ["A vista de lá de cima é de tirar o fôlego.", "The view from up there is breathtaking."]],
+        "c": [["She's very ___ (pé no chão).", "down-to-earth"], ["He's a bit ___ (cabeça-dura).", "stubborn"], ["The town is ___ (cheia de) tourists in summer.", "packed with / full of"], ["My grandmother was a ___ (forte, independente) woman.", "strong, independent"], ["The hotel was ___ (decepcionante).", "disappointing"]],
+        "r": [["He is a person that helps all people.", "Reescreva mais natural", "He's the kind of person who helps everyone."], ["The neighborhood has many bars, it's very animated.", "Corrija o falso cognato", "The neighborhood has many bars; it's very lively."], ["She is very sympathetic with everyone. (= simpática)", "Corrija o falso cognato", "She is very friendly / nice to everyone."]]
+      },
+      "fala": ["Describe a family member: appearance and personality.", "Describe your city to a tourist in 2 minutes.", "Describe a person — I guess who it is (famous person).", "Describe your dream house."],
+      "escrita": ["Describe your best friend (6 sentences: appearance + personality).", "Describe your neighborhood for a travel blog.", "Describe a place from your childhood."]
+    },
+    {
+      "id": "a2-contaveis",
+      "nome": "Countable & Uncountable (some, any, much, many)",
+      "categoria": "Gramática",
+      "sub": ["Contáveis e incontáveis", "Some / any", "Much / many / a lot of"],
+      "fique": ["'Informations' → information", "'Many money' → much money / a lot of money", "'Advices' → advice / pieces of advice", "'How many water' → How much water"],
+      "facil": {
+        "p": ["Is there any milk in your fridge?", "Do you drink much water?", "How many brothers and sisters do you have?", "Do you have any pets?", "How much coffee do you drink a day?", "Are there many cars on your street?"],
+        "t": [["Tem algum ovo?", "Are there any eggs?"], ["Eu tenho alguns amigos aqui.", "I have some friends here."], ["Não tem açúcar.", "There isn't any sugar."], ["Quanto custa?", "How much is it?"], ["Quantas pessoas?", "How many people?"]],
+        "c": [["There is ___ water in the bottle.", "some"], ["Are there ___ apples?", "any"], ["How ___ money do you have?", "much"], ["How ___ books do you read a year?", "many"], ["I don't have ___ time.", "much / any"]],
+        "r": [["How many water?", "Corrija", "How much water?"], ["I have many money.", "Corrija", "I have a lot of money."], ["There aren't some chairs.", "Corrija", "There aren't any chairs."]]
+      },
+      "medio": {
+        "p": ["How much time do you spend on your phone every day?", "What food do you always have at home?", "How many hours do you sleep?", "Do you need any information about my city?", "How much luggage do you take on a trip?", "Is there any advice you'd give to a new student?"],
+        "t": [["Você pode me dar um conselho?", "Can you give me some advice?"], ["Preciso de mais informações.", "I need more information."], ["Não tenho muito dinheiro, mas tenho muitos amigos.", "I don't have much money, but I have a lot of friends."], ["Tem pouco trânsito hoje.", "There is little traffic today."], ["Comprei alguns móveis novos.", "I bought some new furniture."]],
+        "c": [["Can I have ___ (um pouco de) water?", "some"], ["There are ___ (poucas) people here.", "few"], ["There is ___ (pouco) time.", "little"], ["She gave me two ___ (conselhos).", "pieces of advice"], ["Would you like ___ coffee?", "some"]],
+        "r": [["I need some informations.", "Corrija", "I need some information."], ["She gave me a good advice.", "Corrija", "She gave me some good advice / a good piece of advice."], ["There are a little people.", "Corrija", "There are a few people."]]
+      },
+      "dificil": {
+        "p": ["Do you think people today have less free time than before?", "How much money is enough to be happy?", "Is there any news that surprised you recently?", "Do you have enough time for your hobbies?", "What do you have too much of? What do you have too little of?", "How much experience do you need to be a good teacher?"],
+        "t": [["Há muitos poucos lugares assim.", "There are very few places like this."], ["Tenho pouco tempo, mas o suficiente.", "I have a little time, but enough."], ["Não tem nenhuma notícia boa hoje.", "There's no good news today."], ["Quanta bagagem você vai levar?", "How much luggage are you taking?"], ["Ele tem experiência demais para essa vaga.", "He has too much experience for this position."]],
+        "c": [["The news ___ (be) bad.", "is"], ["There is ___ (nenhum) reason to worry.", "no"], ["We have ___ (tempo demais).", "too much time"], ["I have ___ (amigos demais) on social media.", "too many friends"], ["There isn't ___ (suficiente) bread.", "enough"]],
+        "r": [["The news are good.", "Corrija", "The news is good."], ["I have very few time.", "Corrija", "I have very little time."], ["I don't have any free time — use no.", "Reescreva", "I have no free time."]]
+      },
+      "fala": ["Plan a party: what and how much do we need to buy?", "Describe what is in your fridge right now.", "Talk about what you have too much/too little of in your life.", "Role-play at a market: ask prices and quantities."],
+      "escrita": ["Write a shopping list with quantities (some, a few, a lot of).", "Write 5 sentences about your city with much/many/a lot of.", "Write advice for a friend (some advice, a piece of advice)."]
+    },
+    {
+      "id": "a2-present-perfect-intro",
+      "nome": "Present Perfect (introdução)",
+      "categoria": "Gramática",
+      "sub": ["Experiências (ever / never)", "Just / already / yet", "Particípios irregulares"],
+      "fique": ["'I have went' → I have gone / I went", "Com tempo definido: 'I have seen him yesterday' → I saw him yesterday", "'Did you ever...?' → Have you ever...? (experiência)"],
+      "facil": {
+        "p": ["Have you ever been to Argentina?", "Have you ever eaten sushi?", "Have you ever seen snow?", "Have you finished your homework?", "Have you ever lost your phone?", "Have you ever met a famous person?"],
+        "t": [["Eu já fui a Paris.", "I have been to Paris."], ["Nunca comi isso.", "I have never eaten this."], ["Você já viu esse filme?", "Have you ever seen this movie?"], ["Ela acabou de chegar.", "She has just arrived."], ["Ainda não terminei.", "I haven't finished yet."]],
+        "c": [["I have ___ (be) to Chile.", "been"], ["She has never ___ (see) the sea.", "seen"], ["Have you ___ (eat) yet?", "eaten"], ["They have just ___ (leave).", "left"], ["I ___ (not) finished yet.", "haven't"]],
+        "r": [["I have went to Bahia.", "Corrija", "I have been to Bahia."], ["You have seen this movie. (ever)", "Pergunta", "Have you ever seen this movie?"], ["I didn't finish yet.", "Corrija", "I haven't finished yet."]]
+      },
+      "medio": {
+        "p": ["What countries have you visited?", "Have you ever had a really bad job? Tell me about it.", "What is something you've never done but want to do?", "Have you done anything interesting this week?", "Have you already planned your next vacation?", "Have you ever changed your mind about something important?"],
+        "t": [["Já almocei, obrigado.", "I've already had lunch, thanks."], ["Você já respondeu o e-mail?", "Have you answered the email yet?"], ["Eu já fui lá duas vezes.", "I've been there twice."], ["Ela nunca andou de avião.", "She has never flown."], ["Fui lá no ano passado.", "I went there last year."]],
+        "c": [["I ___ (be) there twice.", "have been"], ["I ___ (go) there in 2019.", "went"], ["Have you ___ (speak) to her yet?", "spoken"], ["He has ___ (já) left.", "already"], ["We haven't decided ___ (ainda).", "yet"]],
+        "r": [["I have visited Rome last year.", "Corrija", "I visited Rome last year."], ["Did you ever try acarajé? (experiência)", "Reescreva", "Have you ever tried acarajé?"], ["She has finished already the report.", "Corrija a posição", "She has already finished the report."]]
+      },
+      "dificil": {
+        "p": ["What's the most interesting place you've ever been to? When did you go?", "What's the best decision you've ever made?", "Have you ever had to speak English in a real situation? What happened?", "What have you learned this year?", "Have you ever done something you regret? What happened?", "What's changed in your city since you were a child?"],
+        "t": [["É a primeira vez que eu como isso.", "It's the first time I've eaten this."], ["Já faz tempo que não nos vemos.", "We haven't seen each other for a long time."], ["Você já se perguntou por quê?", "Have you ever wondered why?"], ["Ela foi para a Europa e ainda não voltou. (gone)", "She has gone to Europe and hasn't come back yet."], ["Muita coisa mudou desde então.", "A lot has changed since then."]],
+        "c": [["It's the first time I ___ (eat) here.", "have eaten"], ["She's not here. She has ___ (go) to the bank.", "gone"], ["I've ___ (be) to the bank. I'm back.", "been"], ["A lot ___ (change) since 2010.", "has changed"], ["How many times have you ___ (fly) this year?", "flown"]],
+        "r": [["Is the first time I eat this.", "Corrija", "It's the first time I've eaten this."], ["She has been to Europe. (ainda está lá)", "Corrija", "She has gone to Europe."], ["I haven't seen you since much time.", "Corrija", "I haven't seen you for a long time."]]
+      },
+      "fala": ["'Have you ever...?' game: ask me 8 questions, then ask When? Where? How was it?", "Talk about your experiences: travel, food, sports.", "Talk about what you have/haven't done this week.", "Talk about how your city has changed."],
+      "escrita": ["Write 6 experiences you have had (and 3 you have never had).", "Write a to-do list and mark what you've already done / haven't done yet.", "Write about the best place you've ever visited (present perfect + past simple)."]
+    }
+  ]
+}

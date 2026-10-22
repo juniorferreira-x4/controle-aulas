@@ -1,0 +1,141 @@
+{
+  "nivel": "A2",
+  "aquecimento": ["What's the best thing that happened this week?", "What did you do last weekend?", "What are you going to do tonight?", "Tell me about something new in your life.", "What was the last thing that made you laugh?", "What are you reading or watching these days?", "How did you sleep last night?", "What did you have for lunch?", "What's something you're looking forward to?", "What's the news at your work this week?"],
+  "topicos": [
+    {
+      "id": "a2-present-continuous",
+      "nome": "Present Continuous",
+      "categoria": "Gramática",
+      "sub": ["Agora", "Ações temporárias", "Planos combinados"],
+      "fique": ["Esquecer o TO BE: 'I working' → I am working", "'She watching' → She is watching", "Ortografia: 'runing' → running, 'makeing' → making"],
+      "facil": {
+        "p": ["Is your family watching TV now?", "Are you wearing a T-shirt?", "What are you doing right now?", "Is it raining in your city now?", "Are you sitting or standing?", "Is anyone cooking in your house now?"],
+        "t": [["Eu estou estudando inglês agora.", "I am studying English now."], ["Ela está dormindo.", "She is sleeping."], ["Está chovendo.", "It is raining."], ["Eles não estão trabalhando hoje.", "They aren't working today."], ["Você está me ouvindo?", "Are you listening to me?"]],
+        "c": [["I ___ (read) a good book.", "am reading"], ["She ___ (talk) on the phone.", "is talking"], ["They ___ (not / play) now.", "aren't playing"], ["___ you ___ (listen)?", "Are / listening"], ["It ___ (rain) a lot today.", "is raining"]],
+        "r": [["I working now.", "Corrija", "I am working now."], ["She is cooking.", "Pergunta", "Is she cooking?"], ["They are running.", "Negativa", "They aren't running."]]
+      },
+      "medio": {
+        "p": ["What are you working on these days?", "What series are you watching at the moment?", "Are you learning anything new this month?", "What are you doing this weekend? (planos)", "Who is living with you at the moment?", "What is happening in your city these days?"],
+        "t": [["Estou lendo um livro ótimo esta semana.", "I'm reading a great book this week."], ["Ela está morando com os pais por enquanto.", "She is living with her parents for now."], ["O que você vai fazer no sábado? (plano)", "What are you doing on Saturday?"], ["Estamos reformando a cozinha.", "We are renovating the kitchen."], ["Por que você está rindo?", "Why are you laughing?"]],
+        "c": [["We ___ (have) dinner with friends tonight.", "are having"], ["What ___ you ___ (do) these days?", "are / doing"], ["He ___ (stay) at a hotel this week.", "is staying"], ["Prices ___ (go) up.", "are going"], ["I ___ (not / feel) well today.", "am not feeling"]],
+        "r": [["I meet my boss tomorrow at 10. (plano combinado)", "Use present continuous", "I'm meeting my boss tomorrow at 10."], ["She is liveing in London.", "Corrija", "She is living in London."], ["What you are doing?", "Corrija", "What are you doing?"]]
+      },
+      "dificil": {
+        "p": ["What is changing in your profession right now?", "What are people in your country talking about these days?", "What are you trying to improve in your life at the moment?", "Is technology making us happier? What is it changing?", "What are your friends doing differently since the pandemic?", "What are you doing next weekend, and who are you meeting?"],
+        "t": [["O mundo está ficando cada vez mais caro.", "The world is getting more and more expensive."], ["Estou tentando dormir mais cedo.", "I'm trying to go to bed earlier."], ["Meu inglês está melhorando aos poucos.", "My English is getting better little by little."], ["Ele sempre está reclamando! (irritação)", "He's always complaining!"], ["Vou jantar com a Ana amanhã. (combinado)", "I'm having dinner with Ana tomorrow."]],
+        "c": [["The climate ___ (change) fast.", "is changing"], ["You ___ always ___ (lose) your keys!", "are / losing"], ["More people ___ (work) from home now.", "are working"], ["I ___ (fly) to Lisbon on Friday.", "am flying"], ["Things ___ (get) better.", "are getting"]],
+        "r": [["He complains all the time and it annoys me.", "Use always + continuous", "He's always complaining!"], ["My English improves. (processo em andamento)", "Reescreva", "My English is improving."], ["I am knowing the answer.", "Corrija (verbo estativo)", "I know the answer."]]
+      },
+      "fala": ["Describe what people are doing in a busy place (beach, mall, office).", "Talk about your current projects and changes in your life.", "Tell me your plans for next week (present continuous).", "Call a friend role-play: 'What are you doing?'"],
+      "escrita": ["Write 6 sentences about what your family is doing right now.", "Write about 4 things that are changing in your life.", "Write your plans for next weekend (3 sentences)."]
+    },
+    {
+      "id": "a2-sp-vs-pc",
+      "nome": "Simple Present vs Present Continuous",
+      "categoria": "Gramática",
+      "sub": ["Hábito vs agora", "Verbos estativos", "Expressões de tempo"],
+      "fique": ["'I am working every day' → I work every day (hábito, não contínuo)", "'I am liking' → I like", "'Usually I am going' → I usually go"],
+      "facil": {
+        "p": ["Do you study at night? Are you studying now?", "What do you normally wear? What are you wearing now?", "Do you usually drink coffee? Are you drinking coffee now?", "Does your mother work on Saturdays? Is she working now?", "Do you watch TV every day? Are you watching anything these days?", "Where do you usually sit in class? Where are you sitting now?"],
+        "t": [["Eu trabalho todo dia, mas hoje não estou trabalhando.", "I work every day, but today I'm not working."], ["Ela geralmente usa óculos.", "She usually wears glasses."], ["Agora ela está usando lentes.", "Now she is wearing contact lenses."], ["Eu gosto desse filme.", "I like this movie."], ["Ele está cozinhando agora.", "He is cooking now."]],
+        "c": [["I usually ___ (walk) to work.", "walk"], ["Look! He ___ (run).", "is running"], ["She ___ (not / like) cold weather.", "doesn't like"], ["They ___ (play) soccer right now.", "are playing"], ["I ___ (know) the answer.", "know"]],
+        "r": [["I am working every day.", "Corrija", "I work every day."], ["She cooks now.", "Corrija", "She is cooking now."], ["I am liking this song.", "Corrija", "I like this song."]]
+      },
+      "medio": {
+        "p": ["What do you do at work? What are you working on this week?", "How do you usually spend Sunday? What are you doing next Sunday?", "What do you normally read? What are you reading at the moment?", "Who do you live with? Is anyone staying with you now?", "What do you think about your city? What is happening there now?", "Do you exercise? Are you doing any sport these days?"],
+        "t": [["Normalmente eu vou de carro, mas esta semana estou indo de metrô.", "I usually drive, but this week I'm taking the subway."], ["Eu acho que você tem razão.", "I think you are right."], ["O que você está pensando em fazer?", "What are you thinking of doing?"], ["Essa sopa está com um cheiro ótimo.", "This soup smells great."], ["Ela tem dois filhos e está esperando o terceiro.", "She has two kids and she's expecting a third."]],
+        "c": [["I ___ (think) it's a good idea.", "think"], ["I ___ (think) about changing jobs.", "am thinking"], ["She ___ (have) a big house.", "has"], ["She ___ (have) lunch now.", "is having"], ["This cake ___ (taste) amazing.", "tastes"]],
+        "r": [["I am thinking that you are right.", "Corrija", "I think you are right."], ["He is having a car.", "Corrija", "He has a car."], ["We usually are eating at home.", "Corrija", "We usually eat at home."]]
+      },
+      "dificil": {
+        "p": ["What do you normally do when you're stressed, and what are you doing differently these days?", "What does your company usually do at the end of the year? What is it planning now?", "What do people in Brazil usually think about English? Is it changing?", "Do you see your friends often? Are you seeing anyone special this week?", "What do you think your job will look like in 10 years, and what are you doing to prepare?", "What do you usually do on your birthday? What are you doing for the next one?"],
+        "t": [["Geralmente eu não reclamo, mas hoje estou bem irritado.", "I don't usually complain, but today I'm really annoyed."], ["Ele está sendo muito chato hoje. (comportamento temporário)", "He's being really annoying today."], ["Eu vejo o que você quer dizer.", "I see what you mean."], ["Estou vendo um médico novo. (consultando)", "I'm seeing a new doctor."], ["A empresa fabrica peças, mas agora está desenvolvendo um app.", "The company makes parts, but now it's developing an app."]],
+        "c": [["He ___ (be) usually calm, but today he ___ (be) rude.", "is / is being"], ["I ___ (see) what you mean.", "see"], ["I ___ (see) the doctor at 3 p.m. today.", "am seeing"], ["She ___ (weigh) 60 kilos.", "weighs"], ["She ___ (weigh) the flour for the cake.", "is weighing"]],
+        "r": [["Today he is rude, but normally he isn't.", "Use 'be being'", "He's being rude today, but he usually isn't."], ["I am not understanding.", "Corrija", "I don't understand."], ["This week I work from home. (temporário)", "Reescreva", "This week I'm working from home."]]
+      },
+      "fala": ["Compare your normal routine with what you are doing this week.", "Describe a photo: what do these people usually do? What are they doing now?", "Talk about your job: what you usually do and current projects.", "Talk about habits that are changing in your family."],
+      "escrita": ["Write 5 pairs of sentences: habit + now (I usually... / Today I'm...).", "Write a message to a friend about your week (routine + current changes).", "Write 4 sentences with stative verbs (like, know, want, need)."]
+    },
+    {
+      "id": "a2-simple-past",
+      "nome": "Simple Past (regular e irregular)",
+      "categoria": "Gramática",
+      "sub": ["Regulares -ed", "Irregulares comuns", "Negativa e perguntas com did"],
+      "fique": ["'I goed' → I went", "'Did you went?' → Did you go?", "'I didn't went' → I didn't go", "Pronúncia do -ed: worked /t/, played /d/, wanted /id/"],
+      "facil": {
+        "p": ["What did you do yesterday?", "What did you eat for dinner last night?", "Did you watch a movie last weekend?", "Where did you go on your last vacation?", "What time did you wake up today?", "Did you work yesterday?"],
+        "t": [["Eu fui ao cinema ontem.", "I went to the movies yesterday."], ["Ela trabalhou até tarde.", "She worked late."], ["Nós não saímos no sábado.", "We didn't go out on Saturday."], ["Você comeu?", "Did you eat?"], ["Ele comprou um carro novo.", "He bought a new car."]],
+        "c": [["I ___ (watch) a series last night.", "watched"], ["She ___ (go) to Bahia in July.", "went"], ["We ___ (not / see) the game.", "didn't see"], ["___ you ___ (call) your mother?", "Did / call"], ["He ___ (eat) pizza yesterday.", "ate"]],
+        "r": [["I go to work by car. (yesterday)", "Passe para o passado", "I went to work by car yesterday."], ["She bought a dress.", "Pergunta", "Did she buy a dress?"], ["They didn't went.", "Corrija", "They didn't go."]]
+      },
+      "medio": {
+        "p": ["Tell me about your last trip. Where did you go, what did you do?", "How did you meet your best friend?", "What did you study at school or university?", "When did you start learning English? Why?", "What did you do on your last birthday?", "What was the last thing you bought online?"],
+        "t": [["Quando você chegou ao Rio?", "When did you arrive in Rio?"], ["Eu perdi o ônibus e cheguei atrasado.", "I missed the bus and arrived late."], ["Ela me contou uma história engraçada.", "She told me a funny story."], ["Nós não tivemos tempo para almoçar.", "We didn't have time to have lunch."], ["Onde vocês se conheceram?", "Where did you meet?"]],
+        "c": [["Where ___ you ___ (buy) that jacket?", "did / buy"], ["I ___ (forget) my keys at home.", "forgot"], ["She ___ (not / tell) me the truth.", "didn't tell"], ["We ___ (take) a taxi to the airport.", "took"], ["How ___ you ___ (find) out?", "did / find"]],
+        "r": [["She met her husband in 2010. (When)", "Faça a pergunta", "When did she meet her husband?"], ["I losed my phone.", "Corrija", "I lost my phone."], ["Did you went to the party?", "Corrija", "Did you go to the party?"]]
+      },
+      "dificil": {
+        "p": ["Tell me about a day that changed your life.", "What was the most difficult decision you made? What happened?", "Tell me about a time when something went wrong on a trip.", "How did your family celebrate holidays when you were a child?", "What did you learn from your first job?", "Tell me about a mistake you made and what you learned."],
+        "t": [["Eu não sabia que você tinha se mudado.", "I didn't know you moved (had moved)."], ["Ela pediu demissão porque não aguentava mais.", "She quit because she couldn't take it anymore."], ["Quanto tempo você levou para chegar?", "How long did it take you to get there?"], ["Esqueci completamente do seu aniversário, me desculpa.", "I completely forgot your birthday, I'm sorry."], ["Quem te ensinou a dirigir?", "Who taught you to drive?"]],
+        "c": [["Who ___ (teach) you to swim?", "taught"], ["I ___ (fall) asleep during the movie.", "fell"], ["She ___ (spend) all her money.", "spent"], ["Why ___ you ___ (not / come)?", "did / come"], ["It ___ (cost) a fortune.", "cost"]],
+        "r": [["Who did break the window?", "Corrija (pergunta sobre o sujeito)", "Who broke the window?"], ["I go to Europe in 2018 and I love it.", "Corrija", "I went to Europe in 2018 and I loved it."], ["I didn't knew.", "Corrija", "I didn't know."]]
+      },
+      "fala": ["Tell the story of your best vacation.", "Retell the plot of a movie you saw.", "Talk about your first day at work or school.", "Tell me 3 true and 1 false things you did last year — I guess the lie."],
+      "escrita": ["Write about your last weekend (8 sentences, 4 irregular verbs).", "Write a short story that starts with 'Last Friday, something strange happened...'", "Write 5 questions about the past for a friend."]
+    },
+    {
+      "id": "a2-past-continuous",
+      "nome": "Past Continuous",
+      "categoria": "Gramática",
+      "sub": ["Ação em andamento no passado", "When vs while", "Cenário de histórias"],
+      "fique": ["'I was work' → I was working", "'When I was sleeping, the phone was ringing' → ...the phone rang", "'They was' → They were"],
+      "facil": {
+        "p": ["What were you doing yesterday at 8 p.m.?", "Were you sleeping at midnight?", "What was your family doing last Sunday afternoon?", "Was it raining yesterday morning?", "Were you working at 10 a.m. today?", "What were you watching last night?"],
+        "t": [["Eu estava dormindo.", "I was sleeping."], ["Eles estavam jantando.", "They were having dinner."], ["Estava chovendo.", "It was raining."], ["Você estava trabalhando?", "Were you working?"], ["Ela não estava ouvindo.", "She wasn't listening."]],
+        "c": [["At 9 p.m. I ___ (watch) TV.", "was watching"], ["They ___ (play) cards.", "were playing"], ["She ___ (not / sleep).", "wasn't sleeping"], ["___ you ___ (drive)?", "Were / driving"], ["We ___ (walk) on the beach.", "were walking"]],
+        "r": [["I am reading. (yesterday at 10)", "Passe para o passado", "I was reading yesterday at 10."], ["They were dancing.", "Pergunta", "Were they dancing?"], ["She was cook.", "Corrija", "She was cooking."]]
+      },
+      "medio": {
+        "p": ["What were you doing when you heard some good news recently?", "Were you doing anything interesting at this time last year?", "Did anything happen while you were coming to class?", "What were people doing when you arrived at work today?", "Have you ever had an accident? What were you doing?", "What were you doing when the pandemic started?"],
+        "t": [["Eu estava tomando banho quando o telefone tocou.", "I was taking a shower when the phone rang."], ["Enquanto ela cozinhava, ele lavava a louça.", "While she was cooking, he was washing the dishes."], ["O que você estava fazendo quando eu liguei?", "What were you doing when I called?"], ["Ele caiu enquanto corria.", "He fell while he was running."], ["Estava fazendo sol quando saímos.", "It was sunny when we left."]],
+        "c": [["I ___ (cook) when the lights ___ (go) out.", "was cooking / went"], ["While we ___ (wait), it started to rain.", "were waiting"], ["She ___ (call) while I ___ (drive).", "called / was driving"], ["What ___ you ___ (do) at 6?", "were / doing"], ["He ___ (not / pay) attention, so he ___ (miss) the exit.", "wasn't paying / missed"]],
+        "r": [["I drove. My phone rang. (while)", "Una as frases", "My phone rang while I was driving."], ["When I was sleeping, the alarm was ringing.", "Corrija", "When I was sleeping, the alarm rang."], ["She studied when I arrived. (ação em andamento)", "Corrija", "She was studying when I arrived."]]
+      },
+      "dificil": {
+        "p": ["Tell me a story that starts: 'It was raining and I was walking home when...'", "What were you doing at this time ten years ago?", "Describe a time when you were doing something and got interrupted.", "What was happening in your life when you decided to learn English?", "Tell me about a funny moment at work. What were people doing?", "Where were you and what were you doing during a big event in Brazil?"],
+        "t": [["Eu estava justamente pensando em você quando você mandou mensagem.", "I was just thinking about you when you texted."], ["Ela não estava prestando atenção e perdeu a parte mais importante.", "She wasn't paying attention and missed the most important part."], ["Enquanto todos dormiam, alguém entrou na casa.", "While everyone was sleeping, someone came into the house."], ["Eu ia sair, mas começou a chover. (estava saindo)", "I was leaving when it started to rain."], ["O sol estava se pondo e as pessoas estavam aplaudindo.", "The sun was setting and people were clapping."]],
+        "c": [["I ___ just ___ (leave) when you arrived.", "was / leaving"], ["The kids ___ (fight) all morning.", "were fighting"], ["What ___ she ___ (wear) at the party?", "was / wearing"], ["We ___ (talk) when the boss ___ (walk) in.", "were talking / walked"], ["While I ___ (study), my brother ___ (play) video games.", "was studying / was playing"]],
+        "r": [["The sun set. People clapped. (cena)", "Descreva como cenário", "The sun was setting and people were clapping."], ["I was knowing her when we were working there.", "Corrija", "I knew her when we were working there."], ["While I cooked, I cut my finger.", "Corrija", "While I was cooking, I cut my finger."]]
+      },
+      "fala": ["Alibi game: where were you and what were you doing yesterday at 8, 10 and 12?", "Tell a story with a 'scene' (past continuous) and an 'event' (simple past).", "Describe a photo as if it were the past: 'People were...'", "Talk about an embarrassing moment."],
+      "escrita": ["Write 5 sentences with when/while.", "Write the beginning of a story (background with past continuous).", "Write what your family was doing yesterday at 7 p.m."]
+    },
+    {
+      "id": "a2-futuro",
+      "nome": "Future: will vs going to",
+      "categoria": "Gramática",
+      "sub": ["Planos (going to)", "Decisões na hora e promessas (will)", "Previsões"],
+      "fique": ["'I will to travel' → I will travel", "'I go to travel' → I'm going to travel", "Decisão na hora: 'I'm going to answer it' (telefone tocando) → I'll answer it"],
+      "facil": {
+        "p": ["What are you going to do tonight?", "Are you going to travel this year?", "What are you going to eat for dinner?", "Will it rain tomorrow?", "Are you going to study this weekend?", "What will you do after class?"],
+        "t": [["Eu vou viajar em julho.", "I'm going to travel in July."], ["Ela vai estudar à noite.", "She's going to study at night."], ["Eu te ajudo! (decisão agora)", "I'll help you!"], ["Vai chover amanhã.", "It will rain tomorrow."], ["Nós não vamos sair hoje.", "We aren't going to go out today."]],
+        "c": [["I ___ (going to) visit my parents.", "am going to"], ["The phone is ringing. I ___ answer it.", "'ll"], ["They ___ (not / going to) come.", "aren't going to"], ["I think it ___ be sunny.", "will"], ["___ you going to work tomorrow?", "Are"]],
+        "r": [["I will to call you.", "Corrija", "I will call you."], ["I go to travel next week.", "Corrija", "I'm going to travel next week."], ["She is going to buy a car.", "Pergunta", "Is she going to buy a car?"]]
+      },
+      "medio": {
+        "p": ["What are your plans for your next vacation?", "What do you think will happen in your city this year?", "Are you going to change anything in your routine next month?", "What will you probably do next weekend?", "What are you never going to do again? Why?", "Where do you think you'll live in 10 years?"],
+        "t": [["Eu acho que ele não vem.", "I don't think he'll come."], ["Olha essas nuvens, vai chover.", "Look at those clouds, it's going to rain."], ["Eu prometo que vou chegar na hora.", "I promise I'll be on time."], ["Nós vamos nos mudar no ano que vem.", "We're going to move next year."], ["Quer um café? Sim, vou querer um.", "Would you like a coffee? Yes, I'll have one."]],
+        "c": [["Look out! You ___ (cair) fall!", "'re going to"], ["I promise I ___ (not) tell anyone.", "won't"], ["We've decided. We ___ sell the car.", "'re going to"], ["Maybe I ___ go to the party.", "'ll"], ["It's late. I think I ___ go home.", "'ll"]],
+        "r": [["I've decided: I will study more. (plano decidido antes)", "Use going to", "I'm going to study more."], ["The plane is going to land in 10 minutes and I will call you. (promessa)", "Explique a escolha", "Going to = evidência/plano; will = promessa/decisão."], ["I don't will go.", "Corrija", "I won't go."]]
+      },
+      "dificil": {
+        "p": ["What will the world be like in 2050?", "What are you going to do differently next year? Why?", "Do you think AI will replace teachers? Why or why not?", "What is your company going to do in the next few months?", "What promise do you want to make to yourself?", "Will Brazil be a better country in 10 years? Why?"],
+        "t": [["Acho que os carros vão ser todos elétricos em 20 anos.", "I think all cars will be electric in 20 years."], ["Ela vai ter um bebê em março.", "She's going to have a baby in March."], ["Eu te ligo assim que chegar.", "I'll call you as soon as I arrive."], ["Não se preocupe, vai dar tudo certo.", "Don't worry, everything will be fine."], ["Ia te ligar, mas esqueci.", "I was going to call you, but I forgot."]],
+        "c": [["I'll call you when I ___ (arrive).", "arrive"], ["I ___ (going to) call you, but I forgot.", "was going to"], ["Prices ___ probably go up.", "will"], ["She's pregnant. She ___ have a baby.", "'s going to"], ["If you need help, I ___ be here.", "'ll"]],
+        "r": [["I'll call you when I will arrive.", "Corrija", "I'll call you when I arrive."], ["I had the plan to call you but I forgot.", "Use was going to", "I was going to call you, but I forgot."], ["It's certain that it will rain — look at the sky!", "Use going to", "It's going to rain — look at the sky!"]]
+      },
+      "fala": ["Talk about your plans for next year: work, travel, studies.", "Make 5 predictions about the future of technology.", "Role-play in a restaurant: decide and order (I'll have...).", "Make promises to a friend you disappointed."],
+      "escrita": ["Write your plans for next month (going to).", "Write 5 predictions for 2040 (will).", "Write a message promising something to a friend."]
+    }
+  ]
+}

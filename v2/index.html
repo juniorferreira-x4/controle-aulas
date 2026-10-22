@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle de Aulas — Gutierrez Ferreira</title>
+<meta name="theme-color" content="#0E141B">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topo">
+    <a class="marca" href="#/semana">
+      <span class="marca-sup">Gutierrez Ferreira</span>
+      <span class="marca-nome">Controle de Aulas</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#/semana" data-nav="semana">Semana</a>
+      <a href="#/alunos" data-nav="alunos">Alunos</a>
+      <a href="#/biblioteca" data-nav="biblioteca">Biblioteca</a>
+      <a href="#/config" data-nav="config">Ajustes</a>
+    </nav>
+    <div class="topo-dir" id="topo-dir"></div>
+  </header>
+  <div class="aviso-modo" id="aviso-modo" hidden></div>
+  <main id="view" class="view"><div class="carregando">Carregando…</div></main>
+</div>
+<div id="modal-raiz"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+{
+  "nivel": "A1",
+  "aquecimento": ["What's the best thing that happened today?", "How are you today? Why?", "What did you eat today?", "What's the weather like today?", "What time did you wake up today?", "What are you going to do after class?", "Tell me one thing you did yesterday.", "What's your plan for the weekend?", "How was your day at work?", "What music are you listening to these days?"],
+  "topicos": [
+    {
+      "id": "a1-preposicoes",
+      "nome": "Prepositions in / on / at",
+      "categoria": "Gramática",
+      "sub": ["Tempo", "Lugar", "Expressões fixas"],
+      "fique": ["'In Monday' → on Monday", "'In the night' → at night", "'At Rio' → in Rio", "'In the weekend' → on (at) the weekend"],
+      "facil": {
+        "p": ["What do you do on Sundays?", "Where do you live? In a house or in an apartment?", "What time do you have lunch? At 12?", "When is your birthday? In which month?", "Do you work at night?", "Are you at home now?"],
+        "t": [["Eu trabalho na segunda.", "I work on Monday."], ["A aula é às sete.", "The class is at seven."], ["Ela mora em São Paulo.", "She lives in São Paulo."], ["Meu aniversário é em maio.", "My birthday is in May."], ["Estou em casa.", "I am at home."]],
+        "c": [["I wake up ___ 6 a.m.", "at"], ["We go to the beach ___ Saturday.", "on"], ["She was born ___ 1995.", "in"], ["The keys are ___ the table.", "on"], ["He is ___ work now.", "at"]],
+        "r": [["I study in the night.", "Corrija", "I study at night."], ["The meeting is in Tuesday.", "Corrija", "The meeting is on Tuesday."], ["She lives at Brazil.", "Corrija", "She lives in Brazil."]]
+      },
+      "medio": {
+        "p": ["What do you usually do on Friday nights?", "Where were you on New Year's Eve?", "What do you do in the morning before work?", "Are you usually at home at the weekend?", "What do you keep on your desk?", "Which month is best to visit your city? Why?"],
+        "t": [["Nos vemos no sábado à tarde.", "See you on Saturday afternoon."], ["Ela está no ônibus agora.", "She is on the bus now."], ["Eu nasci em 12 de março.", "I was born on March 12th."], ["Tem um quadro na parede.", "There is a picture on the wall."], ["Ele está no hospital, não no trabalho.", "He is in the hospital, not at work."]],
+        "c": [["I'll see you ___ Christmas.", "at"], ["My office is ___ the third floor.", "on"], ["She is ___ the car, waiting.", "in"], ["We met ___ a party.", "at"], ["I read ___ the bus.", "on"]],
+        "r": [["I was born in 15 of May.", "Corrija", "I was born on May 15th."], ["See you in the weekend.", "Corrija (US/UK)", "See you on the weekend (US) / at the weekend (UK)."], ["She's in the bus.", "Corrija", "She's on the bus."]]
+      },
+      "dificil": {
+        "p": ["Where do you usually spend Christmas and New Year's?", "What do you do at lunchtime on a busy day?", "Is it better to study in the morning or at night? Why?", "Where were you on your last birthday?", "What is on your phone's home screen?", "What happens in your city at Carnival?"],
+        "t": [["Chego em casa às oito da noite.", "I get home at eight in the evening."], ["Ela está de férias em agosto.", "She is on vacation in August."], ["Li isso na internet, não no jornal.", "I read it on the internet, not in the newspaper."], ["Na sexta de manhã tenho reunião.", "I have a meeting on Friday morning."], ["Ele mora na Rua das Flores, número 20.", "He lives at 20 Flores Street."]],
+        "c": [["He lives ___ 15 Ocean Avenue.", "at"], ["I'm ___ vacation next week.", "on"], ["We arrived ___ time for the movie.", "in"], ["The flight is ___ the morning ___ July 3rd.", "on / of"], ["My name is ___ the list.", "on"]],
+        "r": [["I saw it in TV.", "Corrija", "I saw it on TV."], ["I'll arrive on the afternoon.", "Corrija", "I'll arrive in the afternoon."], ["We are in vacation in the January.", "Corrija", "We are on vacation in January."]]
+      },
+      "fala": ["Describe your week day by day using on and at.", "Describe where things are in your kitchen.", "Talk about important dates in your year (birthdays, holidays).", "Explain the way from your home to your work."],
+      "escrita": ["Write your weekly schedule with 6 sentences (on/at/in).", "Write 5 sentences about where things are in your room.", "Write 3 important dates in your life with in/on/at."]
+    },
+    {
+      "id": "a1-can",
+      "nome": "Can / can't",
+      "categoria": "Gramática",
+      "sub": ["Habilidade", "Permissão e pedidos", "Possibilidade"],
+      "fique": ["'I can to swim' → I can swim", "'She cans' → She can", "'Do you can?' → Can you?"],
+      "facil": {
+        "p": ["Can you swim?", "Can you cook?", "Can you drive?", "Can your mother speak English?", "Can you play an instrument?", "Can you dance?"],
+        "t": [["Eu sei nadar.", "I can swim."], ["Ela não sabe dirigir.", "She can't drive."], ["Você pode me ajudar?", "Can you help me?"], ["Posso abrir a janela?", "Can I open the window?"], ["Eles não podem vir hoje.", "They can't come today."]],
+        "c": [["I ___ (sei) cook pasta.", "can"], ["He ___ (não sabe) swim.", "can't"], ["___ you speak French?", "Can"], ["Sorry, I ___ (não posso) talk now.", "can't"], ["___ I use your phone?", "Can"]],
+        "r": [["She can to dance.", "Corrija", "She can dance."], ["You can drive.", "Pergunta", "Can you drive?"], ["He cans play guitar.", "Corrija", "He can play guitar."]]
+      },
+      "medio": {
+        "p": ["What can you do very well?", "What can't you do but want to learn?", "Can you cook for many people? What can you make?", "What can people do in your city on weekends?", "Can you work from home? Do you like it?", "What can you see from your window?"],
+        "t": [["Você pode falar mais devagar, por favor?", "Can you speak more slowly, please?"], ["Não consigo ouvir você.", "I can't hear you."], ["Aqui você pode estacionar de graça.", "You can park here for free."], ["Meu filho sabe ler, mas não sabe escrever.", "My son can read, but he can't write."], ["Posso pagar com cartão?", "Can I pay by card?"]],
+        "c": [["___ you repeat that, please?", "Can"], ["You ___ (não pode) smoke here.", "can't"], ["I ___ (consigo) see the sea from here.", "can"], ["What languages ___ you speak?", "can"], ["My dog ___ (sabe) open the door!", "can"]],
+        "r": [["Is it possible to pay in cash?", "Use can", "Can I pay in cash?"], ["I don't can understand.", "Corrija", "I can't understand."], ["Please help me.", "Pedido educado com can", "Can you help me, please?"]]
+      },
+      "dificil": {
+        "p": ["What can you do now that you couldn't do 10 years ago?", "What can a person do to learn English faster?", "What can't you live without?", "What can your company do better?", "What can tourists do in Rio in one day?", "What skill can make someone rich today?"],
+        "t": [["Não consigo dormir quando está calor.", "I can't sleep when it's hot."], ["Dá para ver o Cristo daqui.", "You can see Christ the Redeemer from here."], ["Quando eu era criança, eu conseguia correr muito.", "When I was a child, I could run a lot."], ["Você não pode estar falando sério!", "You can't be serious!"], ["Quem sabe consertar isso?", "Who can fix this?"]],
+        "c": [["When I was 5, I ___ (sabia) swim.", "could"], ["You ___ be tired — you slept 10 hours! (impossível)", "can't"], ["___ you possibly lend me some money?", "Could"], ["Who ___ answer this question?", "can"], ["I ___ believe it! (não acredito)", "can't"]],
+        "r": [["Is it possible for me to leave early?", "Use can (permissão)", "Can I leave early?"], ["I knew how to swim when I was six.", "Use could", "I could swim when I was six."], ["It's impossible that he's 50!", "Use can't", "He can't be 50!"]]
+      },
+      "fala": ["Talk about 5 things you can do and 5 you can't.", "Role-play: ask permission in a restaurant and a hotel.", "What can people do in your city? Recommend activities.", "Talk about abilities in your family."],
+      "escrita": ["Write 6 sentences about your abilities (can/can't).", "Write 4 polite requests with Can you...?", "Write a short ad: 'I can teach you...'"]
+    },
+    {
+      "id": "a1-frequencia",
+      "nome": "Adverbs of frequency",
+      "categoria": "Gramática",
+      "sub": ["Always/usually/sometimes/never", "Posição na frase", "How often + expressões"],
+      "fique": ["Posição: 'I go always' → I always go", "Com to be: 'She always is late' → She is always late", "'Never I eat' → I never eat"],
+      "facil": {
+        "p": ["Do you always have breakfast?", "Do you sometimes cook?", "Do you ever go to the beach?", "Are you usually tired at night?", "Do you never drink coffee?", "Do you often watch movies?"],
+        "t": [["Eu sempre tomo café.", "I always drink coffee."], ["Ela nunca come carne.", "She never eats meat."], ["Às vezes eu trabalho em casa.", "I sometimes work at home."], ["Ele geralmente acorda cedo.", "He usually wakes up early."], ["Nós raramente saímos.", "We rarely go out."]],
+        "c": [["I ___ (sempre) brush my teeth.", "always"], ["She ___ (nunca) drinks alcohol.", "never"], ["They ___ (geralmente) eat at home.", "usually"], ["He is ___ (sempre) happy.", "always"], ["I ___ (às vezes) read at night.", "sometimes"]],
+        "r": [["I go always to the gym.", "Corrija a posição", "I always go to the gym."], ["She always is late.", "Corrija", "She is always late."], ["I eat fish. (never)", "Inclua o advérbio", "I never eat fish."]]
+      },
+      "medio": {
+        "p": ["How often do you exercise?", "What do you usually do on Friday night?", "What do you never do on weekends?", "How often do you see your family?", "Are you ever late for work? Why?", "What do you hardly ever eat?"],
+        "t": [["Com que frequência você vai ao cinema?", "How often do you go to the movies?"], ["Eu vou à academia três vezes por semana.", "I go to the gym three times a week."], ["Ela quase nunca liga para mim.", "She hardly ever calls me."], ["Você costuma trabalhar aos sábados?", "Do you usually work on Saturdays?"], ["Eu vejo meus pais uma vez por mês.", "I see my parents once a month."]],
+        "c": [["I go to the dentist ___ (uma vez) a year.", "once"], ["She calls me ___ (duas vezes) a week.", "twice"], ["We ___ (quase nunca) eat out.", "hardly ever"], ["___ often do you travel?", "How"], ["He ___ (frequentemente) works late.", "often"]],
+        "r": [["I go to the beach every weekend. (always)", "Reescreva com advérbio", "I always go to the beach on weekends."], ["She never doesn't study.", "Corrija", "She never studies."], ["I play soccer on Monday and Thursday.", "Use twice a week", "I play soccer twice a week."]]
+      },
+      "dificil": {
+        "p": ["What is something you used to do often but rarely do now?", "How often do you check your phone? Is it too much?", "What do you always do before an important meeting?", "Is there something you never do but want to try?", "How often should people go to the doctor?", "What does your city almost never have?"],
+        "t": [["Eu quase sempre esqueço o guarda-chuva.", "I almost always forget my umbrella."], ["Ele raramente reclama, mas hoje está irritado.", "He rarely complains, but today he is annoyed."], ["Com que frequência você checa seus e-mails?", "How often do you check your emails?"], ["Nunca é tarde para aprender.", "It's never too late to learn."], ["De vez em quando eu peço comida pelo aplicativo.", "Every now and then I order food through the app."]],
+        "c": [["I ___ (de vez em quando) go running.", "every now and then"], ["She ___ (raramente) takes a day off.", "rarely / seldom"], ["___ (Às vezes), I work until midnight.", "Sometimes"], ["He is ___ (quase sempre) in a good mood.", "almost always"], ["We see each other ___ (a cada dois meses).", "every two months"]],
+        "r": [["Always I forget names.", "Corrija", "I always forget names."], ["Sometimes I can't sleep. (início vs meio)", "Mova o advérbio", "I sometimes can't sleep."], ["He doesn't ever drink.", "Use never", "He never drinks."]]
+      },
+      "fala": ["Talk about your healthy and unhealthy habits.", "Interview me: How often do you...? (5 questions)", "Compare your routine now with your routine 5 years ago.", "Talk about things you always/never do on vacation."],
+      "escrita": ["Write 8 sentences about your habits using 8 different frequency expressions.", "Write about the habits of a person you live with.", "Write 3 habits you want to start and 3 you want to stop."]
+    },
+    {
+      "id": "a1-rotina",
+      "nome": "Rotina e vida diária",
+      "categoria": "Vocabulário",
+      "sub": ["Verbos da rotina", "Horas", "Tarefas domésticas"],
+      "fique": ["'Make my homework' → do my homework", "'Take a bath' (banho de banheira) vs take a shower", "'Wake up' (acordar) vs 'get up' (levantar)"],
+      "facil": {
+        "p": ["What time do you wake up?", "Do you take a shower in the morning or at night?", "What do you have for breakfast?", "What time do you go to bed?", "Do you cook dinner?", "How do you go to work?"],
+        "t": [["Eu acordo às seis e meia.", "I wake up at six thirty."], ["Ela toma banho à noite.", "She takes a shower at night."], ["Eu almoço ao meio-dia.", "I have lunch at noon."], ["Ele vai para o trabalho de ônibus.", "He goes to work by bus."], ["Eu durmo às onze.", "I go to bed at eleven."]],
+        "c": [["I ___ up at 7.", "get / wake"], ["She ___ a shower every morning.", "takes"], ["We ___ dinner at 8.", "have"], ["He ___ his teeth after lunch.", "brushes"], ["I ___ to bed late.", "go"]],
+        "r": [["I make my homework at night.", "Corrija", "I do my homework at night."], ["She wakes up at 6 and stands up at 6:30.", "Corrija", "She wakes up at 6 and gets up at 6:30."], ["I go to work with bus.", "Corrija", "I go to work by bus."]]
+      },
+      "medio": {
+        "p": ["Describe your morning routine.", "Who does the housework in your home?", "What do you do to relax after work?", "Do you have time for breakfast on weekdays?", "What household chore do you hate?", "What's different about your routine on Sundays?"],
+        "t": [["Eu lavo a louça depois do jantar.", "I wash the dishes after dinner."], ["Minha mãe faz as compras aos sábados.", "My mother does the shopping on Saturdays."], ["Eu arrumo a cama todo dia.", "I make my bed every day."], ["Ele leva o cachorro para passear à noite.", "He walks the dog at night."], ["Nós lavamos roupa uma vez por semana.", "We do the laundry once a week."]],
+        "c": [["I ___ the laundry on Sundays.", "do"], ["Who ___ the dishes in your house?", "washes / does"], ["She ___ the bed every morning.", "makes"], ["I ___ a nap after lunch.", "take"], ["He ___ the dog twice a day.", "walks"]],
+        "r": [["I clean the dishes.", "Use a collocation correta", "I wash (do) the dishes."], ["She makes the shopping.", "Corrija", "She does the shopping."], ["I take breakfast at 7.", "Corrija (mais natural)", "I have breakfast at 7."]]
+      },
+      "dificil": {
+        "p": ["What part of your routine would you like to change? Why?", "Is your routine healthy? What's missing?", "Do you think routines are good or boring?", "How does your routine change when you are on vacation?", "What do you do in the first 10 minutes after you wake up?", "How do you organize the housework with the people you live with?"],
+        "t": [["Antes de sair, eu sempre confiro se fechei a porta.", "Before I leave, I always check that I've locked the door."], ["Durante a semana eu mal tenho tempo para almoçar.", "During the week I barely have time for lunch."], ["Nos fins de semana eu durmo até tarde.", "On weekends I sleep in."], ["Ele pega o metrô e depois anda dez minutos.", "He takes the subway and then walks for ten minutes."], ["Eu costumo cochilar depois do almoço.", "I usually take a nap after lunch."]],
+        "c": [["On Sundays I ___ in until 10. (dormir até tarde)", "sleep"], ["I ___ up the kitchen after dinner. (arrumar)", "clean / tidy"], ["She ___ off the lights before bed.", "turns"], ["I usually ___ the 7:15 train.", "catch / take"], ["We ___ turns cooking. (revezar)", "take"]],
+        "r": [["I wake up. Then I take a shower. Then I have breakfast.", "Una com after that / before", "After I wake up, I take a shower and then I have breakfast."], ["In the weekend I sleep until late.", "Corrija (natural)", "On the weekend I sleep in."], ["I do a nap.", "Corrija", "I take a nap."]]
+      },
+      "fala": ["Describe your perfect day from morning to night.", "Compare your routine with your partner's or a friend's.", "Talk about a stressful day last week.", "Explain how you divide housework at home."],
+      "escrita": ["Write your routine from 6 a.m. to 11 p.m. (8 sentences).", "Write about your Sunday routine.", "Write 5 sentences about housework: who does what."]
+    },
+    {
+      "id": "a1-was-were",
+      "nome": "Simple Past: was / were",
+      "categoria": "Gramática",
+      "sub": ["Afirmativa", "Negativa", "Perguntas", "Born / there was"],
+      "fique": ["'I were' → I was", "'They was' → They were", "'I born in 1990' → I was born in 1990"],
+      "facil": {
+        "p": ["Where were you yesterday at 8 p.m.?", "Were you tired last night?", "Was the weather good last weekend?", "Where were you born?", "Was your last class difficult?", "Were your friends at your birthday party?"],
+        "t": [["Eu estava em casa ontem.", "I was at home yesterday."], ["Eles estavam cansados.", "They were tired."], ["O filme não foi bom.", "The movie wasn't good."], ["Você estava no trabalho?", "Were you at work?"], ["Eu nasci em 1990.", "I was born in 1990."]],
+        "c": [["I ___ at the beach on Sunday.", "was"], ["They ___ (not) at school.", "weren't"], ["___ she happy?", "Was"], ["We ___ in Paris in 2019.", "were"], ["Where ___ you born?", "were"]],
+        "r": [["I am tired today. (yesterday)", "Passe para o passado", "I was tired yesterday."], ["They were at home.", "Negativa", "They weren't at home."], ["She was sick.", "Pergunta", "Was she sick?"]]
+      },
+      "medio": {
+        "p": ["How was your weekend?", "Who was your favorite teacher at school? Why?", "Where were you on your last vacation?", "What was your first job?", "Was your childhood home big or small?", "What was the last good movie you watched?"],
+        "t": [["Como foi a reunião?", "How was the meeting?"], ["Tinha muita gente no show.", "There were a lot of people at the concert."], ["Minha primeira escola era perto de casa.", "My first school was near my house."], ["Por que você estava atrasado?", "Why were you late?"], ["Não tinha nada para comer.", "There wasn't anything to eat."]],
+        "c": [["How ___ your trip?", "was"], ["There ___ two problems.", "were"], ["Why ___ they angry?", "were"], ["There ___ (not) any milk.", "wasn't"], ["My grandparents ___ born in Portugal.", "were"]],
+        "r": [["The party is great. (last night)", "Passe para o passado", "The party was great last night."], ["You were at work. (Where)", "Faça a pergunta", "Where were you?"], ["There was many people.", "Corrija", "There were many people."]]
+      },
+      "dificil": {
+        "p": ["What were you like as a child?", "What was the best day of your life?", "Where were you when you heard some big news?", "What was difficult about your first job?", "Who was your hero when you were a teenager?", "What was your city like 20 years ago?"],
+        "t": [["Quando eu era criança, eu era muito tímido.", "When I was a child, I was very shy."], ["Não foi culpa minha.", "It wasn't my fault."], ["Ela tinha razão.", "She was right."], ["Como era o seu bairro antigamente?", "What was your neighborhood like in the past?"], ["Estávamos com medo, mas foi divertido.", "We were scared, but it was fun."]],
+        "c": [["What ___ your first car like?", "was"], ["It ___ (not) my fault.", "wasn't"], ["You ___ right, I ___ wrong.", "were / was"], ["___ there a lot of traffic?", "Was"], ["How old ___ you when you started working?", "were"]],
+        "r": [["I born in Rio.", "Corrija", "I was born in Rio."], ["How was your city? (descrição)", "Pergunta com like", "What was your city like?"], ["When I had 10 years, I was shy.", "Corrija", "When I was 10, I was shy."]]
+      },
+      "fala": ["Talk about your childhood: where were you, who were your friends?", "Describe your last weekend: how was it?", "Describe your first job or first school.", "Talk about a famous person from the past."],
+      "escrita": ["Write 6 sentences about yourself as a child (was/were).", "Write about your last vacation: where were you, how was it?", "Write 4 questions with was/were for a classmate."]
+    }
+  ]
+}

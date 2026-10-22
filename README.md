@@ -1,5 +1,7 @@
 # Controle de Aulas — Gutierrez Ferreira
 
+> **Versão 2 (nova), na pasta [`v2/`](v2/):** agenda da semana, aula guiada de 60 min com cronômetro, banco de exercícios A1–B2 (fácil/médio/difícil), listening com áudio, pós-aula com checklist de dificuldades, homework automático no Google Drive, remarcação e falta pelas regras do contrato, painel e cadastro de alunos. Endereço: `https://juniorferreira-x4.github.io/controle-aulas/v2/`. Para configurar a nuvem e o Drive, veja [`v2/GUIA_FIREBASE.md`](v2/GUIA_FIREBASE.md). A versão 1 continua funcionando na raiz até a migração terminar.
+
 Progressive Web App (PWA) para controle de aulas de inglês: alunos, aulas, reposições, nivelamento e painel de acompanhamento.
 
 ## Funcionalidades

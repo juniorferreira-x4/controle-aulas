@@ -1,0 +1,141 @@
+{
+  "nivel": "B1",
+  "aquecimento": ["What's the best thing that happened since our last class?", "What's been on your mind this week?", "Tell me about something you learned recently.", "What's something that annoyed you this week?", "If you had a free day tomorrow, what would you do?", "What's the most interesting conversation you've had lately?", "What did you do to relax this weekend?", "What's a decision you need to make soon?", "What news caught your attention this week?", "How has your week been so far?"],
+  "topicos": [
+    {
+      "id": "b1-pp-vs-past",
+      "nome": "Present Perfect vs Simple Past",
+      "categoria": "Gramática",
+      "sub": ["Tempo definido vs indefinido", "Resultado no presente", "Ever / never / before"],
+      "fique": ["Tempo definido com present perfect: 'I have seen it yesterday' → I saw it yesterday", "'I live here since 2010' → I have lived here since 2010", "'When have you arrived?' → When did you arrive?"],
+      "facil": {
+        "p": ["Have you ever been to another country? When did you go?", "Have you seen any good movies recently? When did you see it?", "Have you ever broken a bone? How did it happen?", "Did you go out last weekend? Have you been out this week?", "Have you ever cooked for a lot of people? What did you make?", "What did you do yesterday? Have you done anything fun today?"],
+        "t": [["Eu já estive no Chile. Fui em 2019.", "I've been to Chile. I went in 2019."], ["Ela perdeu as chaves. (ainda não achou)", "She has lost her keys."], ["Ela perdeu as chaves ontem e achou hoje.", "She lost her keys yesterday and found them today."], ["Você já comeu feijoada?", "Have you ever eaten feijoada?"], ["Quando você chegou?", "When did you arrive?"]],
+        "c": [["I ___ (see) him yesterday.", "saw"], ["I ___ never ___ (see) snow.", "have / seen"], ["When ___ you ___ (start) your job?", "did / start"], ["She ___ (work) here since 2018.", "has worked"], ["They ___ (move) to Rio in 2015.", "moved"]],
+        "r": [["I have finished the report yesterday.", "Corrija", "I finished the report yesterday."], ["When have you met her?", "Corrija", "When did you meet her?"], ["I live in Rio since 2010.", "Corrija", "I have lived in Rio since 2010."]]
+      },
+      "medio": {
+        "p": ["What's the most interesting job you've had? What did you do there?", "How long have you known your best friend? How did you meet?", "Have you ever changed your career plans? What made you change?", "What have you achieved this year? What did you do to get there?", "Have you read anything interesting lately? What was it about?", "Has your city changed much since you were a kid? How was it before?"],
+        "t": [["Trabalho nessa empresa há cinco anos.", "I've worked at this company for five years."], ["Trabalhei naquela empresa por cinco anos. (não trabalho mais)", "I worked at that company for five years."], ["Você já decidiu o que vai fazer?", "Have you decided what you're going to do yet?"], ["Eu nunca tinha visto nada parecido até ontem.", "I had never seen anything like it until yesterday."], ["Quantas vezes você foi a São Paulo este ano?", "How many times have you been to São Paulo this year?"]],
+        "c": [["I ___ (know) her for 10 years.", "have known"], ["We ___ (meet) at university.", "met"], ["How many books ___ you ___ (read) this year?", "have / read"], ["Shakespeare ___ (write) many plays.", "wrote"], ["I ___ (not / see) him since Christmas.", "haven't seen"]],
+        "r": [["I know him since 2015.", "Corrija", "I've known him since 2015."], ["I have worked there for 3 years, but I left in 2020.", "Corrija", "I worked there for 3 years, but I left in 2020."], ["Did you finish yet?", "Reescreva (inglês britânico/neutro)", "Have you finished yet?"]]
+      },
+      "dificil": {
+        "p": ["What's something you've always wanted to do but never have? What stopped you?", "Tell me about a moment when your life changed. How has it affected you since then?", "What have you learned from a failure? What happened?", "How has technology changed the way you work? What did you do before?", "Which trip has had the biggest impact on you? Why?", "Have your priorities changed in the last five years? How?"],
+        "t": [["Desde que me mudei, não voltei mais lá.", "Since I moved, I haven't been back there."], ["Ele acabou de sair — você o perdeu por pouco.", "He's just left — you just missed him."], ["Isso nunca aconteceu comigo antes.", "That has never happened to me before."], ["Quando foi a última vez que você tirou férias?", "When was the last time you took a vacation?"], ["Faz anos que não tiro férias.", "I haven't taken a vacation in years."]],
+        "c": [["It's the best meal I ___ ever ___ (have).", "have / had"], ["When was the last time you ___ (go) to the doctor?", "went"], ["I ___ (not / take) a vacation in years.", "haven't taken"], ["Since she ___ (start) the course, she ___ (improve) a lot.", "started / has improved"], ["The company ___ (grow) a lot since it ___ (open).", "has grown / opened"]],
+        "r": [["The last time I went to the beach was in May.", "Reescreva com 'I haven't'", "I haven't been to the beach since May."], ["It's years that I don't see him.", "Corrija", "I haven't seen him for years."], ["Since I have moved here, I have been happier.", "Corrija", "Since I moved here, I have been happier."]]
+      },
+      "fala": ["Tell me about your career: what you've done and when.", "Interview: 'Have you ever...?' + follow-up questions in the past.", "Talk about how your life has changed in the last 5 years.", "Talk about a place you've visited — when, with whom, how it was."],
+      "escrita": ["Write a short professional bio (present perfect + past simple).", "Write about 3 important events in your life and how they've affected you.", "Write an email updating a friend on what you've done since you last met."]
+    },
+    {
+      "id": "b1-pp-continuous",
+      "nome": "Present Perfect Continuous (for / since)",
+      "categoria": "Gramática",
+      "sub": ["Duração até agora", "For vs since", "Simple vs continuous"],
+      "fique": ["'I am studying English for 3 years' → I have been studying English for 3 years", "'Since 3 years' → for 3 years", "'I've been knowing him' → I've known him (estativo)"],
+      "facil": {
+        "p": ["How long have you been studying English?", "How long have you been living in your house?", "What have you been doing today?", "How long have you been working at your job?", "Have you been sleeping well recently?", "What have you been watching lately?"],
+        "t": [["Estudo inglês há três anos.", "I have been studying English for three years."], ["Ela trabalha aqui desde 2020.", "She has been working here since 2020."], ["Está chovendo desde manhã.", "It has been raining since this morning."], ["Há quanto tempo você espera?", "How long have you been waiting?"], ["Estamos morando aqui há dois meses.", "We've been living here for two months."]],
+        "c": [["I've been waiting ___ two hours.", "for"], ["She's been working here ___ March.", "since"], ["They ___ (play) for an hour.", "have been playing"], ["How long ___ you ___ (learn) Spanish?", "have / been learning"], ["It ___ (rain) all day.", "has been raining"]],
+        "r": [["I am working here for 5 years.", "Corrija", "I have been working here for 5 years."], ["She lives here since 2019.", "Corrija", "She has been living (has lived) here since 2019."], ["I'm waiting since 3 hours.", "Corrija", "I've been waiting for 3 hours."]]
+      },
+      "medio": {
+        "p": ["What have you been working on lately?", "Why are you tired? What have you been doing?", "How long have you been thinking about changing something in your life?", "What series have you been watching? How many episodes have you watched?", "Have you been exercising lately? How often?", "Who have you been talking to a lot recently?"],
+        "t": [["Estou lendo esse livro há semanas e ainda não terminei.", "I've been reading this book for weeks and I still haven't finished."], ["Li três livros este mês.", "I've read three books this month."], ["Você está com as mãos sujas. O que você estava fazendo?", "Your hands are dirty. What have you been doing?"], ["Ele está tentando falar com você o dia todo.", "He's been trying to call you all day."], ["Conheço ela há anos.", "I've known her for years."]],
+        "c": [["I ___ (read) three chapters so far.", "have read"], ["I ___ (read) all afternoon.", "have been reading"], ["She ___ (know) him since school.", "has known"], ["You look tired. ___ you ___ (work) late?", "Have / been working"], ["We ___ (paint) the house — that's why it smells.", "have been painting"]],
+        "r": [["I've been reading three books this month.", "Corrija (resultado/quantidade)", "I've read three books this month."], ["I've been knowing her for years.", "Corrija (estativo)", "I've known her for years."], ["She is crying. (há uma hora)", "Reescreva com duração", "She's been crying for an hour."]]
+      },
+      "dificil": {
+        "p": ["What's something you've been meaning to do for a long time?", "What habits have you been trying to build this year? How is it going?", "What has been worrying you recently?", "How long have you been doing your current job, and how has it changed?", "What's a skill you've been developing without noticing?", "What have people in your country been talking about recently?"],
+        "t": [["Faz tempo que eu venho querendo te dizer isso.", "I've been meaning to tell you this for a while."], ["Ultimamente tenho dormido muito mal.", "I've been sleeping really badly lately."], ["Os preços vêm subindo desde o ano passado.", "Prices have been going up since last year."], ["Há quanto tempo vocês estão juntos?", "How long have you been together?"], ["Ele tem trabalhado demais e quase não tem visto a família.", "He's been working too much and has hardly seen his family."]],
+        "c": [["I ___ (mean) to call you for weeks.", "have been meaning"], ["How long ___ you two ___ (be) together?", "have / been"], ["Prices ___ (go) up since last year.", "have been going"], ["She ___ (write) four reports today.", "has written"], ["Lately I ___ (feel) more confident.", "have been feeling"]],
+        "r": [["I want to tell you this for a long time.", "Reescreva com 'have been meaning'", "I've been meaning to tell you this for a long time."], ["How long are you together?", "Corrija", "How long have you been together?"], ["Since last year the prices go up.", "Corrija", "Prices have been going up since last year."]]
+      },
+      "fala": ["Talk about things you've been doing lately: work, hobbies, health.", "Look at clues (tired, dirty, happy): what has this person been doing?", "Talk about how long you've been doing important things in your life.", "Interview for a job: 'How long have you been...?'"],
+      "escrita": ["Write 6 sentences about how long you've been doing things (for/since).", "Write a message explaining why you've been busy lately.", "Write 3 pairs: present perfect simple vs continuous."]
+    },
+    {
+      "id": "b1-past-perfect",
+      "nome": "Past Perfect",
+      "categoria": "Gramática",
+      "sub": ["Ação anterior a outra no passado", "By the time / already / before", "Narrativas"],
+      "fique": ["Usar quando não precisa: duas ações em sequência simples ficam no simple past", "'When I arrived, the train left' (ordem confusa) → the train had left", "'I had went' → I had gone"],
+      "facil": {
+        "p": ["Had you studied English before you started with me?", "When you got home yesterday, had anyone cooked dinner?", "Had you ever flown before your first trip abroad?", "When you arrived at work today, had your boss arrived?", "Had you seen the movie before you read the book?", "Before this year, had you ever had an online class?"],
+        "t": [["Quando cheguei, o filme já tinha começado.", "When I arrived, the movie had already started."], ["Eu nunca tinha visto o mar antes.", "I had never seen the sea before."], ["Ela já tinha saído.", "She had already left."], ["Você já tinha estudado inglês antes?", "Had you studied English before?"], ["Eles tinham comido antes de sair.", "They had eaten before they left."]],
+        "c": [["When we arrived, the train ___ (leave).", "had left"], ["I ___ (never / see) snow before that trip.", "had never seen"], ["She ___ (already / eat) when I called.", "had already eaten"], ["___ you ___ (meet) him before?", "Had / met"], ["They ___ (not / finish) when I got there.", "hadn't finished"]],
+        "r": [["When I arrived, the class started. (já tinha começado)", "Corrija", "When I arrived, the class had started."], ["I had went to bed.", "Corrija", "I had gone to bed."], ["She left. Then I arrived.", "Una com 'when' e past perfect", "When I arrived, she had left."]]
+      },
+      "medio": {
+        "p": ["Tell me about a time you arrived somewhere and something had already happened.", "Had you ever done anything dangerous before you turned 18?", "By the time you were 20, what had you already done?", "Have you ever forgotten something you had promised?", "When you started your current job, what had you heard about the company?", "Tell me about a place that had changed a lot when you returned."],
+        "t": [["Quando eu fiz 30, já tinha morado em três cidades.", "By the time I turned 30, I had lived in three cities."], ["Percebi que tinha esquecido o passaporte.", "I realized I had forgotten my passport."], ["Ela estava nervosa porque nunca tinha falado em público.", "She was nervous because she had never spoken in public."], ["Depois que ele terminou, fomos jantar.", "After he had finished, we went to dinner."], ["Eu não sabia que eles tinham se separado.", "I didn't know they had broken up."]],
+        "c": [["By the time I got there, everyone ___ (go) home.", "had gone"], ["I realized I ___ (leave) my wallet at home.", "had left"], ["She was tired because she ___ (work) all night.", "had been working"], ["After they ___ (sign) the contract, they celebrated.", "had signed"], ["I didn't know you ___ (live) in Spain.", "had lived"]],
+        "r": [["I forgot my passport and I realized it at the airport.", "Reescreva com 'realized I had'", "At the airport, I realized I had forgotten my passport."], ["Until 30 I had never travel.", "Corrija", "Until I was 30, I had never traveled."], ["When I arrived the party finished.", "Corrija", "When I arrived, the party had finished."]]
+      },
+      "dificil": {
+        "p": ["Tell me a story where a misunderstanding happened because someone hadn't told the truth.", "What had you imagined about adult life when you were a child? Was it true?", "Describe a moment when you realized you had made a mistake.", "What had changed in your hometown the last time you visited?", "Had you planned your career, or did it just happen?", "Tell me about a time you were surprised because things hadn't gone as expected."],
+        "t": [["Se eu soubesse, teria vindo antes. (preview 3rd conditional)", "If I had known, I would have come earlier."], ["Mal tínhamos chegado quando começou a chover.", "We had hardly arrived when it started to rain."], ["Foi a primeira vez que eu tinha visto algo assim.", "It was the first time I had seen something like that."], ["Ele disse que tinha perdido o emprego.", "He said he had lost his job."], ["Eles estavam namorando havia cinco anos quando se casaram.", "They had been dating for five years when they got married."]],
+        "c": [["It was the first time I ___ (see) such a thing.", "had seen"], ["We ___ hardly ___ (arrive) when it started raining.", "had / arrived"], ["They ___ (date) for five years when they got married.", "had been dating"], ["He told me he ___ (lose) his job.", "had lost"], ["No sooner ___ I ___ (sit) down than the phone rang.", "had / sat"]],
+        "r": [["It was the first time I saw the sea.", "Corrija", "It was the first time I had seen the sea."], ["As soon as I sat, the phone rang. (No sooner)", "Reescreva com 'No sooner...than'", "No sooner had I sat down than the phone rang."], ["They dated five years when they married.", "Corrija", "They had been dating for five years when they got married."]]
+      },
+      "fala": ["Tell a story with a surprise ending (what had happened before?).", "Talk about your life by age 18, 25, 30: 'By then I had...'", "Explain a misunderstanding you had with someone.", "Retell a movie plot including events that had happened before."],
+      "escrita": ["Write a short story starting with 'When I opened the door, I couldn't believe what had happened.'", "Write 5 sentences with 'by the time'.", "Write about a time you realized you had made a mistake."]
+    },
+    {
+      "id": "b1-condicionais-0-1",
+      "nome": "Zero & First Conditional (if / unless / when)",
+      "categoria": "Gramática",
+      "sub": ["Verdades gerais", "Possibilidades reais", "Unless / as soon as / when"],
+      "fique": ["'If it will rain' → If it rains", "'Unless you don't study' → Unless you study", "'When I will arrive' → When I arrive"],
+      "facil": {
+        "p": ["What happens if you don't sleep enough?", "If it rains tomorrow, what will you do?", "What will you do if you have free time this weekend?", "If you heat ice, what happens?", "If you go out tonight, where will you go?", "What do you do if you feel stressed?"],
+        "t": [["Se chover, vou ficar em casa.", "If it rains, I'll stay at home."], ["Se você aquece água a 100 graus, ela ferve.", "If you heat water to 100 degrees, it boils."], ["Se eu tiver tempo, te ligo.", "If I have time, I'll call you."], ["Se ela não estudar, não vai passar.", "If she doesn't study, she won't pass."], ["Te aviso quando eu chegar.", "I'll let you know when I arrive."]],
+        "c": [["If it ___ (rain), we ___ (stay) home.", "rains / will stay"], ["If you ___ (mix) red and blue, you ___ (get) purple.", "mix / get"], ["I'll call you when I ___ (arrive).", "arrive"], ["If she ___ (not / hurry), she ___ (miss) the bus.", "doesn't hurry / will miss"], ["If you ___ (need) help, ask me.", "need"]],
+        "r": [["If it will rain, I won't go.", "Corrija", "If it rains, I won't go."], ["I call you when I will arrive.", "Corrija", "I'll call you when I arrive."], ["Study or you'll fail.", "Reescreva com If", "If you don't study, you'll fail."]]
+      },
+      "medio": {
+        "p": ["What will you do if you don't get a raise this year?", "What happens in your city if it rains a lot?", "If you have a problem at work, who do you talk to?", "What will you do as soon as you get home today?", "Unless something changes, what will your life be like next year?", "If a friend asks you for money, do you lend it?"],
+        "t": [["Não vou a menos que você vá.", "I won't go unless you go."], ["Assim que eu souber, te aviso.", "As soon as I know, I'll tell you."], ["Leve um guarda-chuva caso chova.", "Take an umbrella in case it rains."], ["Se você estiver cansado, a gente pode parar.", "If you're tired, we can stop."], ["Contanto que você chegue na hora, tudo bem.", "As long as you arrive on time, it's fine."]],
+        "c": [["I won't go ___ (a menos que) you come.", "unless"], ["___ (Assim que) I finish, I'll call you.", "As soon as"], ["Take a jacket ___ (caso) it gets cold.", "in case"], ["You can borrow it ___ (contanto que) you give it back.", "as long as"], ["If you're hungry, we ___ (poder) eat now.", "can"]],
+        "r": [["Unless you don't call me, I won't go.", "Corrija", "Unless you call me, I won't go."], ["If you don't hurry, you won't arrive. (unless)", "Reescreva com unless", "Unless you hurry, you won't arrive."], ["I'll take an umbrella if it rains. (preventivo)", "Use in case", "I'll take an umbrella in case it rains."]]
+      },
+      "dificil": {
+        "p": ["If the economy gets worse next year, how will it affect your plans?", "What will happen to your profession if AI keeps improving?", "If a company offers you a job in another city, will you accept it? Under what conditions?", "What do you usually do if someone is rude to you?", "If you don't practice English for a month, what happens to your level?", "What will you do as long as you have good health?"],
+        "t": [["Se você precisar de algo, é só falar.", "If you need anything, just let me know."], ["Se por acaso você vir a Ana, mande um abraço.", "If you happen to see Ana, say hi."], ["Se o voo atrasar, vamos perder a conexão.", "If the flight is delayed, we'll miss the connection."], ["A menos que a gente faça algo agora, vai ser tarde.", "Unless we do something now, it'll be too late."], ["Vou aceitar, desde que o salário seja bom.", "I'll accept, provided (that) the salary is good."]],
+        "c": [["If you ___ (happen) to see her, say hi.", "happen"], ["I'll accept ___ (desde que) the salary is good.", "provided / as long as"], ["If the flight ___ (be) delayed, we'll miss the connection.", "is"], ["Should you ___ (need) anything, call me. (formal)", "need"], ["If you've finished, you ___ (can) leave.", "can"]],
+        "r": [["If you need anything, call me. (formal)", "Reescreva com 'Should you'", "Should you need anything, call me."], ["We'll go if the weather is good. (provided)", "Reescreva", "We'll go provided (that) the weather is good."], ["Unless we won't act now...", "Corrija", "Unless we act now, it'll be too late."]]
+      },
+      "fala": ["Talk about your plans with conditions: 'If..., I'll...'", "Chain game: If I win the lottery... no, real: If I finish early today, I'll...", "Give instructions/rules: 'If a customer complains, you...'", "Negotiate: 'I'll do it as long as...'"],
+      "escrita": ["Write 5 first-conditional sentences about next month.", "Write 4 'facts' with zero conditional about your job or city.", "Write a short email negotiating conditions (unless, as long as, provided)."]
+    },
+    {
+      "id": "b1-used-to",
+      "nome": "Used to / Be used to / Get used to",
+      "categoria": "Gramática",
+      "sub": ["Hábitos passados (used to)", "Estar acostumado (be used to + -ing)", "Acostumar-se (get used to)"],
+      "fique": ["'I use to' → I used to", "'I'm used to wake up early' → I'm used to waking up early", "'I didn't used to' → I didn't use to", "Presente: 'I used to go to the gym' (não vai mais) vs 'I usually go'"],
+      "facil": {
+        "p": ["What did you use to do as a child?", "Did you use to play any sport?", "Where did you use to live?", "What food did you use to hate?", "Did you use to watch cartoons? Which ones?", "Who did you use to spend time with?"],
+        "t": [["Eu costumava jogar futebol.", "I used to play soccer."], ["Ela não costumava gostar de café.", "She didn't use to like coffee."], ["Você costumava morar aqui?", "Did you use to live here?"], ["Eu costumo acordar cedo. (hoje)", "I usually wake up early."], ["Nós costumávamos ir à praia.", "We used to go to the beach."]],
+        "c": [["I ___ (costumava) have long hair.", "used to"], ["Did you ___ (costumava) live here?", "use to"], ["She ___ (não costumava) eat meat.", "didn't use to"], ["We ___ (costumamos — hoje) eat at 8.", "usually"], ["He ___ (costumava) smoke, but he quit.", "used to"]],
+        "r": [["I use to play tennis when I was young.", "Corrija", "I used to play tennis when I was young."], ["I used to go to the gym every day. (hábito atual)", "Corrija", "I usually go to the gym every day."], ["Did you used to live here?", "Corrija", "Did you use to live here?"]]
+      },
+      "medio": {
+        "p": ["What are you used to doing that foreigners find strange?", "Was it hard to get used to your current job?", "What did you use to believe as a child?", "Are you used to speaking English in public?", "What's something you'll never get used to?", "How was your life different before smartphones? What did you use to do?"],
+        "t": [["Estou acostumado a acordar cedo.", "I'm used to waking up early."], ["Ainda estou me acostumando com o novo horário.", "I'm still getting used to the new schedule."], ["Ela não está acostumada com o frio.", "She isn't used to the cold."], ["Você vai se acostumar.", "You'll get used to it."], ["Antes eu morava sozinho; agora divido apartamento.", "I used to live alone; now I share an apartment."]],
+        "c": [["I'm used to ___ (work) at night.", "working"], ["It took me months to get used to ___ (drive) on the left.", "driving"], ["She ___ (costumava) live in London.", "used to"], ["Are you used to ___ (speak) English?", "speaking"], ["I can't get used to ___ (wake) up at 5.", "waking"]],
+        "r": [["I'm used to wake up early.", "Corrija", "I'm used to waking up early."], ["I'm accustoming with the new job.", "Corrija", "I'm getting used to the new job."], ["When I was a child I was used to play outside. (hábito)", "Corrija", "When I was a child, I used to play outside."]]
+      },
+      "dificil": {
+        "p": ["What did people use to do in your city that they don't do anymore?", "What was the hardest thing to get used to when you became an adult?", "What would a foreigner have to get used to in Brazil?", "Are you used to receiving feedback? How do you react?", "What did you use to think was important that you don't care about now?", "What habit did you use to have that you're proud you quit?"],
+        "t": [["Ninguém se acostuma a perder.", "Nobody gets used to losing."], ["Isso costumava ser uma fábrica.", "This used to be a factory."], ["Antigamente as pessoas escreviam cartas; hoje mandam áudio.", "People used to write letters; now they send voice messages."], ["Leva tempo para se acostumar com o sotaque.", "It takes time to get used to the accent."], ["Eu nunca fui acostumado a pedir ajuda.", "I've never been used to asking for help."]],
+        "c": [["This building ___ (costumava ser) a cinema.", "used to be"], ["It takes time to get used to the ___ (accent).", "accent"], ["I've never been used to ___ (ask) for help.", "asking"], ["Where ___ you ___ (costumava) go on vacation?", "did / use to"], ["My grandfather ___ (would) tell us stories every night.", "would"]],
+        "r": [["My grandfather used to tell us stories. (would)", "Reescreva com would", "My grandfather would tell us stories."], ["I'm not used with this.", "Corrija", "I'm not used to this."], ["I used to living alone.", "Corrija (estar acostumado)", "I'm used to living alone."]]
+      },
+      "fala": ["Talk about your childhood: habits, games, food, school.", "Then and now: compare your life 15 years ago and today.", "Talk about changes you had to get used to (job, city, family).", "Tell a foreigner what they'd need to get used to in Brazil."],
+      "escrita": ["Write 6 sentences about what you used to do as a teenager.", "Write about something you had to get used to.", "Write a paragraph: 'My city used to be..., but now...'"]
+    }
+  ]
+}
