@@ -307,3 +307,5 @@ td a.nome-link { color: var(--texto); font-weight: 600; text-decoration: none; }
 .com-linha { gap: 8px; }
 .btn.feito { border-color: var(--ok-borda); color: var(--ok); }
 @media (max-width: 900px) { .grid-com { grid-template-columns: minmax(0, 1fr); } }
+.item.hw-previa { display: block; }
+.btn-doc { justify-content: center; }
