@@ -102,6 +102,12 @@ h1, h2, h3 { margin: 0; }
 .tag.st-trancado { background: var(--alerta-fundo); color: #E8C468; }
 :root[data-tema="claro"] .tag.st-trancado { color: #8A6A10; }
 .tag.st-inativo { background: var(--painel-3); color: var(--muted); }
+select.sel-sit { min-height: 32px; width: auto; padding: 0 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+select.sel-sit.st-ativo { background: var(--ok-fundo); color: var(--ok); border-color: var(--ok-borda); }
+select.sel-sit.st-trancado { background: var(--alerta-fundo); color: var(--alerta); border-color: var(--alerta-borda); }
+select.sel-sit.st-inativo { background: var(--painel-3); color: var(--muted); }
+select.sel-sit.st-experimental { background: var(--acento-fundo); color: var(--acento-texto); border-color: var(--acento-borda); }
+select.sel-sit option { background: var(--painel); color: var(--texto); }
 .tag.st-experimental { background: var(--acento-fundo); color: var(--acento-texto); }
 .txt-ok { color: var(--ok); } .txt-alerta { color: var(--alerta); } .txt-perigo { color: var(--perigo); } .txt-acento { color: var(--acento-texto); } .txt-muted { color: var(--muted); }
 
