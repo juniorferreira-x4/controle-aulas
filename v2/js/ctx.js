@@ -1,5 +1,5 @@
 // Estado compartilhado e utilitários de interface.
-import { ehVirtual, parseVirtual, horaDoAluno, DIFICULDADES_PADRAO, ETAPAS_PADRAO, ETAPAS_CONVERSA } from "./regras.js";
+import { ehVirtual, parseVirtual, horaDoAluno, DIFICULDADES_PADRAO, ETAPAS_PADRAO, ETAPAS_CONVERSA, ETAPAS_REPOSICAO, feriadosAtivos, definirFeriados } from "./regras.js";
 
 // Registro de ações de clique (data-a) e de campos (data-i), preenchido pelas telas.
 export const ACOES = {};
@@ -67,11 +67,20 @@ export function config() {
   return {
     etapas: c.etapas && c.etapas.length ? c.etapas : ETAPAS_PADRAO,
     etapasConversa: c.etapasConversa && c.etapasConversa.length ? c.etapasConversa : ETAPAS_CONVERSA,
+    etapasReposicao: c.etapasReposicao && c.etapasReposicao.length ? c.etapasReposicao : ETAPAS_REPOSICAO,
+    linkReposicao: c.linkReposicao || "",
+    assinatura: c.assinatura || "Junior",
     dificuldades: c.dificuldades && c.dificuldades.length ? c.dificuldades : DIFICULDADES_PADRAO,
     emailAssunto: c.emailAssunto || "Bora voltar com o inglês, {nome}?",
     emailCorpo: c.emailCorpo || "Oi, {nome}! Tudo bem?\n\nFaz um tempo desde a nossa última aula ({ultima}). Tenho alguns horários abertos e um formato de aula novo, com listening e homework personalizados.\n\nQuer marcar uma aula para retomar de onde paramos?\n\nAbraço,\nJunior\n\n(Se preferir não receber mais mensagens, é só responder \"parar\".)",
     tema: c.tema || "escuro"
   };
+}
+
+// Recalcula os feriados ativos (ano passado, atual e próximo) a partir dos Ajustes.
+export function atualizarFeriados() {
+  const ano = new Date().getFullYear();
+  definirFeriados(feriadosAtivos(S.store.config || {}, [ano - 1, ano, ano + 1]));
 }
 
 export function nomeAluno(id) { const a = S.store.aluno(id); return a ? a.nome : "(aluno removido)"; }

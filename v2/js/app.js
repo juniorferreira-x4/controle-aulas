@@ -3,16 +3,17 @@ import { carregarBanco } from "./banco.js";
 import { LocalStore, FirebaseStore, novoId } from "./store.js";
 import {
   S, ACOES, CAMPOS, TELA, esc, toast, erro, navegar, abrirModal, fecharModal, config, nomeAluno, tagNivel, tagSituacao,
-  resolverAula, materializar, copiar, linkWhats, ICONES
+  resolverAula, materializar, copiar, linkWhats, ICONES, atualizarFeriados
 } from "./ctx.js";
 import {
   hojeISO, addDays, segundaDaSemana, fmtData, fmtDataLonga, diaSemana, DIAS_CURTO, DIAS_LONGO, NIVEIS, DIFS, DIF_LABEL,
   aulasNoPeriodo, semRegistro, jaPassou, mapaCobranca, simularCusto, situacaoGratisDoMes, prazoReposicao, reposicoesPendentes,
   faltasNoPeriodo, aulasDadasDoAluno, sugerirPlano, mesDe, VALOR_REMARCACAO, ehVirtual, STATUS_LABEL,
-  PRECOS, MODALIDADE_LABEL, precoTabela, valorMensalEquivalente, fimDoPacote, brl, MODELO_ALUNO, MODELOS, modeloDaAula, sugerirTema, DIA_VENCIMENTO
+  feriadoEm, feriadosDoAno, PRECOS, MODALIDADE_LABEL, precoTabela, valorMensalEquivalente, fimDoPacote, brl, MODELO_ALUNO, MODELOS, modeloDaAula, sugerirTema, DIA_VENCIMENTO
 } from "./regras.js";
 import { renderAula, renderPos } from "./aula.js";
 import { novoSid, linkDoAluno } from "./sessao.js";
+import { telaComunicacao } from "./comunicacao.js";
 import * as TTS from "./tts.js";
 import { criarDocHomework } from "./drive.js";
 
@@ -93,6 +94,7 @@ function telaLogin(msg = "") {
 
 let iniciado = false;
 function iniciarApp() {
+  atualizarFeriados();
   aplicarTema(config().tema);
   S.rerender = render;
   if (!iniciado) {
@@ -133,7 +135,7 @@ function render() {
   try {
     if (nome === "aula") return renderAula(v, arg);
     if (nome === "pos") return renderPos(v, arg);
-    const telas = { semana: telaSemana, alunos: telaAlunos, aluno: telaCadastro, biblioteca: telaBiblioteca, config: telaConfig };
+    const telas = { semana: telaSemana, alunos: telaAlunos, aluno: telaCadastro, biblioteca: telaBiblioteca, comunicacao: telaComunicacao, config: telaConfig };
     (telas[nome] || telaSemana)(v, arg);
   } catch (e) { erro(e); v.innerHTML = `<div class="carregando">Algo deu errado nesta tela: ${esc(e.message)}</div>`; }
 }
@@ -153,7 +155,7 @@ function estadoSlot(a) {
     return { cls: "remarcada", st: filho ? `→ ${fmtData(filho.data)}` : "remarcada", cor: "txt-acento" };
   }
   if (a.status === "prof_faltou") return { cls: "prof_faltou", st: "prof. faltou", cor: "txt-muted" };
-  if (a.status === "feriado") return { cls: "feriado", st: "feriado", cor: "txt-muted" };
+  if (a.status === "feriado") return { cls: "feriado", st: "feriado · sem aula", cor: "txt-muted" };
   if (semRegistro(a)) return { cls: "pendente", st: "sem registro", cor: "txt-alerta" };
   return { cls: "", st: a.tipo === "reposicao" ? "reposição" : "", cor: "txt-acento" };
 }
@@ -184,7 +186,7 @@ function telaSemana(v) {
         </button>`;
     }).join("") : `<div class="dia-vazio">sem aulas</div>`;
     return `<section class="dia ${d === hoje ? "hoje" : ""}">
-      <h2 class="dia-cab"><span class="d1">${DIAS_LONGO[diaSemana(d)]}${d === hoje ? " · hoje" : ""}</span><br><span class="d2">${fmtData(d)}</span></h2>
+      <h2 class="dia-cab"><span class="d1">${DIAS_LONGO[diaSemana(d)]}${d === hoje ? " · hoje" : ""}</span><br><span class="d2">${fmtData(d)}</span>${feriadoEm(d) ? `<br><span class="tag tag-feriado">${esc(feriadoEm(d))}</span>` : ""}</h2>
       ${slots}</section>`;
   }).join("");
 
@@ -726,7 +728,21 @@ function telaCadastro(v, id) {
           </div>
           <div class="item" id="info-plano">${infoPlano(al)}</div>
         </section>
-        <section class="card"><h2 class="card-titulo">Documentos no Drive</h2>
+        <section class="card"><h2 class="card-titulo">Módulos trabalhados</h2>
+          <div class="campo"><label for="c-modat">Módulo atual</label>
+            <select id="c-modat" data-c="moduloAtual"><option value="">Nenhum (o app sugere pelo nível)</option>${Object.keys(S.banco.porNivel).map(n => `<optgroup label="${n}">${S.banco.porNivel[n].map(t => `<option value="${esc(t.id)}" ${al.moduloAtual === t.id ? "selected" : ""}>${esc(t.nome)}</option>`).join("")}</optgroup>`).join("")}</select></div>
+          <span class="mini">Marque os módulos já concluídos. A aula usa o módulo atual (cerca de 70%) e revisa os concluídos (cerca de 30%): aquecimento, prática, exercícios escritos e homework.</span>
+          ${(() => { const feitos = new Set(al.modulosFeitos || []); return Object.keys(S.banco.porNivel).map(n => {
+            const ts = S.banco.porNivel[n], k = ts.filter(t => feitos.has(t.id)).length;
+            return `<details class="mod-nivel" ${n === (al.nivel || "A1") || k ? "open" : ""}><summary><b>${n}</b> <span class="mini">${k} de ${ts.length} concluídos</span></summary>
+              <div class="mod-grade">${ts.map(t => `<label class="check"><input type="checkbox" data-a="mod-feito" data-id="${esc(t.id)}" ${feitos.has(t.id) ? "checked" : ""}>${esc(t.nome)}${al.moduloAtual === t.id ? ` <span class="olho">atual</span>` : ""}</label>`).join("")}</div></details>`;
+          }).join(""); })()}
+        </section>
+        <section class="card"><h2 class="card-titulo">Links da aula</h2>
+          <div class="campo"><label for="c-meet">Reunião da aula (Google Meet)</label>
+            <div class="linha"><input type="url" id="c-meet" data-c="linkMeet" value="${esc(al.linkMeet || "")}" placeholder="https://meet.google.com/…" style="flex:1;min-width:0">
+            ${al.linkMeet ? `<a class="btn" href="${esc(al.linkMeet)}" target="_blank" rel="noopener">Abrir ${ICONES.externo}</a>` : ""}</div>
+            <span class="mini">Aparece como botão “Entrar na reunião” na aula. As reposições usam a sala única configurada em Ajustes.</span></div>
           <div class="campo"><label for="c-doc">Documento do aluno (compartilhado)</label>
             <div class="linha"><input type="url" id="c-doc" data-c="docAlunoUrl" value="${esc(al.docAlunoUrl || "")}" placeholder="https://docs.google.com/document/d/…" class="flex1" style="flex:1;min-width:0">
             ${al.docAlunoUrl ? `<a class="btn" href="${esc(al.docAlunoUrl)}" target="_blank" rel="noopener">Abrir ${ICONES.externo}</a>` : ""}</div></div>
@@ -829,6 +845,9 @@ Object.assign(ACOES, {
     const novo = !a.id;
     const orig = novo ? null : S.store.aluno(a.id);
     if (orig && orig.sessaoFixa && !a.sessaoFixa) a.sessaoFixa = orig.sessaoFixa;
+    a.modulosFeitos = (a.modulosFeitos || []).filter(id => id && id !== a.moduloAtual);
+    if (!a.moduloAtual) a.moduloAtual = null;
+    if (a.linkMeet) a.linkMeet = a.linkMeet.trim();
     if (orig && orig.situacao !== a.situacao) {
       const iniEditado = (a.inicioAgenda || "") !== (orig.inicioAgenda || "");
       const nova = a.situacao; a.situacao = orig.situacao;
@@ -959,8 +978,17 @@ function telaConfig(v) {
         <h2 class="card-titulo">Etapas · aula de conversação <span class="mini">(total ${cfg.etapasConversa.reduce((s, e) => s + Number(e.min || 0), 0)} min)</span></h2>
         <span class="mini">Usada automaticamente para alunos B2 em diante (dá para mudar no cadastro de cada aluno ou na própria aula).</span>
         <div class="pilha">${cfg.etapasConversa.map((e, i) => `<div class="linha"><label for="etc-${i}" style="flex:1">${esc(e.nome)}</label><input type="text" inputmode="numeric" id="etc-${i}" value="${esc(e.min)}" style="width:80px"> <span class="mini">min</span></div>`).join("")}</div>
+        <h2 class="card-titulo">Etapas · aula de reposição <span class="mini">(total ${cfg.etapasReposicao.reduce((s, e) => s + Number(e.min || 0), 0)} min)</span></h2>
+        <span class="mini">Usada automaticamente nas aulas marcadas como reposição: só exercícios escritos, falados e misturados.</span>
+        <div class="pilha">${cfg.etapasReposicao.map((e, i) => `<div class="linha"><label for="etr-${i}" style="flex:1">${esc(e.nome)}</label><input type="text" inputmode="numeric" id="etr-${i}" value="${esc(e.min)}" style="width:80px"> <span class="mini">min</span></div>`).join("")}</div>
         <div><button class="btn" data-a="salvar-etapas">Salvar etapas</button></div>
       </section>
+      <section class="card"><h2 class="card-titulo">Reunião das reposições</h2>
+        <span class="mini">Sala única (Google Meet) usada em todas as aulas de reposição, de 30 minutos. O link da aula regular fica no cadastro de cada aluno.</span>
+        <div class="campo"><label for="cfg-rep">Link da reunião de reposição</label><input type="url" id="cfg-rep" value="${esc(cfg.linkReposicao)}" placeholder="https://meet.google.com/…"></div>
+        <div><button class="btn" data-a="salvar-link-rep">Salvar link</button></div>
+      </section>
+      <section class="card" style="grid-column:1 / -1">${blocoFeriados()}</section>
       <section class="card"><h2 class="card-titulo">Checklist de dificuldades (pós-aula)</h2>
         <label class="mini" for="cfg-dif">Uma por linha</label>
         <textarea id="cfg-dif" style="min-height:200px">${esc(cfg.dificuldades.join("\n"))}</textarea>
@@ -977,7 +1005,29 @@ function telaConfig(v) {
   </div>`;
 }
 
-async function salvarCfg(parcial) { await S.store.salvarConfig({ ...(S.store.config || {}), ...parcial }); toast("Salvo."); }
+// Feriados: lista automática (nacionais, RJ e cidade do Rio) com liga/desliga, mais datas extras.
+function blocoFeriados() {
+  const c = S.store.config || {};
+  const ano = new Date().getFullYear();
+  const deslig = new Set(c.feriadosDesligados || []), lig = new Set(c.feriadosLigados || []);
+  const extras = (c.feriadosExtras || []).slice().sort((a, b) => a.data.localeCompare(b.data));
+  const anoSel = S.anoFeriados || ano;
+  const lista = feriadosDoAno(anoSel);
+  return `<div class="linha"><h2 class="card-titulo flex1">Feriados · sem aula, sem reposição</h2>
+      <div class="seg" role="group" aria-label="Ano">${[ano, ano + 1].map(y => `<button class="btn-sm" data-a="fer-ano" data-y="${y}" aria-pressed="${y === anoSel}">${y}</button>`).join("")}</div></div>
+    <span class="mini">Nesses dias a agenda não gera aula. A aula não é reposta nem transferida e não entra na cobrança. Pontos facultativos começam desligados.</span>
+    <div class="fer-grade">${lista.map(x => {
+      const on = x.facultativo ? lig.has(x.data) : !deslig.has(x.data);
+      return `<label class="check fer-item"><input type="checkbox" data-a="fer-toggle" data-d="${x.data}" data-f="${x.facultativo ? 1 : 0}" ${on ? "checked" : ""}>
+        <span class="mono">${fmtData(x.data)}</span> <span class="flex1">${esc(x.nome)}</span> <span class="mini">${esc(x.esfera)} · ${DIAS_CURTO[diaSemana(x.data)]}</span></label>`;
+    }).join("")}</div>
+    <div class="sep"></div>
+    <span class="rotulo">Outras datas sem aula (recesso, viagem, feriado extra)</span>
+    ${extras.length ? extras.map(x => `<div class="item"><span class="mono">${fmtDataLonga(x.data)}</span><span class="flex1">${esc(x.nome)}</span><button class="btn btn-sm" data-a="fer-del" data-d="${x.data}">Remover</button></div>`).join("") : `<span class="sub">Nenhuma.</span>`}
+    <div class="linha"><input type="date" id="fer-data" style="max-width:180px"><input type="text" id="fer-nome" placeholder="Nome (ex.: Recesso de fim de ano)" class="flex1" style="min-width:180px"><button class="btn" data-a="fer-add">Adicionar</button></div>`;
+}
+
+async function salvarCfg(parcial, aviso = "Salvo.") { await S.store.salvarConfig({ ...(S.store.config || {}), ...parcial }); atualizarFeriados(); if (aviso) toast(aviso); }
 function baixar(nome, conteudo) {
   const blob = new Blob([conteudo], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -999,8 +1049,18 @@ Object.assign(ACOES, {
   "salvar-etapas": async () => {
     const etapas = config().etapas.map((e, i) => ({ ...e, min: Math.max(1, parseInt(document.getElementById(`et-${i}`).value, 10) || e.min) }));
     const etapasConversa = config().etapasConversa.map((e, i) => ({ ...e, min: Math.max(1, parseInt(document.getElementById(`etc-${i}`).value, 10) || e.min) }));
-    await salvarCfg({ etapas, etapasConversa }); render();
+    const etapasReposicao = config().etapasReposicao.map((e, i) => ({ ...e, min: Math.max(1, parseInt(document.getElementById(`etr-${i}`).value, 10) || e.min) }));
+    await salvarCfg({ etapas, etapasConversa, etapasReposicao }); render();
   },
+  "salvar-link-rep": async () => salvarCfg({ linkReposicao: document.getElementById("cfg-rep").value.trim() }),
+  "fer-ano": el => { S.anoFeriados = Number(el.dataset.y); render(); },
+  "fer-add": async () => {
+    const data = document.getElementById("fer-data").value, nome = document.getElementById("fer-nome").value.trim() || "Sem aula";
+    if (!data) return toast("Escolha a data.");
+    const extras = [...(S.store.config?.feriadosExtras || []).filter(x => x.data !== data), { data, nome }];
+    await salvarCfg({ feriadosExtras: extras }, "Data adicionada."); render();
+  },
+  "fer-del": async el => { await salvarCfg({ feriadosExtras: (S.store.config?.feriadosExtras || []).filter(x => x.data !== el.dataset.d) }, "Removida."); render(); },
   "salvar-dif": async () => {
     const lista = document.getElementById("cfg-dif").value.split("\n").map(s => s.trim()).filter(Boolean);
     await salvarCfg({ dificuldades: lista });
@@ -1121,3 +1181,25 @@ boot();
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
+
+// Liga/desliga um feriado da lista automática (o checkbox mantém o comportamento nativo).
+ACOES["fer-toggle"] = async el => {
+  const c = S.store.config || {};
+  const d = el.dataset.d, facultativo = el.dataset.f === "1", on = el.checked;
+  if (facultativo) {
+    const lig = new Set(c.feriadosLigados || []); on ? lig.add(d) : lig.delete(d);
+    await salvarCfg({ feriadosLigados: [...lig] }, on ? "Feriado ligado." : "Feriado desligado.");
+  } else {
+    const des = new Set(c.feriadosDesligados || []); on ? des.delete(d) : des.add(d);
+    await salvarCfg({ feriadosDesligados: [...des] }, on ? "Feriado ligado." : "Feriado desligado.");
+  }
+};
+ACOES["fer-toggle"].semPrevent = true;
+
+// Checklist de módulos concluídos no cadastro (salva junto com o botão Salvar).
+ACOES["mod-feito"] = el => {
+  const set = new Set(S.cadastro.modulosFeitos || []);
+  el.checked ? set.add(el.dataset.id) : set.delete(el.dataset.id);
+  S.cadastro.modulosFeitos = [...set];
+};
+ACOES["mod-feito"].semPrevent = true;
