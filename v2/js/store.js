@@ -51,6 +51,22 @@ export class LocalStore extends BaseStore {
   }
 }
 
+// O Firestore não aceita lista dentro de lista (ex.: homework.completar = [[frase, resposta], …]).
+// Ao gravar, cada lista interna vira { __a: [...] }; ao ler, volta a ser lista.
+export function paraFs(v, dentroDeLista = false) {
+  if (Array.isArray(v)) { const arr = v.map(x => paraFs(x, true)); return dentroDeLista ? { __a: arr } : arr; }
+  if (v && typeof v === "object") { const o = {}; for (const k in v) o[k] = paraFs(v[k], false); return o; }
+  return v;
+}
+export function deFs(v) {
+  if (Array.isArray(v)) return v.map(deFs);
+  if (v && typeof v === "object") {
+    if (Array.isArray(v.__a) && Object.keys(v).length === 1) return v.__a.map(deFs);
+    const o = {}; for (const k in v) o[k] = deFs(v[k]); return o;
+  }
+  return v;
+}
+
 export class FirebaseStore extends BaseStore {
   constructor(fb, uid) { super(); this.fb = fb; this.uid = uid; this.modo = "nuvem"; }
   _col(nome) { const { collection, db } = this.fb; return collection(db, "users", this.uid, nome); }
@@ -60,12 +76,12 @@ export class FirebaseStore extends BaseStore {
     const [al, au, cf] = await Promise.all([
       getDocs(this._col("alunos")), getDocs(this._col("aulas")), getDoc(this._doc("config", "main"))
     ]);
-    this.alunos = al.docs.map(d => d.data());
-    this.aulas = au.docs.map(d => d.data());
-    this.config = cf.exists() ? cf.data() : {};
+    this.alunos = al.docs.map(d => deFs(d.data()));
+    this.aulas = au.docs.map(d => deFs(d.data()));
+    this.config = cf.exists() ? deFs(cf.data()) : {};
   }
-  async salvarAluno(a) { const x = limpo(this.carimbar(a)); upsert(this.alunos, x); await this.fb.setDoc(this._doc("alunos", x.id), x); return x; }
-  async salvarAula(a) { const x = limpo(this.carimbar(a)); upsert(this.aulas, x); await this.fb.setDoc(this._doc("aulas", x.id), x); return x; }
+  async salvarAluno(a) { const x = limpo(this.carimbar(a)); upsert(this.alunos, x); await this.fb.setDoc(this._doc("alunos", x.id), paraFs(x)); return x; }
+  async salvarAula(a) { const x = limpo(this.carimbar(a)); upsert(this.aulas, x); await this.fb.setDoc(this._doc("aulas", x.id), paraFs(x)); return x; }
   async apagarAula(id) { this.aulas = this.aulas.filter(a => a.id !== id); await this.fb.deleteDoc(this._doc("aulas", id)); }
   async apagarAluno(id) {
     const das = this.aulas.filter(a => a.alunoId === id).map(a => a.id);
@@ -73,7 +89,7 @@ export class FirebaseStore extends BaseStore {
     this.aulas = this.aulas.filter(a => a.alunoId !== id);
     await this._lote([...das.map(x => ["del", "aulas", x]), ["del", "alunos", id]]);
   }
-  async salvarConfig(c) { this.config = limpo(c); await this.fb.setDoc(this._doc("config", "main"), this.config); }
+  async salvarConfig(c) { this.config = limpo(c); await this.fb.setDoc(this._doc("config", "main"), paraFs(this.config)); }
   async importarTudo({ alunos, aulas }) {
     const ops = [];
     alunos.forEach(a => { const x = limpo(this.carimbar(a)); upsert(this.alunos, x); ops.push(["set", "alunos", x.id, x]); });
@@ -85,7 +101,7 @@ export class FirebaseStore extends BaseStore {
     for (let i = 0; i < ops.length; i += 400) {
       const b = writeBatch(db);
       ops.slice(i, i + 400).forEach(([tipo, col, id, dados]) => {
-        if (tipo === "del") b.delete(this._doc(col, id)); else b.set(this._doc(col, id), dados);
+        if (tipo === "del") b.delete(this._doc(col, id)); else b.set(this._doc(col, id), paraFs(dados));
       });
       await b.commit();
     }
